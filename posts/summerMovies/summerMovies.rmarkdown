@@ -1,0 +1,33 @@
+---
+title: "Summer Movies"
+description: "Post description"
+author: "Steven Wolf"
+date: "8/2/2024"
+categories:
+  - tidyTuesday
+draft: true
+---
+
+
+
+
+This week we're exploring "summer" movies: movies with *summer* in their title!
+
+The data this week comes from the [Internet Movie Database](https://developer.imdb.com/non-commercial-datasets/).
+
+
+
+
+
+```{r}
+library(tidyverse)
+library(janitor)
+
+tuesdata <- tidytuesdayR::tt_load('2024-07-30')
+
+summer_movie_genres <- tuesdata$summer_movie_genres
+summer_movies <- tuesdata$summer_movies
+
+source('cleanSummerMovies.R')
+```
+

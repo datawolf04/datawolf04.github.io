@@ -1,0 +1,25 @@
+project:
+  type: website
+
+website:
+  title: "Steve's Data Playground"
+  navbar:
+    right:
+      - about.qmd
+      - icon: linkedin
+        href: https://www.linkedin.com/in/steven-wolf-253b6625a
+      - icon: github
+        href: https://github.com/datawolf04/
+  # Add these in when I post this so that it will generate an RSS feed
+      # - icon: rss
+      #   href: index.xml
+  # site-url: https://www.myblogexample.io
+  # description: "A great sample blog"
+
+format:
+  html:
+    theme: zephyr
+    css: styles.css
+
+
+

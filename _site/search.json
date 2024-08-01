@@ -1,0 +1,30 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Steve’s Data Playground",
+    "section": "",
+    "text": "No matching items"
+  },
+  {
+    "objectID": "posts/post-with-code/index.html",
+    "href": "posts/post-with-code/index.html",
+    "title": "Post With Code",
+    "section": "",
+    "text": "This is a post with executable code.\n\n1 + 1\n\n[1] 2"
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I’m a physicist by training, but a Data Scientist by practice. I’ve been coding things in R and Python for about 15 years, and I finally decided that I wanted a place to put my fun projects. I also wanted to figure out how Quarto works. So this is a place for me to do that. Plus, I thought it would be fun to just play with some data. And I just learned about #TidyTuesday and the Data Science Learning Community."
+  }
+]
