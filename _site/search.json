@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "Steve’s Data Playground",
     "section": "",
-    "text": "No matching items"
+    "text": "Summer Movies\n\n\n\n\n\n\ntidyTuesday\n\n\n\nAnalyzing the IMDB for movies with ‘summer’ in the title\n\n\n\n\n\nAug 2, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/post-with-code/index.html",
@@ -26,5 +26,40 @@
     "title": "About",
     "section": "",
     "text": "I’m a physicist by training, but a Data Scientist by practice. I’ve been coding things in R and Python for about 15 years, and I finally decided that I wanted a place to put my fun projects. I also wanted to figure out how Quarto works. So this is a place for me to do that. Plus, I thought it would be fun to just play with some data. And I just learned about #TidyTuesday and the Data Science Learning Community."
+  },
+  {
+    "objectID": "readme.html",
+    "href": "readme.html",
+    "title": "Steve's Data Playground",
+    "section": "",
+    "text": "This is the weblog so I can do some #TidyTuesday activities and play with Quarto."
+  },
+  {
+    "objectID": "posts/summerMovies/summerMovies.html",
+    "href": "posts/summerMovies/summerMovies.html",
+    "title": "Summer Movies",
+    "section": "",
+    "text": "This week we’re exploring “summer” movies: movies with summer in their title!\nThe data this week comes from the Internet Movie Database.\nlibrary(tidyverse)\nlibrary(ggtext)\nlibrary(showtext)\nlibrary(janitor)\nlibrary(ggdist)\nlibrary(ggrepel)\nlibrary(scales)\n\nload('summerMovie.RData')"
+  },
+  {
+    "objectID": "posts/summerMovies/summerMovies.html#popularity-of-movie-by-year",
+    "href": "posts/summerMovies/summerMovies.html#popularity-of-movie-by-year",
+    "title": "Summer Movies",
+    "section": "Popularity of movie by year",
+    "text": "Popularity of movie by year\nIn some sense how well-known or popular a movie is should depend on the year. I’m guessing that very old movies may not have as many votes in the IMDB system. This could also bias the ratings\n\nggplot(summer_movies, aes(x=year,y=num_votes)) +\n  geom_point() + \n  labs(\n    x = \"Year movie released\",\n    y = \"Number of ratings\",\n    caption = caption_text\n  ) + themeSimple()\n\nWarning: Removed 1 row containing missing values or values outside the scale range\n(`geom_point()`).\n\n\n\n\n\n\n\n\n\nI can definitely see that there is a volume bias towards newer movies. Let’s explore if this shows up in the ratings.\n\nggplot(summer_movies, aes(x=num_votes, y=average_rating, color=year)) +\n  geom_point() + \n  scale_x_log10(breaks = trans_breaks(\"log10\", function(x) 10^x),\n                labels = trans_format(\"log10\", math_format(10^.x))) +\n  scale_y_continuous(limits = c(0,10)) + \n  labs(\n    x = \"Number of ratings\",\n    y = \"Average rating\",\n    colour = \"Year\",\n    caption = caption_text\n  ) + themeSimple()\n\n\n\n\n\n\n\n\nI’d say that there are no truly universally bad summer movies (for example with everyone scoring it a 0 or 1 out of 10). It also seems like there is a “reversion to the mean” effect for movies that have more votes, although this could simply be the result of sparse data. By “reversion to the mean” I am referring to the vaguely triangular shape of the blob of points, suggesting that as a movie is rated more and more, the diversity of opinion forces the mean rating to tend away from extreme values."
+  },
+  {
+    "objectID": "posts/summerMovies/summerMovies.html#re-imagining-other-work",
+    "href": "posts/summerMovies/summerMovies.html#re-imagining-other-work",
+    "title": "Summer Movies",
+    "section": "Re-imagining other work",
+    "text": "Re-imagining other work\nAs I’m doing this a bit late in the game, I can take advantage of the work some others have done. I saw this plot, and thought it would be good to replicate here, with a subtle twist.\n\nRather than plotting mean values for each genre, I thought I’d make a box plot instead of plotting the average rating. So I will tidy up the data.\n\nglobalMedian = median(summer_movies$average_rating, na.rm = TRUE)\ngDat &lt;- summer_movies |&gt; separate_longer_delim(cols = genres, delim = \",\") |&gt;\n  group_by(genres) \n\nnewGenre &lt;-  gDat |&gt;\n  summarise(\n    count = n(),\n    rating = median(average_rating, na.rm = TRUE),\n    .groups = \"drop\"\n  )\n\ndata4plot = full_join(newGenre,gDat,by=\"genres\") |&gt;\n  mutate(\n      genre_count = str_glue(\"{genres} ({count})\"),\n      genre_count = fct_reorder(genre_count, rating, .desc = FALSE),\n      highlight = ifelse(rating &gt;= globalMedian, \"yes\",\"no\")\n      )\n\nAnd finally, the plot.\n\nggplot(data4plot, aes(x=average_rating, y=genre_count, fill=highlight)) +\n  geom_vline(\n    xintercept = globalMedian,\n    linewidth = .5,\n    color = 'gray'\n    ) +\n  geom_boxplot() +\n  labs(\n    x = \"Rating\",\n    y = \"Movie Genre (count)\",\n    caption = caption_text\n  ) +\n  scale_x_continuous(breaks = seq(2,10,by=1), limits=c(2,10)) +\n  scale_y_discrete() +\n  coord_cartesian(clip='off') + catYtheme()"
+  },
+  {
+    "objectID": "posts/summerMovies/summerMovies.html#final-notes",
+    "href": "posts/summerMovies/summerMovies.html#final-notes",
+    "title": "Summer Movies",
+    "section": "Final notes",
+    "text": "Final notes\nI just found out about #TidyTuesday, just this week, and I want to participate. So the purpose of this post is mostly to get a blog going, and I hope to update approximately monthly. Now that this post is written, we’ll see if I can get this onto Github Pages. 😄"
   }
 ]

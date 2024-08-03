@@ -1,11 +1,12 @@
 ---
 title: "Summer Movies"
-description: "Post description"
+description: "Analyzing the IMDB for movies with 'summer' in the title"
 author: "Steven Wolf"
 date: "8/2/2024"
 categories:
   - tidyTuesday
-draft: true
+resources: 
+  - "summerMovie.RData"
 ---
 
 This week we're exploring "summer" movies: movies with *summer* in their title!
@@ -13,15 +14,151 @@ This week we're exploring "summer" movies: movies with *summer* in their title!
 The data this week comes from the [Internet Movie Database](https://developer.imdb.com/non-commercial-datasets/).
 
 
-```{r}
+```{r results='hide',message=FALSE, warning=FALSE}
 library(tidyverse)
+library(ggtext)
+library(showtext)
 library(janitor)
+library(ggdist)
+library(ggrepel)
+library(scales)
 
-tuesdata <- tidytuesdayR::tt_load('2024-07-30')
-
-summer_movie_genres <- tuesdata$summer_movie_genres
-summer_movies <- tuesdata$summer_movies
-
-source('cleanSummerMovies.R')
+load('summerMovie.RData')
 ```
 
+```{r echo=FALSE}
+showtext_opts(dpi = 320, regular.wt = 300, bold.wt = 800)
+
+font_add("fa6-brands", 
+         "/usr/share/fonts/fontawesome-free-6.6.0-desktop/otfs/Font Awesome 6 Brands-Regular-400.otf")
+showtext_auto(enable = TRUE)
+
+theme_set(theme_classic(base_size = 14, base_family = 'sans'))
+
+ttText <- str_glue("#TidyTuesday &bull; Source: IMDb non-commercial datasets")
+gh <- str_glue("<span style='font-family: \"fa6-brands\"'>&#xf09b;</span>")
+li <- str_glue("<span style='font-family:\"fa6-brands\"'>&#xf08c;</span>")
+caption_text <- str_glue("{ttText} <br> {gh} datawolf04 {li} wolf-253b6625a")
+
+themeSimple = function(){
+  theme_classic() %+replace%
+  
+  theme(
+    legend.title = element_markdown(size = rel(.65), hjust = 0.5),
+    legend.text = element_text(size = rel(0.4)), 
+  
+    plot.title.position = 'plot',
+    plot.caption.position = 'plot',
+    
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20),
+    axis.title.x = element_text(margin = margin(10, 0, 0, 0), size = rel(1.2)),
+    axis.title.y = element_text(margin = margin(0, 10, 0, 0), size = rel(1.2),angle=90),
+    axis.text = element_text(size=rel(0.8)),
+    plot.caption = element_markdown(
+        size        = rel(.5),
+        family      = "sans",
+        color       = "grey40",
+        lineheight  = 0.6,
+        hjust       = 0,
+        halign      = 0,
+        margin      = margin(t = 10, b = 5)
+    )
+  ) 
+}
+
+catYtheme <- function(){
+  themeSimple() %+replace%
+  
+  theme(
+    legend.position='none',
+    axis.text.x.top = element_markdown(face='bold', vjust=0.5),
+    axis.line.y = element_blank(),
+    axis.ticks = element_blank(),
+    panel.grid.major.y = element_blank()
+  )
+}
+```
+
+## Popularity of movie by year
+
+In some sense how well-known or popular a movie is should depend on the year. I'm guessing that very old movies may not have as many votes in the IMDB system. This could also bias the ratings
+
+```{r}
+ggplot(summer_movies, aes(x=year,y=num_votes)) +
+  geom_point() + 
+  labs(
+    x = "Year movie released",
+    y = "Number of ratings",
+    caption = caption_text
+  ) + themeSimple()
+```
+
+I can definitely see that there is a volume bias towards newer movies. Let's explore if this shows up in the ratings.
+
+```{r}
+ggplot(summer_movies, aes(x=num_votes, y=average_rating, color=year)) +
+  geom_point() + 
+  scale_x_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  scale_y_continuous(limits = c(0,10)) + 
+  labs(
+    x = "Number of ratings",
+    y = "Average rating",
+    colour = "Year",
+    caption = caption_text
+  ) + themeSimple()
+```
+
+I'd say that there are no truly universally bad summer movies (for example with everyone scoring it a 0 or 1 out of 10). It also seems like there is a "reversion to the mean" effect for movies that have more votes, although this could simply be the result of sparse data. By "reversion to the mean" I am referring to the vaguely triangular shape of the blob of points, suggesting that as a movie is rated more and more, the diversity of opinion forces the mean rating to tend away from extreme values.
+
+## Re-imagining other work
+
+As I'm doing this a bit late in the game, I can take advantage of the work some others have done. I saw 
+[this plot](https://github.com/poncest/tidytuesday/tree/main/2024/Week_31), and thought it would be good to replicate here, with a subtle twist.
+
+![](https://raw.githubusercontent.com/poncest/tidytuesday/main/2024/Week_31/2024_31.png)
+
+Rather than plotting mean values for each genre, I thought I'd make a box plot instead of plotting the average rating. So I will tidy up the data.
+
+```{r}
+globalMedian = median(summer_movies$average_rating, na.rm = TRUE)
+gDat <- summer_movies |> separate_longer_delim(cols = genres, delim = ",") |>
+  group_by(genres) 
+
+newGenre <-  gDat |>
+  summarise(
+    count = n(),
+    rating = median(average_rating, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+data4plot = full_join(newGenre,gDat,by="genres") |>
+  mutate(
+      genre_count = str_glue("{genres} ({count})"),
+      genre_count = fct_reorder(genre_count, rating, .desc = FALSE),
+      highlight = ifelse(rating >= globalMedian, "yes","no")
+      )
+```
+
+And finally, the plot.
+
+```{r fig.height=12, fig.width=7}
+ggplot(data4plot, aes(x=average_rating, y=genre_count, fill=highlight)) +
+  geom_vline(
+    xintercept = globalMedian,
+    linewidth = .5,
+    color = 'gray'
+    ) +
+  geom_boxplot() +
+  labs(
+    x = "Rating",
+    y = "Movie Genre (count)",
+    caption = caption_text
+  ) +
+  scale_x_continuous(breaks = seq(2,10,by=1), limits=c(2,10)) +
+  scale_y_discrete() +
+  coord_cartesian(clip='off') + catYtheme()
+```
+
+## Final notes
+I just found out about #TidyTuesday, just this week, and I want to participate. So the purpose of this post is mostly to get a blog going, and I hope to update approximately monthly. Now that this post is written, we'll see if I can get this onto Github Pages. 😄
