@@ -20,6 +20,9 @@ format:
   html:
     theme: zephyr
     css: styles.css
+    
+execute: 
+  freeze: auto
 
 
 
