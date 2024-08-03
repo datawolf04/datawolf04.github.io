@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "readme.html",
-    "href": "readme.html",
-    "title": "Steve's Data Playground",
-    "section": "",
-    "text": "This is the weblog so I can do some #TidyTuesday activities and play with Quarto."
-  },
-  {
     "objectID": "posts/summerMovies/summerMovies.html",
     "href": "posts/summerMovies/summerMovies.html",
     "title": "Summer Movies",
@@ -35,11 +28,11 @@
     "text": "Final notes\nI just found out about #TidyTuesday, just this week, and I want to participate. So the purpose of this post is mostly to get a blog going, and I hope to update approximately monthly. Now that this post is written, we’ll see if I can get this onto Github Pages. 😄"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Steve’s Data Playground",
+    "objectID": "readme.html",
+    "href": "readme.html",
+    "title": "Steve's Data Playground",
     "section": "",
-    "text": "Summer Movies\n\n\n\n\n\n\ntidyTuesday\n\n\n\nAnalyzing the IMDB for movies with ‘summer’ in the title\n\n\n\n\n\nAug 2, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\nNo matching items"
+    "text": "This is the weblog so I can do some #TidyTuesday activities and play with Quarto."
   },
   {
     "objectID": "about.html",
@@ -47,5 +40,12 @@
     "title": "About",
     "section": "",
     "text": "I’m a physicist by training, but a Data Scientist by practice. I’ve been coding things in R and Python for about 15 years, and I finally decided that I wanted a place to put my fun projects. I also wanted to figure out how Quarto works. So this is a place for me to do that. Plus, I thought it would be fun to just play with some data. And I just learned about #TidyTuesday and the Data Science Learning Community."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Steve’s Data Playground",
+    "section": "",
+    "text": "Summer Movies\n\n\n\n\n\n\ntidyTuesday\n\n\n\nAnalyzing the IMDB for movies with ‘summer’ in the title\n\n\n\n\n\nAug 2, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\nNo matching items"
   }
 ]
