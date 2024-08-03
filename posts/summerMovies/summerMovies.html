@@ -104,6 +104,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../../styles.css">
 </head>
@@ -204,20 +233,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggdist)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'summerMovie.RData'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'summerMovie.RData'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="popularity-of-movie-by-year" class="level2">
 <h2 class="anchored" data-anchor-id="popularity-of-movie-by-year">Popularity of movie by year</h2>
 <p>In some sense how well-known or popular a movie is should depend on the year. I’m guessing that very old movies may not have as many votes in the IMDB system. This could also bias the ratings</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(summer_movies, <span class="fu">aes</span>(<span class="at">x=</span>year,<span class="at">y=</span>num_votes)) <span class="sc">+</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color=</span>oneCol) <span class="sc">+</span> </span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Year movie released"</span>,</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Number of ratings"</span>,</span>
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> caption_text</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">themeSimple</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">theme_simple</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
 (`geom_point()`).</code></pre>
@@ -237,12 +267,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_log10</span>(<span class="at">breaks =</span> <span class="fu">trans_breaks</span>(<span class="st">"log10"</span>, <span class="cf">function</span>(x) <span class="dv">10</span><span class="sc">^</span>x),</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                <span class="at">labels =</span> <span class="fu">trans_format</span>(<span class="st">"log10"</span>, <span class="fu">math_format</span>(<span class="dv">10</span><span class="sc">^</span>.x))) <span class="sc">+</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">10</span>)) <span class="sc">+</span> </span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of ratings"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average rating"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">colour =</span> <span class="st">"Year"</span>,</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> caption_text</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">themeSimple</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_paletteer_c</span>(col_pal_cont) <span class="sc">+</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Number of ratings"</span>,</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Average rating"</span>,</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="st">"Year"</span>,</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> caption_text</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span> <span class="fu">theme_simple</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -251,13 +282,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>I’d say that there are no truly universally bad summer movies (for example with everyone scoring it a 0 or 1 out of 10). It also seems like there is a “reversion to the mean” effect for movies that have more votes, although this could simply be the result of sparse data. By “reversion to the mean” I am referring to the vaguely triangular shape of the blob of points, suggesting that as a movie is rated more and more, the diversity of opinion forces the mean rating to tend away from extreme values.</p>
+<p>I’d say that there are no truly universally bad summer movies (for example with everyone scoring it a 0 or 1 out of 10). Despite the recency bias in the rating volume, it would seem that movies can be rated poorly or highly regardless of the year the movie was released. It also seems like there is a “reversion to the mean” effect for movies that have more votes, although this could simply be the result of sparse data. By “reversion to the mean” I am referring to the vaguely triangular shape of the blob of points, suggesting that as a movie is rated more and more, the diversity of opinion forces the mean rating to tend away from extreme values.</p>
 </section>
 <section id="re-imagining-other-work" class="level2">
 <h2 class="anchored" data-anchor-id="re-imagining-other-work">Re-imagining other work</h2>
 <p>As I’m doing this a bit late in the game, I can take advantage of the work some others have done. I saw <a href="https://github.com/poncest/tidytuesday/tree/main/2024/Week_31">this plot</a>, and thought it would be good to replicate here, with a subtle twist.</p>
 <p><img src="https://raw.githubusercontent.com/poncest/tidytuesday/main/2024/Week_31/2024_31.png" class="img-fluid"></p>
-<p>Rather than plotting mean values for each genre, I thought I’d make a box plot instead of plotting the average rating. So I will tidy up the data.</p>
+<p>Rather than plotting mean values for each genre, I thought I’d make a box plot instead of plotting the average rating. So I will tidy up the data. Furthermore, since I’m creating a box plot, I’m going to remove genres with fewer than <span class="math inline">\(N=5\)</span> ratings.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>globalMedian <span class="ot">=</span> <span class="fu">median</span>(summer_movies<span class="sc">$</span>average_rating, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>gDat <span class="ot">&lt;-</span> summer_movies <span class="sc">|&gt;</span> <span class="fu">separate_longer_delim</span>(<span class="at">cols =</span> genres, <span class="at">delim =</span> <span class="st">","</span>) <span class="sc">|&gt;</span></span>
@@ -275,7 +306,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>      <span class="at">genre_count =</span> <span class="fu">str_glue</span>(<span class="st">"{genres} ({count})"</span>),</span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>      <span class="at">genre_count =</span> <span class="fu">fct_reorder</span>(genre_count, rating, <span class="at">.desc =</span> <span class="cn">FALSE</span>),</span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>      <span class="at">highlight =</span> <span class="fu">ifelse</span>(rating <span class="sc">&gt;=</span> globalMedian, <span class="st">"yes"</span>,<span class="st">"no"</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>      ) <span class="sc">|&gt;</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(count<span class="sc">&gt;=</span><span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And finally, the plot.</p>
 <div class="cell">
@@ -293,7 +325,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">breaks =</span> <span class="fu">seq</span>(<span class="dv">2</span>,<span class="dv">10</span>,<span class="at">by=</span><span class="dv">1</span>), <span class="at">limits=</span><span class="fu">c</span>(<span class="dv">2</span>,<span class="dv">10</span>)) <span class="sc">+</span></span>
 <span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_discrete</span>() <span class="sc">+</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip=</span><span class="st">'off'</span>) <span class="sc">+</span> <span class="fu">catYtheme</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_paletteer_d</span>(col_pal_dis) <span class="sc">+</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_cartesian</span>(<span class="at">clip=</span><span class="st">'off'</span>) <span class="sc">+</span> <span class="fu">theme_catY</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -306,6 +339,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="final-notes" class="level2">
 <h2 class="anchored" data-anchor-id="final-notes">Final notes</h2>
 <p>I just found out about #TidyTuesday, just this week, and I want to participate. So the purpose of this post is mostly to get a blog going, and I hope to update approximately monthly. Now that this post is written, we’ll see if I can get this onto Github Pages. 😄</p>
+<p>[Edit: Phew! That worked!]</p>
 
 
 </section>
