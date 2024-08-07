@@ -129,7 +129,7 @@ window.Quarto = {
 </script>
 
 <link rel="stylesheet" href="styles.css">
-</head>
+<link rel="alternate" type="application/rss+xml" title="Steve's Data Playground" href="index.xml" data-external="1"></head>
 
 <body class="nav-fixed">
 
@@ -147,11 +147,13 @@ window.Quarto = {
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
-            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
     <a class="nav-link" href="https://www.linkedin.com/in/steven-wolf-253b6625a"> <i class="bi bi-linkedin" role="img">
 </i> 
@@ -159,6 +161,11 @@ window.Quarto = {
   </li>  
   <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/datawolf04/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -205,7 +212,7 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="tidyTuesday" data-listing-date-sort="1722988800000" data-listing-file-modified-sort="1723050694523" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1468">
+<div class="quarto-post image-right" data-index="0" data-categories="tidyTuesday" data-listing-date-sort="1722988800000" data-listing-file-modified-sort="1723054229226" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1468">
 <div class="thumbnail">
 <p><a href="./posts/olympic240805/olympicMedalData.html" class="no-external"></a></p><a href="./posts/olympic240805/olympicMedalData.html" class="no-external">
 <p class="card-img-top"><img src="posts/olympic240805/olympicMedalData_files/figure-html/unnamed-chunk-7-1.png"  class="thumbnail-image card-img"/></p>
@@ -238,7 +245,7 @@ Steven Wolf
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="tidyTuesday" data-listing-date-sort="1722556800000" data-listing-file-modified-sort="1723050694543" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="937">
+<div class="quarto-post image-right" data-index="1" data-categories="tidyTuesday" data-listing-date-sort="1722556800000" data-listing-file-modified-sort="1723054229242" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="937">
 <div class="thumbnail">
 <p><a href="./posts/summerMovies/summerMovies.html" class="no-external"></a></p><a href="./posts/summerMovies/summerMovies.html" class="no-external">
 <p class="card-img-top"><img src="posts/summerMovies/summerMovies_files/figure-html/unnamed-chunk-3-1.png"  class="thumbnail-image card-img"/></p>
@@ -368,7 +375,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
     var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
     var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/datawolf04\.github\.io\/");
+      var filterRegex = new RegExp("https:\/\/datawolf04\.github\.io");
     var isInternal = (href) => {
         return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
     }
