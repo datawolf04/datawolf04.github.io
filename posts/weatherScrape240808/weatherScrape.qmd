@@ -1,0 +1,50 @@
+---
+title: "Scraping Weather Data-Proof of concept"
+description: "Scraping weather data near Zebulon, NC"
+author: "Steven Wolf"
+date: "8/8/2024"
+categories:
+  - weather
+  - python
+jupyter: python3
+draft: true
+---
+
+My friend, [Ben Leese](https://benleese.com), was telling me about his most recent project. He has a passion for going through old naturalist's notebooks and pulling out data from the depths of that analog mess and bringing it into the digital world. And he was talking about how weather could impact different bird behaviors. But he only had binary weather data (Yes, it rained/No it didn't). Furthermore, it was from Raleigh, NC rather than Zebulon, NC. While these places are close on the map, they aren't really the same.
+
+So I said that I'd try to find some better weather data for him. I found this [helpful python script](https://zperzan.github.io/projects/scrape-weather-underground/) for scraping the weather data from [Weather Underground](https://www.wunderground.com), which I will adapt to my purpose.
+
+```{python}
+import time
+import sys
+
+import numpy as np
+import pandas as pd
+from bs4 import BeautifulSoup as BS
+from selenium import webdriver
+
+# Set the absolute path to chromedriver
+chromedriver_path = '/usr/local/bin/chromedriver'
+
+from scrape_wunderground import *
+```
+
+I will scrape weather from the [Riley Hill Rd station](https://www.wunderground.com/dashboard/pws/KNCZEBUL20?cm_ven=localwx_pwsdash) with code `KNCZEBUL20` on 9/4/2023.
+
+```{python}
+station_id = "KNCZEBUL20"
+date_id = "2023-09-04"
+
+print_tables(station_id, date_id)
+```
+
+In principle, this pulls out ***so much more*** than the data that I'll need. I'll need to do some processing to get daily summary statistics.
+
+That being said, I'll have to find a different weather station because this one seems somewhat new.
+
+```{python}
+station_id = "KNCZEBUL20"
+date_id = "1976-09-04"
+
+print_tables(station_id, date_id)
+```

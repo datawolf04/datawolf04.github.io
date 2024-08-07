@@ -5,6 +5,7 @@ author: "Steven Wolf"
 date: "8/7/2024"
 categories:
   - tidyTuesday
+  - R
 resources: 
   - "olymnpicMedalResults.RData"
 ---
