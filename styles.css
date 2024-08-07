@@ -1,1 +1,9 @@
 /* css styles */
+
+tr:nth-child(even){
+  background-color: #898E9FFF;
+}
+
+tr:nth-child(odd){
+  background-color: #CE9642FF;
+}
