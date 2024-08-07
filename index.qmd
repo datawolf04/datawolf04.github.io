@@ -7,8 +7,7 @@ listing:
   categories: true
   sort-ui: false
   filter-ui: false
-  # Turn this on when you deploy for RSS feed
-  # feed: true
+  feed: true
 page-layout: full
 title-block-banner: true
 ---

@@ -4,17 +4,18 @@ project:
 website:
   title: "Steve's Data Playground"
   navbar:
-    right:
+    left:
       - about.qmd
+    right:
       - icon: linkedin
         href: https://www.linkedin.com/in/steven-wolf-253b6625a
       - icon: github
         href: https://github.com/datawolf04/
+      - icon: rss
+        href: index.xml
   # Add these in when I post this so that it will generate an RSS feed
-      # - icon: rss
-      #   href: index.xml
-  # site-url: https://www.myblogexample.io
-  # description: "A great sample blog"
+  site-url: https://datawolf04.github.io
+  description: "A place to play with data"
 
 format:
   html:

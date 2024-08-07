@@ -1,6 +1,6 @@
 ---
 title: "About"
-image: profile.jpg
+image: swolfHeadVert.jpg
 about:
   template: jolla
   links:
@@ -10,11 +10,12 @@ about:
     - icon: github
       text: Github
       href: https://github.com/datawolf04/
-
+    - icon: google
+      text: Google Scholar
+      href: https://scholar.google.com/citations?user=YMrBRecAAAAJ
 ---
 
-I'm a physicist by training, but a Data Scientist by practice. I've been coding things in R and Python for about 15 years, and I finally decided that I wanted a place to put my fun projects. I also wanted to figure out how [Quarto](https://quarto.org) works. So this is a place for me to do that. Plus, I thought it would be fun to just play with some data. And I just learned about [#TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/README.md) and the [Data Science Learning Community](https://dslc.io/).
+I'm a physicist by training, but a Data Scientist by practice. I've been coding things in R and Python for several years, and I finally decided that I wanted a place to put my fun projects, organize my thoughts, and do other data science related things. In addition to the places you will find me linked to the bottom, you can find me active with [#TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/README.md) and the [Data Science Learning Community](https://dslc.io/).
 
-![](https://ih1.redbubble.net/image.563601502.2597/mp,840x830,matte,f8f8f8,t-pad,1000x1000,f8f8f8.jpg)
-
+![](https://ih1.redbubble.net/image.563601502.2597/mp,840x830,matte,f8f8f8,t-pad,1000x1000,f8f8f8.jpg){width=60%}
 
