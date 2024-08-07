@@ -21,27 +21,6 @@
     "text": "Back to the show\nI think that I should create a function that sorts the participation data (and later, the medalist data) by country and year. Also, since 230 lines would make the graph look like messy spaghetti, I think it would be best to limit the results to the top 10 countries by the metric being plotted (participation, number medalists, number gold medalists).\n\ncountByCountryYearSzn = function(dat,top=TRUE){\n  cbcys &lt;- dat |&gt; group_by(across(all_of(c(\"season\",\"noc\",\"year\")))) |&gt;\n      summarize(\n        pcount = n()\n      ) |&gt;\n    mutate(\n      cumCount = cumsum(pcount)\n    )\n  \n  countryTotal &lt;- dat |&gt; count(noc) |&gt;\n    arrange(desc(n))\n  \n  nC = nrow(countryTotal)\n  \n  if(top){\n    cKeep = countryTotal[1:10, ]\n  }else{\n    cKeep = countryTotal[(nC-10):nC, ]\n  }\n  \n  out &lt;- cbcys |&gt; inner_join(cKeep,join_by(noc))\n  \n  out$noc = factor(out$noc, levels = cKeep$noc)\n\n  return(out)\n}\n\nNow, let’s make a graph of olympic participation:\n\npart = countByCountryYearSzn(olympics,top=TRUE)\n\n`summarise()` has grouped output by 'season', 'noc'. You can override using the\n`.groups` argument.\n\nggplot(part, aes(x=year, y=cumCount, color=noc)) +\n  geom_step() + facet_wrap(~ season, ncol=1, scales=\"free_y\") + \n  theme_simple() + theme(\n    plot.background = element_rect(fill=grn,color=grn),\n    panel.background = element_rect(fill=ltGrn,color=ltGrn),\n    legend.key = element_rect(fill=ltGrn,color=ltGrn),\n    legend.background = element_rect(fill=ltGrn,color=ltGrn)\n  ) +\n  labs(\n    title = \"Olympic participation by country (top 10)\",\n    x = \"Year of Olympic Games\",\n    y = \"Cumulative participant count\",\n    caption = caption_text,\n    color = \"Nation\"\n  ) +\n  scale_color_paletteer_d(col_pal_dis_long)\n\n\n\n\n\n\n\n\nThe medal breakdown\n\nolyMedal &lt;- olympics |&gt; filter(!is.na(medal))\n\nmedalists = countByCountryYearSzn(olyMedal,top=TRUE)\n\n`summarise()` has grouped output by 'season', 'noc'. You can override using the\n`.groups` argument.\n\nggplot(medalists, aes(x=year,y=cumCount,color=noc)) +\n  geom_step() + facet_wrap(~ season, ncol=1, scales=\"free_y\") + \n  theme_simple() + theme(\n    plot.background = element_rect(fill=silver,color=silver),\n    panel.background = element_rect(fill=ltSilver,color=ltSilver),\n    legend.key = element_rect(fill=ltSilver,color=ltSilver),\n    legend.background = element_rect(fill=ltSilver,color=ltSilver)\n  ) +\n  labs(\n    title=\"Olympic medalists by country (top 10)\",\n    x = \"Year of Olympic Games\",\n    y = \"Cumulative medal count\",\n    caption = caption_text,\n    color = \"Nation\"\n  ) +\n  scale_color_paletteer_d(col_pal_dis_long)\n\n\n\n\n\n\n\n\nI will note that URS is the Soviet Union, and RUS is Russia. Clearly that country’s 20th century history means that it is not treated as continuous by the Olympic Federation. It reminds me of when I was a kid watching Where in the World is Carmen Sandiego and all of a sudden there were new countries on the European maps. &lt;/nostalgia trip&gt;\nBut you can totally see the rivalry fueled by the Cold War when you look at the “slope” of the summer olympic medal accumulation graph and compare the Soviets (and later, the Russians) to the Americans.\n\nolyGold &lt;- olympics |&gt; filter(medal==\"Gold\")\n\ngoldMetals = countByCountryYearSzn(olyGold,top=TRUE)\n\n`summarise()` has grouped output by 'season', 'noc'. You can override using the\n`.groups` argument.\n\nggplot(goldMetals, aes(x=year,y=cumCount,color=noc)) +\n  geom_step() + facet_wrap(~ season, ncol = 1, scales=\"free_y\") + \n  theme_simple() + theme(\n    plot.background = element_rect(fill=gold,color=gold),\n    panel.background = element_rect(fill=ltGold,color=ltGold),\n    legend.key = element_rect(fill=ltGold,color=ltGold),\n    legend.background = element_rect(fill=ltGold,color=ltGold)\n  ) +\n  labs(\n    title=\"Olympic Golds by country (top 10)\",\n    x = \"Year of Olympic Games\",\n    y = \"Cumulative gold metal count\",\n    caption = caption_text,\n    color = \"Nation\"\n  ) +\n  scale_color_paletteer_d(col_pal_dis_long)"
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Steve’s Data Playground",
-    "section": "",
-    "text": "Olympic countries: Fun facts and visualizations\n\n\n\n\n\n\ntidyTuesday\n\n\n\nCountries by participation and medal count\n\n\n\n\n\nAug 7, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\n\n\n\n\n\n\nSummer Movies\n\n\n\n\n\n\ntidyTuesday\n\n\n\nAnalyzing the IMDB for movies with ‘summer’ in the title\n\n\n\n\n\nAug 2, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "I’m a physicist by training, but a Data Scientist by practice. I’ve been coding things in R and Python for several years, and I finally decided that I wanted a place to put my fun projects, organize my thoughts, and do other data science related things. In addition to the places you will find me linked to the bottom, you can find me active with #TidyTuesday and the Data Science Learning Community."
-  },
-  {
-    "objectID": "readme.html",
-    "href": "readme.html",
-    "title": "Steve's Data Playground",
-    "section": "",
-    "text": "This is the weblog so I can do some #TidyTuesday activities and play with Quarto.\nGo to the webpage here: datawolf04.github.io"
-  },
-  {
     "objectID": "posts/summerMovies/summerMovies.html",
     "href": "posts/summerMovies/summerMovies.html",
     "title": "Summer Movies",
@@ -68,5 +47,26 @@
     "title": "Summer Movies",
     "section": "Final notes",
     "text": "Final notes\nI just found out about #TidyTuesday, just this week, and I want to participate. So the purpose of this post is mostly to get a blog going, and I hope to update approximately monthly. Now that this post is written, we’ll see if I can get this onto Github Pages. 😄\n[Edit: Phew! That worked!]"
+  },
+  {
+    "objectID": "readme.html",
+    "href": "readme.html",
+    "title": "Steve's Data Playground",
+    "section": "",
+    "text": "This is the weblog so I can do some #TidyTuesday activities and play with Quarto.\nGo to the webpage here: datawolf04.github.io"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "I’m a physicist by training, but a Data Scientist by practice. I’ve been coding things in R and Python for several years, and I finally decided that I wanted a place to put my fun projects, organize my thoughts, and do other data science related things. In addition to the places you will find me linked to the bottom, you can find me active with #TidyTuesday and the Data Science Learning Community."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Steve’s Data Playground",
+    "section": "",
+    "text": "Olympic countries: Fun facts and visualizations\n\n\n\n\n\n\ntidyTuesday\n\n\nR\n\n\n\nCountries by participation and medal count\n\n\n\n\n\nAug 7, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\n\n\n\n\n\n\nSummer Movies\n\n\n\n\n\n\ntidyTuesday\n\n\nR\n\n\n\nAnalyzing the IMDB for movies with ‘summer’ in the title\n\n\n\n\n\nAug 2, 2024\n\n\nSteven Wolf\n\n\n\n\n\n\nNo matching items"
   }
 ]
