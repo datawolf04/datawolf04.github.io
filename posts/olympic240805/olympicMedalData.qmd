@@ -1,0 +1,267 @@
+---
+title: "Olympic countries: Fun facts and visualizations"
+description: "Countries by participation and medal count"
+author: "Steven Wolf"
+date: "8/7/2024"
+categories:
+  - tidyTuesday
+resources: 
+  - "olymnpicMedalResults.RData"
+---
+
+This week we're exploring Olympics data!
+
+The data this week comes from the [RGriffin Kaggle dataset: 120 years of Olympic history: athletes and results](https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results/), basic bio data on athletes and medal results from Athens 1896 to Rio 2016.
+
+
+```{r results='hide',message=FALSE, warning=FALSE}
+library(tidyverse)
+library(ggtext)
+library(showtext)
+library(janitor)
+library(ggdist)
+library(ggrepel)
+library(scales)
+library(paletteer)
+library(gt)
+
+
+load('olympicMedalResults.RData')
+```
+
+
+```{r echo=FALSE}
+col_pal_dis_short = "MetBrewer::Kandinsky"
+col_pal_dis_long = "PrettyCols::Autumn"
+col_pal_cont = "ggthemes::Blue-Teal"
+oneCol = paletteer_d(col_pal_dis_short)[1]
+silver = "#e1e1e1"
+ltSilver = "#efefef"
+gold = "#eecf70"
+ltGold = "#f7e8b9"
+grn = "#a0e9a7"
+ltGrn = "#c4f5c8"
+
+showtext_opts(dpi = 225, regular.wt = 300, bold.wt = 800)
+
+font_add("fa6-brands", 
+         "/usr/share/fonts/fontawesome-free-6.6.0-desktop/otfs/Font Awesome 6 Brands-Regular-400.otf")
+showtext_auto(enable = TRUE)
+
+theme_set(theme_classic(base_size = 14, base_family = 'sans'))
+
+ttText <- str_glue("**#TidyTuesday** &bull; Source: RGriffin Kaggle dataset")
+gh <- str_glue("<span style='font-family: \"fa6-brands\"'>&#xf09b;</span>")
+li <- str_glue("<span style='font-family:\"fa6-brands\"'>&#xf08c;</span>")
+caption_text <- str_glue("{ttText} <br> {gh} datawolf04 {li} wolf-253b6625a")
+
+theme_simple = function(...){
+  theme_classic() %+replace%
+  
+  theme(
+    legend.title = element_markdown(size = rel(0.8), hjust = 0.5),
+    legend.text = element_text(size = rel(0.7)), 
+  
+    plot.title.position = 'plot',
+    plot.caption.position = 'plot',
+    
+    strip.background = element_rect(
+      fill=paletteer_d(col_pal_dis_short)[4]),
+    strip.text = element_text(color = "white"),
+    
+    plot.margin = margin(t = 20, r = 20, b = 20, l = 20),
+    plot.title = element_text(size = rel(1.5),
+                              margin = margin(0,0,10,0)),
+    axis.title.x = element_text(margin = margin(10, 0, 0, 0), size = rel(1.2)),
+    axis.title.y = element_text(margin = margin(0, 10, 0, 0), size = rel(1.2),angle=90),
+    axis.text = element_text(size=rel(0.8)),
+    plot.caption = element_markdown(
+        size        = rel(.7),
+        family      = "sans",
+        color       = "grey25",
+        lineheight  = 0.6,
+        hjust       = 0,
+        halign      = 0,
+        margin      = margin(t = 10, b = 5)
+    )
+  ) 
+}
+```
+
+## Data in this dataset:
+First, I am planning on analyzing the summer and winter olympics separately. Furthermore, it occurs to me that the year in this dataset should be treated as a `factor` variable, rather than a numeric variable. This will help if (for example) the olympics were skipped or postponed, and it will definitely help when the winter games were shifted by 2 years so that the intervals between games are uniform.
+
+```{r}
+countryParticipation <- olympics |> count(noc) |>
+  arrange(desc(n)) 
+```
+
+My plan is to plot out participation, medal count, and gold medal count by ~~country~~ NOC region. The reason for this due to the fact that there are an obnoxious number of "teams" (`r length(unique(olympics$team))`) already in this dataset. Also, I don't think that we want to track the results of "Osborne Swimming Club, Manchester" or "Phalainis ton Thorichtou 'Psara'-3" on the same level as Spain, China, Brazil, USA, etc. As it stands, there are plenty of countries to keep track of! As it is, there are `r length(unique(olympics$noc))` national olympic committeees. For fun, let's look at the least frequent participants.
+
+```{r echo=FALSE}
+gt(tail(countryParticipation,10)) |>
+  tab_header(
+    title = "Olympic participant breakdown",
+    subtitle = "10 lowest participating countries"
+  ) |>
+  cols_label(
+    noc = "Country code",
+    n = "Participant #"
+  ) |> 
+  tab_source_note(
+    source_note = md(ttText)
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = paletteer_d(col_pal_dis_short)[1]),
+      cell_text(color = 'white')
+    ),
+    locations=cells_title()
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = paletteer_d(col_pal_dis_short)[1]),
+      cell_text(color = 'white')
+    ),
+    locations=cells_source_notes()
+  ) |>
+  tab_style(
+    style = list(
+      cell_fill(color = paletteer_d(col_pal_dis_short)[4]),
+      cell_text(color = 'white')
+    ),
+    locations=cells_column_labels()
+  ) 
+  
+
+```
+
+### Aside:  Ummm...
+
+What is NFL and who is the lone participant from there?
+```{r}
+olympics |> filter(noc=="NFL") |> glimpse()
+```
+
+Ok, wait a minute. So the Canadians don't want to accept this guy? Was Newfoundland it's own country back then?
+
+*(Feverish googling occurs)*
+
+Well, I'll be darned, it was! According to [Wikipedia](https://en.wikipedia.org/wiki/Newfoundland_and_Labrador):
+
+> Until 1949, the Dominion of Newfoundland was a separate dominion in the British Empire. In 1933, the House of Assembly of the self-governing dominion voted to dissolve itself and to hand over administration of Newfoundland and Labrador to the British-appointed Commission of Government. This followed the suffering caused by the Great Depression and Newfoundland's participation in the First World War. On March 31, 1949, it became the 10th and most recent province to join the Canadian Confederation as "Newfoundland". On December 6, 2001, the Constitution of Canada was amended to change the province's name from "Newfoundland" to "Newfoundland and Labrador". 
+
+Huh...I learn something new every day! And here I thought it was because most Canadians think *(insert Newfie joke here)*.
+
+## Back to the show
+I think that I should create a function that sorts the participation data (and later, the medalist data) by country and year. Also, since `r length(unique(olympics$noc))` lines would make the graph look like messy spaghetti, I think it would be best to limit the results to the top 10 countries by the metric being plotted (participation, number medalists, number gold medalists).
+```{r}
+countByCountryYearSzn = function(dat,top=TRUE){
+  cbcys <- dat |> group_by(across(all_of(c("season","noc","year")))) |>
+      summarize(
+        pcount = n()
+      ) |>
+    mutate(
+      cumCount = cumsum(pcount)
+    )
+  
+  countryTotal <- dat |> count(noc) |>
+    arrange(desc(n))
+  
+  nC = nrow(countryTotal)
+  
+  if(top){
+    cKeep = countryTotal[1:10, ]
+  }else{
+    cKeep = countryTotal[(nC-10):nC, ]
+  }
+  
+  out <- cbcys |> inner_join(cKeep,join_by(noc))
+  
+  out$noc = factor(out$noc, levels = cKeep$noc)
+
+  return(out)
+}
+```
+
+Now, let's make a graph of olympic participation:
+```{r fig.height=10, fig.width=7}
+part = countByCountryYearSzn(olympics,top=TRUE)
+
+ggplot(part, aes(x=year, y=cumCount, color=noc)) +
+  geom_step() + facet_wrap(~ season, ncol=1, scales="free_y") + 
+  theme_simple() + theme(
+    plot.background = element_rect(fill=grn,color=grn),
+    panel.background = element_rect(fill=ltGrn,color=ltGrn),
+    legend.key = element_rect(fill=ltGrn,color=ltGrn),
+    legend.background = element_rect(fill=ltGrn,color=ltGrn)
+  ) +
+  labs(
+    title = "Olympic participation by country (top 10)",
+    x = "Year of Olympic Games",
+    y = "Cumulative participant count",
+    caption = caption_text,
+    color = "Nation"
+  ) +
+  scale_color_paletteer_d(col_pal_dis_long)
+
+```
+
+The medal breakdown
+```{r fig.height=10, fig.width=7}
+olyMedal <- olympics |> filter(!is.na(medal))
+
+medalists = countByCountryYearSzn(olyMedal,top=TRUE)
+
+ggplot(medalists, aes(x=year,y=cumCount,color=noc)) +
+  geom_step() + facet_wrap(~ season, ncol=1, scales="free_y") + 
+  theme_simple() + theme(
+    plot.background = element_rect(fill=silver,color=silver),
+    panel.background = element_rect(fill=ltSilver,color=ltSilver),
+    legend.key = element_rect(fill=ltSilver,color=ltSilver),
+    legend.background = element_rect(fill=ltSilver,color=ltSilver)
+  ) +
+  labs(
+    title="Olympic medalists by country (top 10)",
+    x = "Year of Olympic Games",
+    y = "Cumulative medal count",
+    caption = caption_text,
+    color = "Nation"
+  ) +
+  scale_color_paletteer_d(col_pal_dis_long)
+
+```
+
+I will note that `URS` is the Soviet Union, and `RUS` is Russia. Clearly that country's 20th century history means that it is not treated as continuous by the Olympic Federation. It reminds me of when I was a kid watching *Where in the World is Carmen Sandiego* and all of a sudden there were new countries on the European maps. \</nostalgia trip\>
+
+But you can totally see the rivalry fueled by the Cold War when you look at the "slope" of the summer olympic medal accumulation graph and compare the Soviets (and later, the Russians) to the Americans.
+
+```{r fig.height=10, fig.width=7}
+olyGold <- olympics |> filter(medal=="Gold")
+
+goldMetals = countByCountryYearSzn(olyGold,top=TRUE)
+
+ggplot(goldMetals, aes(x=year,y=cumCount,color=noc)) +
+  geom_step() + facet_wrap(~ season, ncol = 1, scales="free_y") + 
+  theme_simple() + theme(
+    plot.background = element_rect(fill=gold,color=gold),
+    panel.background = element_rect(fill=ltGold,color=ltGold),
+    legend.key = element_rect(fill=ltGold,color=ltGold),
+    legend.background = element_rect(fill=ltGold,color=ltGold)
+  ) +
+  labs(
+    title="Olympic Golds by country (top 10)",
+    x = "Year of Olympic Games",
+    y = "Cumulative gold metal count",
+    caption = caption_text,
+    color = "Nation"
+  ) +
+  scale_color_paletteer_d(col_pal_dis_long)
+```
+
+```{r echo=FALSE, results='hide', message=FALSE, warning=FALSE}
+ggsave("~/Pictures/goldMedalAccumulation.png")
+```
+
+
+
