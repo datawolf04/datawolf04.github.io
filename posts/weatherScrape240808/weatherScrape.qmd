@@ -6,13 +6,13 @@ date: "8/8/2024"
 categories:
   - weather
   - python
+  - web-scraping
 jupyter: python3
-draft: true
 ---
 
-My friend, [Ben Leese](https://benleese.com), was telling me about his most recent project. He has a passion for going through old naturalist's notebooks and pulling out data from the depths of that analog mess and bringing it into the digital world. And he was talking about how weather could impact different bird behaviors. But he only had binary weather data (Yes, it rained/No it didn't). Furthermore, it was from Raleigh, NC rather than Zebulon, NC. While these places are close on the map, they aren't really the same.
+My friend, [Ben Leese](https://benleese.com), was telling me about his most recent project. He has a passion for going through old naturalist's notebooks and pulling out data from the depths of that analog mess and bringing it into the digital world. He was talking to me about how weather could impact different bird behaviors. But he only had binary weather data (Yes, it rained/No, it didn't rain). Furthermore, it was from Raleigh, NC rather than Zebulon, NC. While these places are close on the map, weather is even more local than politics. So I said that I'd try to find some better weather data for him. 
 
-So I said that I'd try to find some better weather data for him. I found this [helpful python script](https://zperzan.github.io/projects/scrape-weather-underground/) for scraping the weather data[^1] from [Weather Underground](https://www.wunderground.com), which I will adapt to my purpose. 
+I found this [helpful python script](https://zperzan.github.io/projects/scrape-weather-underground/) for scraping the weather data from [Weather Underground](https://www.wunderground.com), which I will adapt to my purpose. 
 
 ```{python}
 import time
@@ -22,35 +22,46 @@ import numpy as np
 import pandas as pd
 from bs4 import BeautifulSoup as BS
 from selenium import webdriver
-
-# Set the absolute path to chromedriver
-chromedriver_path = '/usr/local/bin/chromedriver'
-
+from great_tables import GT
 from scrape_wunderground import *
 ```
 
-I will scrape weather from the [BreakingWind  station](https://www.wunderground.com/dashboard/pws/KNCZEBUL74?cm_ven=localwx_pwsdash) with code `KNCZEBUL74` on 1/1/2024, as I am pretty sure this is the closest station to the desired location
+I will scrape weather from the [BreakingWind  station](https://www.wunderground.com/dashboard/pws/KNCZEBUL74?cm_ven=localwx_pwsdash) with code `KNCZEBUL74` on 8/1/2024, as I am pretty sure this is the closest station to the desired location.
 
 ```{python}
 station_id = "KNCZEBUL74"
 date_id = "2024-08-01"
 
-print_tables(station_id, date_id)
+(
+  GT(scrape_wunderground(station_id,date_id).head(20))
+    .tab_options(
+      column_labels_background_color = "#3B3A3EFF",
+  )
+)
 ```
 
 And it works! That being said, I'll have to find a different weather station because this one seems somewhat new. There is only partial data for 5/29/2024.
 
 ```{python}
 date_id = "2024-05-29"
-print_tables(station_id, date_id)
+(
+  GT(scrape_wunderground(station_id,date_id).head(20))
+    .tab_options(
+      column_labels_background_color = "#3B3A3EFF",
+  )
+)
 ```
 
 And 5/28/2024 has no data. 
 ```{python}
 date_id = "2024-05-28"
-print_tables(station_id, date_id)
+(
+  GT(scrape_wunderground(station_id,date_id).head(20))
+    .tab_options(
+      column_labels_background_color = "#3B3A3EFF",
+  )
+)
 ```
 
-I will have to find a different nearby weather station for this purpose. But this opens up this project to a host of weather data that can be used for modeling.
+I will have to find a different nearby weather station for this purpose of finding Ben some weather data for the time period he is interested in (mid 1970s). And, once I succeed at that, I will have to aggregate the 5-minute data to daily data. But once that's done, my friend should have more than enough weather data to help him with his model.
 
-[^1]: Note to the reader: the linked script is not able to get the data that it claims right away. It would seem that the structure of the website has changed, and therefore the script must change in order to access the correct data. Rather than working on that process right now, I'll leave it for later.
