@@ -1,0 +1,158 @@
+---
+title: "World's Fairs"
+description: "I've always wanted to play with making a map-based visualization"
+author: "Steven Wolf"
+date: "8/7/2024"
+categories:
+  - tidyTuesday
+  - R 
+  - maps
+resources: 
+  - "worldsFairs.Rdata"
+execute: 
+  messages: false
+  warnings: false
+---
+
+This week's #TidyTuesday is all about World's Fairs, and I have always wanted to figure out how to make a visualization with a map. So this is the week that I try that out. In addition to the data from Wikipedia in the given dataset, I have also downloaded [S. Altan's Kaggle Dataset: Countries by Continent](https://www.kaggle.com/datasets/hserdaraltan/countries-by-continent).
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(gt)
+library(rworldmap)
+library(paletteer)
+library(RColorBrewer)
+
+load('worldsFairs.Rdata')
+source('helperFunctions.R')
+```
+
+## Plan and data cleaning
+My plan is to create visualizations that look at different world's fair properties by continent and country. I will clean the data a bit, and then generate some tables. 
+
+### Continental breakdown of World's fair
+
+```{r}
+fairData = left_join(worlds_fairs,countryContinent, by='country')
+
+# Replace missing continents by hand
+missing = c("Europe","Oceania","Europe","Europe","Asia")
+fairData$continent[is.na(fairData$continent)] = missing
+
+fairDataByContinent = fairData |>
+  mutate(
+    duration = calcFLMV(start_month, start_year, end_month, end_year) 
+  ) |> group_by(continent) |> 
+  summarize(
+    N = n(),
+    across(where(is.numeric), ~ mean(.x,na.rm=TRUE))
+  ) |>
+  select(-c('start_month','start_year','end_month','end_year'))
+```
+
+```{r echo=FALSE}
+gt(fairDataByContinent) |>
+  tab_header(
+    title = "World's Fair by the numbers",
+    subtitle = "Average properties by host continent"
+  ) |> 
+    tab_footnote(
+    footnote = "Missing data was ignored from averages taken."
+  ) |>
+  fmt_number(
+    columns = -c('N','continent'),
+    decimals = 1
+  ) |> 
+  cols_label(
+    continent = "Continent",
+    N = "Number Hosted",
+    visitors = "Visitors (M)",
+    cost = "Avg. cost (M$)",
+    area = "Land area (hectares)",
+    attending_countries = "Number of attending countries",
+    duration = "Fair duration (mo)"
+  ) |> my_table_formatting() 
+
+```
+
+
+### Country breakdown of world's fair
+
+```{r}
+fairDataByCountry = fairData |>
+  mutate(
+    duration = calcFLMV(start_month, start_year, end_month, end_year) 
+  ) |> group_by(country) |> 
+  summarize(
+    N = n(),
+    across(where(is.numeric), ~ mean(.x,na.rm=TRUE))
+  ) |>
+  select(-c('start_month','start_year','end_month','end_year'))
+```
+  
+```{r echo=FALSE}
+gt(fairDataByCountry) |>
+  tab_header(
+    title = "World's Fair by the numbers",
+    subtitle = "Average properties by host country"
+  ) |> 
+  fmt_number(
+    columns = -c('N','country'),
+    decimals = 1
+  ) |> sub_missing() |>
+  tab_footnote(
+    footnote = "Missing data was ignored from averages taken. Blank values imply no data exists for that country and quantity."
+  ) |>
+  cols_label(
+    country = "Country",
+    N = "Number Hosted",
+    visitors = "Visitors (M)",
+    cost = "Fair cost (M$)",
+    area = "Land area (hectares)",
+    attending_countries = "Number of attending countries",
+    duration = "Fair duration (mo)"
+  ) |> my_table_formatting()
+
+```
+
+
+## Putting this on a map
+
+
+```{r}
+worldFairMap <- joinCountryData2Map(fairDataByCountry, joinCode = 'NAME',
+                                    nameJoinColumn = "country")
+par(mar=c(0,0.1,2,0.1),xaxs="i",yaxs="i",cex.main=2)
+attendMap = mapCountryData(worldFairMap, addLegend=FALSE,
+                           nameColumnToPlot = 'attending_countries',
+                           catMethod = "pretty",
+                           colourPalette = brewer.pal(10,"Purples"),
+                           oceanCol='lightblue',missingCountryCol = 'white',
+                           mapTitle="Country attendance")
+do.call(addMapLegend, c(attendMap, legendWidth=0.5, legendMar=5))
+costMap = mapCountryData(worldFairMap, nameColumnToPlot = 'cost',
+               catMethod = "pretty", addLegend=FALSE,
+               colourPalette = brewer.pal(10,"Greens"),
+               oceanCol='lightblue',missingCountryCol = 'white',
+               mapTitle="Cost in Millions")
+do.call(addMapLegend, c(costMap, legendWidth=0.5, legendMar=5))
+areaMap = mapCountryData(worldFairMap, nameColumnToPlot = 'area',
+               catMethod = "pretty", addLegend=FALSE,
+               colourPalette = brewer.pal(10,"PuBuGn"),
+               oceanCol='lightblue',missingCountryCol = 'white',
+               mapTitle="Size of fairgrounds")
+do.call(addMapLegend, c(areaMap, legendWidth=0.5, legendMar=5))
+visitMap = mapCountryData(worldFairMap, nameColumnToPlot = 'visitors',
+               catMethod = "pretty", addLegend=FALSE,
+               colourPalette = brewer.pal(10,"OrRd"),
+               oceanCol='lightblue',missingCountryCol = 'white',
+               mapTitle="Fair Visitors by the Million")
+do.call(addMapLegend, c(visitMap, legendWidth=0.5, legendMar=5))
+timeMap = mapCountryData(worldFairMap, nameColumnToPlot = 'duration',
+               catMethod = "pretty", addLegend=FALSE,
+               colourPalette = brewer.pal(10,"OrRd"),
+               oceanCol='lightblue',missingCountryCol = 'white',
+               mapTitle="Length of the World's Fair")
+do.call(addMapLegend, c(timeMap, legendWidth=0.5, legendMar=5))
+```
+
