@@ -2,7 +2,7 @@
 title: "World's Fairs"
 description: "I've always wanted to play with making a map-based visualization"
 author: "Steven Wolf"
-date: "8/7/2024"
+date: "8/14/2024"
 categories:
   - tidyTuesday
   - R 
