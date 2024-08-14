@@ -1976,6 +1976,1797 @@ font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></c
   <pubDate>Wed, 07 Aug 2024 00:00:00 GMT</pubDate>
 </item>
 <item>
+  <title>World’s Fairs</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This week’s #TidyTuesday is all about World’s Fairs, and I have always wanted to figure out how to make a visualization with a map. So this is the week that I try that out. In addition to the data from Wikipedia in the given dataset, I have also downloaded <a href="https://www.kaggle.com/datasets/hserdaraltan/countries-by-continent">S. Altan’s Kaggle Dataset: Countries by Continent</a>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(gt)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(rworldmap)</span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(paletteer)</span>
+<span id="cb1-5"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(RColorBrewer)</span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">load</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'worldsFairs.Rdata'</span>)</span>
+<span id="cb1-8"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'helperFunctions.R'</span>)</span></code></pre></div>
+</div>
+<section id="plan-and-data-cleaning" class="level2">
+<h2 class="anchored" data-anchor-id="plan-and-data-cleaning">Plan and data cleaning</h2>
+<p>My plan is to create visualizations that look at different world’s fair properties by continent and country. I will clean the data a bit, and then generate some tables.</p>
+<section id="continental-breakdown-of-worlds-fair" class="level3">
+<h3 class="anchored" data-anchor-id="continental-breakdown-of-worlds-fair">Continental breakdown of World’s fair</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">fairData <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(worlds_fairs,countryContinent, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'country'</span>)</span>
+<span id="cb2-2"></span>
+<span id="cb2-3"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Replace missing continents by hand</span></span>
+<span id="cb2-4">missing <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Europe"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Oceania"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Europe"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Europe"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Asia"</span>)</span>
+<span id="cb2-5">fairData<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>continent[<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(fairData<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>continent)] <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> missing</span>
+<span id="cb2-6"></span>
+<span id="cb2-7">fairDataByContinent <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> fairData <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-8">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb2-9">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">duration =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">calcFLMV</span>(start_month, start_year, end_month, end_year) </span>
+<span id="cb2-10">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(continent) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb2-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb2-12">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">N =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">n</span>(),</span>
+<span id="cb2-13">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">where</span>(is.numeric), <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(.x,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>))</span>
+<span id="cb2-14">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb2-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'start_month'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'start_year'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'end_month'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'end_year'</span>))</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="wrunauijkv" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wrunauijkv table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#wrunauijkv thead, #wrunauijkv tbody, #wrunauijkv tfoot, #wrunauijkv tr, #wrunauijkv td, #wrunauijkv th {
+  border-style: none;
+}
+
+#wrunauijkv p {
+  margin: 0;
+  padding: 0;
+}
+
+#wrunauijkv .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#wrunauijkv .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#wrunauijkv .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#wrunauijkv .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#wrunauijkv .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#wrunauijkv .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#wrunauijkv .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#wrunauijkv .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#wrunauijkv .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#wrunauijkv .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#wrunauijkv .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#wrunauijkv .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#wrunauijkv .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#wrunauijkv .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#wrunauijkv .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wrunauijkv .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#wrunauijkv .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#wrunauijkv .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#wrunauijkv .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wrunauijkv .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#wrunauijkv .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wrunauijkv .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#wrunauijkv .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wrunauijkv .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#wrunauijkv .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#wrunauijkv .gt_left {
+  text-align: left;
+}
+
+#wrunauijkv .gt_center {
+  text-align: center;
+}
+
+#wrunauijkv .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#wrunauijkv .gt_font_normal {
+  font-weight: normal;
+}
+
+#wrunauijkv .gt_font_bold {
+  font-weight: bold;
+}
+
+#wrunauijkv .gt_font_italic {
+  font-style: italic;
+}
+
+#wrunauijkv .gt_super {
+  font-size: 65%;
+}
+
+#wrunauijkv .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#wrunauijkv .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#wrunauijkv .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#wrunauijkv .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#wrunauijkv .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#wrunauijkv .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#wrunauijkv .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#wrunauijkv .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#wrunauijkv div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_title gt_font_normal" style="background-color: #3B7C70; color: #FFFFFF;">World's Fair by the numbers</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF;">Average properties by host continent</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Continent">Continent</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Number Hosted">Number Hosted</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Visitors (M)">Visitors (M)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Avg. cost (M$)">Avg. cost (M$)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Land area (hectares)">Land area (hectares)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Number of attending countries">Number of attending countries</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Fair duration (mo)">Fair duration (mo)</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="continent" class="gt_row gt_left">Asia</td>
+<td headers="N" class="gt_row gt_right">11</td>
+<td headers="visitors" class="gt_row gt_right">26.0</td>
+<td headers="cost" class="gt_row gt_right">1,999.7</td>
+<td headers="area" class="gt_row gt_right">169.4</td>
+<td headers="attending_countries" class="gt_row gt_right">103.5</td>
+<td headers="duration" class="gt_row gt_right">5.1</td></tr>
+    <tr><td headers="continent" class="gt_row gt_left">Europe</td>
+<td headers="N" class="gt_row gt_right">43</td>
+<td headers="visitors" class="gt_row gt_right">12.7</td>
+<td headers="cost" class="gt_row gt_right">547.8</td>
+<td headers="area" class="gt_row gt_right">77.1</td>
+<td headers="attending_countries" class="gt_row gt_right">42.7</td>
+<td headers="duration" class="gt_row gt_right">5.2</td></tr>
+    <tr><td headers="continent" class="gt_row gt_left">North America</td>
+<td headers="N" class="gt_row gt_right">14</td>
+<td headers="visitors" class="gt_row gt_right">20.9</td>
+<td headers="cost" class="gt_row gt_right">281.4</td>
+<td headers="area" class="gt_row gt_right">144.2</td>
+<td headers="attending_countries" class="gt_row gt_right">29.8</td>
+<td headers="duration" class="gt_row gt_right">8.9</td></tr>
+    <tr><td headers="continent" class="gt_row gt_left">Oceania</td>
+<td headers="N" class="gt_row gt_right">2</td>
+<td headers="visitors" class="gt_row gt_right">9.9</td>
+<td headers="cost" class="gt_row gt_right">320.5</td>
+<td headers="area" class="gt_row gt_right">32.5</td>
+<td headers="attending_countries" class="gt_row gt_right">34.5</td>
+<td headers="duration" class="gt_row gt_right">7.0</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" style="background-color: #3B7C70; color: #FFFFFF;" colspan="7"><div data-qmd-base64="KiojVGlkeVR1ZXNkYXkqKiAmYnVsbDsgU291cmNlczogV2lraXBlZGlhIGFuZCBTLiBBbHRhbiBLYWdnbGUgZGF0YXNldA=="><div class="gt_from_md"><p><strong>#TidyTuesday</strong> • Sources: Wikipedia and S. Altan Kaggle dataset</p>
+</div></div></td>
+    </tr>
+  </tfoot>
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" style="background-color: #3B7C70; color: #FFFFFF;" colspan="7"> Missing data was ignored from averages taken.</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="country-breakdown-of-worlds-fair" class="level3">
+<h3 class="anchored" data-anchor-id="country-breakdown-of-worlds-fair">Country breakdown of world’s fair</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">fairDataByCountry <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> fairData <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-2">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(</span>
+<span id="cb3-3">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">duration =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">calcFLMV</span>(start_month, start_year, end_month, end_year) </span>
+<span id="cb3-4">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">group_by</span>(country) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb3-5">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">summarize</span>(</span>
+<span id="cb3-6">    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">N =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">n</span>(),</span>
+<span id="cb3-7">    <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">across</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">where</span>(is.numeric), <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">~</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mean</span>(.x,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">na.rm=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">TRUE</span>))</span>
+<span id="cb3-8">  ) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb3-9">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'start_month'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'start_year'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'end_month'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'end_year'</span>))</span></code></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="dktowcyzjr" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#dktowcyzjr table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#dktowcyzjr thead, #dktowcyzjr tbody, #dktowcyzjr tfoot, #dktowcyzjr tr, #dktowcyzjr td, #dktowcyzjr th {
+  border-style: none;
+}
+
+#dktowcyzjr p {
+  margin: 0;
+  padding: 0;
+}
+
+#dktowcyzjr .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#dktowcyzjr .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#dktowcyzjr .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#dktowcyzjr .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#dktowcyzjr .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#dktowcyzjr .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#dktowcyzjr .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#dktowcyzjr .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#dktowcyzjr .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#dktowcyzjr .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#dktowcyzjr .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#dktowcyzjr .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#dktowcyzjr .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#dktowcyzjr .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#dktowcyzjr .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dktowcyzjr .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#dktowcyzjr .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#dktowcyzjr .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#dktowcyzjr .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dktowcyzjr .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#dktowcyzjr .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dktowcyzjr .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#dktowcyzjr .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dktowcyzjr .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#dktowcyzjr .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#dktowcyzjr .gt_left {
+  text-align: left;
+}
+
+#dktowcyzjr .gt_center {
+  text-align: center;
+}
+
+#dktowcyzjr .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#dktowcyzjr .gt_font_normal {
+  font-weight: normal;
+}
+
+#dktowcyzjr .gt_font_bold {
+  font-weight: bold;
+}
+
+#dktowcyzjr .gt_font_italic {
+  font-style: italic;
+}
+
+#dktowcyzjr .gt_super {
+  font-size: 65%;
+}
+
+#dktowcyzjr .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#dktowcyzjr .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#dktowcyzjr .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#dktowcyzjr .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#dktowcyzjr .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#dktowcyzjr .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#dktowcyzjr .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#dktowcyzjr .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#dktowcyzjr div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+<table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <thead>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_title gt_font_normal" style="background-color: #3B7C70; color: #FFFFFF;">World's Fair by the numbers</td>
+    </tr>
+    <tr class="gt_heading">
+      <td colspan="7" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF;">Average properties by host country</td>
+    </tr>
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Country">Country</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Number Hosted">Number Hosted</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Visitors (M)">Visitors (M)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Fair cost (M$)">Fair cost (M$)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Land area (hectares)">Land area (hectares)</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Number of attending countries">Number of attending countries</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" style="background-color: #3B3A3E; color: #FFFFFF;" scope="col" id="Fair duration (mo)">Fair duration (mo)</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="country" class="gt_row gt_left">Australia</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">18.5</td>
+<td headers="cost" class="gt_row gt_right">625.0</td>
+<td headers="area" class="gt_row gt_right">40.0</td>
+<td headers="attending_countries" class="gt_row gt_right">36.0</td>
+<td headers="duration" class="gt_row gt_right">7.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Austria-Hungary</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">7.2</td>
+<td headers="cost" class="gt_row gt_right">95.0</td>
+<td headers="area" class="gt_row gt_right">233.0</td>
+<td headers="attending_countries" class="gt_row gt_right">35.0</td>
+<td headers="duration" class="gt_row gt_right">6.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Belgium</td>
+<td headers="N" class="gt_row gt_right">7</td>
+<td headers="visitors" class="gt_row gt_right">16.4</td>
+<td headers="cost" class="gt_row gt_right">558.8</td>
+<td headers="area" class="gt_row gt_right">117.7</td>
+<td headers="attending_countries" class="gt_row gt_right">26.9</td>
+<td headers="duration" class="gt_row gt_right">6.7</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Bulgaria</td>
+<td headers="N" class="gt_row gt_right">3</td>
+<td headers="visitors" class="gt_row gt_right">1.0</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">5.8</td>
+<td headers="attending_countries" class="gt_row gt_right">40.5</td>
+<td headers="duration" class="gt_row gt_right">1.7</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Canada</td>
+<td headers="N" class="gt_row gt_right">2</td>
+<td headers="visitors" class="gt_row gt_right">36.2</td>
+<td headers="cost" class="gt_row gt_right">371.0</td>
+<td headers="area" class="gt_row gt_right">217.5</td>
+<td headers="attending_countries" class="gt_row gt_right">58.5</td>
+<td headers="duration" class="gt_row gt_right">6.5</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Colony of Victoria</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">1.3</td>
+<td headers="cost" class="gt_row gt_right">16.0</td>
+<td headers="area" class="gt_row gt_right">25.0</td>
+<td headers="attending_countries" class="gt_row gt_right">33.0</td>
+<td headers="duration" class="gt_row gt_right">7.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Finland</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">—</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">0.1</td>
+<td headers="attending_countries" class="gt_row gt_right">25.0</td>
+<td headers="duration" class="gt_row gt_right">1.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">France</td>
+<td headers="N" class="gt_row gt_right">9</td>
+<td headers="visitors" class="gt_row gt_right">21.6</td>
+<td headers="cost" class="gt_row gt_right">556.0</td>
+<td headers="area" class="gt_row gt_right">67.9</td>
+<td headers="attending_countries" class="gt_row gt_right">34.5</td>
+<td headers="duration" class="gt_row gt_right">5.4</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Germany</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">18.1</td>
+<td headers="cost" class="gt_row gt_right">3,400.0</td>
+<td headers="area" class="gt_row gt_right">160.0</td>
+<td headers="attending_countries" class="gt_row gt_right">155.0</td>
+<td headers="duration" class="gt_row gt_right">5.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Haiti</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">—</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">24.0</td>
+<td headers="attending_countries" class="gt_row gt_right">15.0</td>
+<td headers="duration" class="gt_row gt_right">7.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Hungary</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">1.9</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">35.0</td>
+<td headers="attending_countries" class="gt_row gt_right">52.0</td>
+<td headers="duration" class="gt_row gt_right">2.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Israel</td>
+<td headers="N" class="gt_row gt_right">2</td>
+<td headers="visitors" class="gt_row gt_right">—</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">29.8</td>
+<td headers="attending_countries" class="gt_row gt_right">13.0</td>
+<td headers="duration" class="gt_row gt_right">2.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Italy</td>
+<td headers="N" class="gt_row gt_right">8</td>
+<td headers="visitors" class="gt_row gt_right">7.7</td>
+<td headers="cost" class="gt_row gt_right">26.0</td>
+<td headers="area" class="gt_row gt_right">68.3</td>
+<td headers="attending_countries" class="gt_row gt_right">44.1</td>
+<td headers="duration" class="gt_row gt_right">5.5</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Japan</td>
+<td headers="N" class="gt_row gt_right">4</td>
+<td headers="visitors" class="gt_row gt_right">27.5</td>
+<td headers="cost" class="gt_row gt_right">30.0</td>
+<td headers="area" class="gt_row gt_right">175.7</td>
+<td headers="attending_countries" class="gt_row gt_right">69.8</td>
+<td headers="duration" class="gt_row gt_right">7.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Kazakhstan</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">4.1</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">25.0</td>
+<td headers="attending_countries" class="gt_row gt_right">115.0</td>
+<td headers="duration" class="gt_row gt_right">4.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">People's Republic of China</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">73.1</td>
+<td headers="cost" class="gt_row gt_right">4,200.0</td>
+<td headers="area" class="gt_row gt_right">523.0</td>
+<td headers="attending_countries" class="gt_row gt_right">192.0</td>
+<td headers="duration" class="gt_row gt_right">6.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Portugal</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">10.1</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">50.0</td>
+<td headers="attending_countries" class="gt_row gt_right">143.0</td>
+<td headers="duration" class="gt_row gt_right">5.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">South Korea</td>
+<td headers="N" class="gt_row gt_right">2</td>
+<td headers="visitors" class="gt_row gt_right">11.3</td>
+<td headers="cost" class="gt_row gt_right">1,769.0</td>
+<td headers="area" class="gt_row gt_right">57.5</td>
+<td headers="attending_countries" class="gt_row gt_right">122.0</td>
+<td headers="duration" class="gt_row gt_right">4.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Spain</td>
+<td headers="N" class="gt_row gt_right">4</td>
+<td headers="visitors" class="gt_row gt_right">13.9</td>
+<td headers="cost" class="gt_row gt_right">21.0</td>
+<td headers="area" class="gt_row gt_right">101.2</td>
+<td headers="attending_countries" class="gt_row gt_right">68.8</td>
+<td headers="duration" class="gt_row gt_right">7.2</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">Sweden</td>
+<td headers="N" class="gt_row gt_right">3</td>
+<td headers="visitors" class="gt_row gt_right">—</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">0.5</td>
+<td headers="attending_countries" class="gt_row gt_right">18.3</td>
+<td headers="duration" class="gt_row gt_right">2.3</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">United Arab Emirates</td>
+<td headers="N" class="gt_row gt_right">1</td>
+<td headers="visitors" class="gt_row gt_right">24.1</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">438.0</td>
+<td headers="attending_countries" class="gt_row gt_right">192.0</td>
+<td headers="duration" class="gt_row gt_right">6.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">United Kingdom</td>
+<td headers="N" class="gt_row gt_right">2</td>
+<td headers="visitors" class="gt_row gt_right">6.0</td>
+<td headers="cost" class="gt_row gt_right">83.5</td>
+<td headers="area" class="gt_row gt_right">12.5</td>
+<td headers="attending_countries" class="gt_row gt_right">32.0</td>
+<td headers="duration" class="gt_row gt_right">7.0</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">United States</td>
+<td headers="N" class="gt_row gt_right">11</td>
+<td headers="visitors" class="gt_row gt_right">18.2</td>
+<td headers="cost" class="gt_row gt_right">265.1</td>
+<td headers="area" class="gt_row gt_right">141.8</td>
+<td headers="attending_countries" class="gt_row gt_right">25.6</td>
+<td headers="duration" class="gt_row gt_right">9.5</td></tr>
+    <tr><td headers="country" class="gt_row gt_left">West Germany</td>
+<td headers="N" class="gt_row gt_right">2</td>
+<td headers="visitors" class="gt_row gt_right">2.1</td>
+<td headers="cost" class="gt_row gt_right">—</td>
+<td headers="area" class="gt_row gt_right">51.6</td>
+<td headers="attending_countries" class="gt_row gt_right">24.5</td>
+<td headers="duration" class="gt_row gt_right">4.0</td></tr>
+  </tbody>
+  <tfoot class="gt_sourcenotes">
+    <tr>
+      <td class="gt_sourcenote" style="background-color: #3B7C70; color: #FFFFFF;" colspan="7"><div data-qmd-base64="KiojVGlkeVR1ZXNkYXkqKiAmYnVsbDsgU291cmNlczogV2lraXBlZGlhIGFuZCBTLiBBbHRhbiBLYWdnbGUgZGF0YXNldA=="><div class="gt_from_md"><p><strong>#TidyTuesday</strong> • Sources: Wikipedia and S. Altan Kaggle dataset</p>
+</div></div></td>
+    </tr>
+  </tfoot>
+  <tfoot class="gt_footnotes">
+    <tr>
+      <td class="gt_footnote" style="background-color: #3B7C70; color: #FFFFFF;" colspan="7"> Missing data was ignored from averages taken. Blank values imply no data exists for that country and quantity.</td>
+    </tr>
+  </tfoot>
+</table>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="putting-this-on-a-map" class="level2">
+<h2 class="anchored" data-anchor-id="putting-this-on-a-map">Putting this on a map</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">worldFairMap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">joinCountryData2Map</span>(fairDataByCountry, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">joinCode =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'NAME'</span>,</span>
+<span id="cb4-2">                                    <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nameJoinColumn =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"country"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>21 codes from your data successfully matched countries in the map
+3 codes from your data failed to match with a country code in the map
+222 codes from the map weren't represented in your data</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">par</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mar=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>),<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">xaxs=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"i"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">yaxs=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"i"</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">cex.main=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb6-2">attendMap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mapCountryData</span>(worldFairMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">addLegend=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb6-3">                           <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nameColumnToPlot =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'attending_countries'</span>,</span>
+<span id="cb6-4">                           <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">catMethod =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pretty"</span>,</span>
+<span id="cb6-5">                           <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colourPalette =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">brewer.pal</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Purples"</span>),</span>
+<span id="cb6-6">                           <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">oceanCol=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lightblue'</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">missingCountryCol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'white'</span>,</span>
+<span id="cb6-7">                           <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Country attendance"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You asked for 7 categories, 10 were used due to pretty() classification</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in brewer.pal(10, "Purples"): n too large, allowed maximum for palette Purples is 9
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 10
+required, using interpolation to calculate colours</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(attendMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendWidth=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>))</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240813/worldFairs_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">costMap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mapCountryData</span>(worldFairMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nameColumnToPlot =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'cost'</span>,</span>
+<span id="cb11-2">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">catMethod =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pretty"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">addLegend=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb11-3">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colourPalette =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">brewer.pal</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Greens"</span>),</span>
+<span id="cb11-4">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">oceanCol=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lightblue'</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">missingCountryCol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'white'</span>,</span>
+<span id="cb11-5">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Cost in Millions"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You asked for 7 categories, 9 were used due to pretty() classification</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in brewer.pal(10, "Greens"): n too large, allowed maximum for palette Greens is 9
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(costMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendWidth=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>))</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240813/worldFairs_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1">areaMap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mapCountryData</span>(worldFairMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nameColumnToPlot =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'area'</span>,</span>
+<span id="cb15-2">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">catMethod =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pretty"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">addLegend=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb15-3">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colourPalette =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">brewer.pal</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"PuBuGn"</span>),</span>
+<span id="cb15-4">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">oceanCol=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lightblue'</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">missingCountryCol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'white'</span>,</span>
+<span id="cb15-5">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Size of fairgrounds"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You asked for 7 categories, 6 were used due to pretty() classification</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in brewer.pal(10, "PuBuGn"): n too large, allowed maximum for palette PuBuGn is 9
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 6
+required, using interpolation to calculate colours</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(areaMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendWidth=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>))</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240813/worldFairs_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1">visitMap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mapCountryData</span>(worldFairMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nameColumnToPlot =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'visitors'</span>,</span>
+<span id="cb20-2">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">catMethod =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pretty"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">addLegend=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb20-3">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colourPalette =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">brewer.pal</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"OrRd"</span>),</span>
+<span id="cb20-4">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">oceanCol=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lightblue'</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">missingCountryCol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'white'</span>,</span>
+<span id="cb20-5">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Fair Visitors by the Million"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You asked for 7 categories, 8 were used due to pretty() classification</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in brewer.pal(10, "OrRd"): n too large, allowed maximum for palette OrRd is 9
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 8
+required, using interpolation to calculate colours</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(visitMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendWidth=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>))</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240813/worldFairs_files/figure-html/unnamed-chunk-6-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1">timeMap <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mapCountryData</span>(worldFairMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">nameColumnToPlot =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'duration'</span>,</span>
+<span id="cb25-2">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">catMethod =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"pretty"</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">addLegend=</span><span class="cn" style="color: #8f5902;
+background-color: null;
+font-style: inherit;">FALSE</span>,</span>
+<span id="cb25-3">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">colourPalette =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">brewer.pal</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"OrRd"</span>),</span>
+<span id="cb25-4">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">oceanCol=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'lightblue'</span>,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">missingCountryCol =</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'white'</span>,</span>
+<span id="cb25-5">               <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Length of the World's Fair"</span>)</span></code></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>You asked for 7 categories, 9 were used due to pretty() classification</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in brewer.pal(10, "OrRd"): n too large, allowed maximum for palette OrRd is 9
+Returning the palette you asked for with that many colors</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(timeMap, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendWidth=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>))</span></code></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240813/worldFairs_files/figure-html/unnamed-chunk-6-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>tidyTuesday</category>
+  <category>R</category>
+  <category>maps</category>
+  <guid>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</guid>
+  <pubDate>Wed, 07 Aug 2024 00:00:00 GMT</pubDate>
+</item>
+<item>
   <title>Summer Movies</title>
   <dc:creator>Steven Wolf</dc:creator>
   <link>https://datawolf04.github.io/posts/summerMovies/summerMovies.html</link>
