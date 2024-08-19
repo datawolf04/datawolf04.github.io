@@ -1,0 +1,171 @@
+---
+title: "English Monarchy"
+description: ""
+author: "Steven Wolf"
+date: "8/20/2024"
+categories:
+  - tidyTuesday
+  - R 
+resources: 
+  - "englishMonarchy.RData"
+  - "englishDynasties.csv"
+execute: 
+  messages: false
+  warning: false
+draft:
+  true
+---
+
+This week's #TidyTuesday is all about  exploring English Monarchs and Marriages!
+
+> this dataset focuses on the names, ages, and marriages of various 'kings' and 'consorts'. the data ranges all the way back to 850 where the details are a bit fuzzy, spanning all the way to current day. names contain special characters; ages & years can be a bit of a regex puzzle as well. additionally, the age of kings and consorts may show quite a bit of an age gap.
+
+The data was scraped from [Ian Visits](https://www.ianvisits.co.uk/articles/a-list-of-monarchs-by-marriage-6857/) by [f. hull](https://github.com/frankiethull), who also curated this week's post!
+
+```{r message=FALSE, warning=FALSE, echo=FALSE}
+library(tidyverse)
+library(gt)
+library(paletteer)
+library(RColorBrewer)
+library(grid)
+library(GGally)
+
+load('englishMonarchy.RData')
+source('helperFunctions.R')
+```
+
+### Additions/changes to the dataset
+I will note a few things which I can highlight by looking at the end of the dataset:
+```{r echo=FALSE}
+tail(monarchDat)
+```
+1. King Charles III is not in this dataset. I will add him into the dataset. I'll also include his consort as Camilla, rather than Diana, as Diana was not married to Charles during his reign.
+2. The dataset refers to the **king** rather than a gender neutral term. I will replace it with **sovereign**. 
+
+```{r}
+names(monarchDat) = str_replace_all(names(monarchDat),"king","sovereign")
+charles = data.frame('Charles III','57','Camilla Parker Bowles','xx','2005')
+names(charles) = names(monarchDat)
+monarchDat = rbind(monarchDat,charles)
+```
+
+I have retained the term consort as I don't have a better one. I'm shuddering a bit though because we have a 5 and a 3 year old in this dataset:
+
+```{r echo=FALSE}
+monarchDat[36, ]
+```
+
+Finally, I also collected data of the different dynasties of English royalty taken from [Wikipedia](https://en.wikipedia.org/wiki/List_of_English_monarchs) and [Britannica](https://kids.britannica.com/students/article/kings-and-queens-of-Britain-at-a-glance/626780). That data is the the file [`englishDynasties.csv`](./englishDynasties.csv).
+
+```{r echo=FALSE}
+dynasty = read.csv('englishDynasties.csv') |> clean_names()
+
+dyn = dynasty |> mutate(house = factor(house,levels=unique(dynasty$house)))
+
+getDynastyName = function(yr){
+  if(yr<min(dynasty$start_year) | yr>max(dynasty$end_year)){
+    stop(str_glue("Year {yr} is not in range"))
+  }
+  
+  dName = dynasty$house[dynasty$start_year<=yr & dynasty$end_year>yr]
+  return(dName)
+}
+
+gdn = Vectorize(getDynastyName)
+```
+
+
+## Data cleaning
+As one might expect from a dataset that has been scraped from a webpage written by a London history/culture type, there is some inconsistency in how the data has been cataloged. And as the prompt for the week says, some of the early data is "fuzzy". So I want to clean it up.
+
+```{r echo=FALSE}
+glimpse(monarchDat)
+```
+
+As you can see from the glimpse above, uncertainty in the dataset is often indicated with `?` or `-` being included in the string. Ultimately I want to work with numeric variables, so I'm going to need to clean them up. I also want to track whether a date or age is uncertain, so I am going to create columns tracking that information.
+```{r echo=FALSE}
+queenNames='Mary|Elizabeth|Anne|Victoria'
+monarchDat |> 
+  mutate(
+    sovereign_age_unc = str_detect(sovereign_age,'[?-]'),
+    consort_age_unc = str_detect(consort_age,'[?-]'),
+    year_of_marriage_unc = str_detect(year_of_marriage,'[?-]'),
+    any_unc = sovereign_age_unc | consort_age_unc | year_of_marriage_unc,
+    sovereign_age = as.numeric(str_replace_all(sovereign_age,"[^0-9.-]",'')),
+    consort_age = as.numeric(str_replace_all(consort_age,"[^0-9.-]",'')),
+    year_of_marriage = as.numeric(str_replace_all(year_of_marriage,"[^0-9.-]",'')),
+    sovereign_type = ifelse(str_detect(sovereign_name,queenNames),
+                              'Queen','King'),
+    sovereign_type = factor(sovereign_type,levels=c('Queen','King')),
+    age_diff_pos = sovereign_age - consort_age > 0,
+    age_diff = sovereign_age - consort_age,
+    min_age = pmin(consort_age, sovereign_age),
+    max_age = pmax(consort_age, sovereign_age)
+  ) -> monDat 
+
+glimpse(monDat) 
+```
+
+## Plan
+Make a plot with sovereign age and consort age given the year of marriage. On this plot I'm going to highlight:
+
+1. The age gap. If both sovereign and consort have the age recorded in the data, there will be a vertical line drawn from the younger to the elder.
+2. The gender of the sovereign. Kings are light blue and queens are pink.
+3. Marriages with uncertain data (either in the year or the ages of those involved) are more transparent so that they stand out less.
+
+
+```{r fig.asp=1,echo=FALSE}
+winLogo = png::readPNG('windsorLogo.png') |>
+  rasterGrob(interpolate=TRUE)
+
+wesLogo = png::readPNG('wessexLogo.png') |>
+  rasterGrob(interpolate=TRUE)
+
+ggplot(monDat,aes(x=year_of_marriage,color=sovereign_type,alpha=!any_unc)) + 
+  geom_linerange(aes(ymin=min_age,ymax=max_age,
+                     linetype=factor(age_diff_pos,levels=c(TRUE,FALSE)))) +
+  scale_linetype_discrete(na.translate = FALSE) +
+  scale_alpha_discrete(range=c(0.25,0.95)) + guides(alpha='none') +
+  theme_mine() + ylim(0,NA) + xlim(850,NA) +
+  scale_color_manual(values=twoColorPal) +
+  coord_cartesian(clip='off') +
+  annotation_custom(wesLogo,x=650,y=65,xmax=850,ymax=75) +
+  annotation_custom(winLogo,x=1900,y=65,xmax=2050,ymax=75) +
+  geom_point(aes(y=sovereign_age)) + geom_point(aes(y=consort_age), shape=2) +
+  labs(
+    color = "Sovereign Type", linetype= "Sovereign is older",
+    caption = caption_text, title = "Marriages in the English Monarchy",
+    subtitle = 'From Wessex to Windsor'
+  ) + xlab('Year of marriage') + ylab('Age at marriage') 
+
+ggsave('engMarTimeline.png')
+  
+```
+
+## One more visualization
+Pairs plots are fun, and the `ggpairs` function will automatically calculate some correlation values and put them on the plot as well. I've always done these using old school `pairs` and I thought it would be fun to look at one using the `ggplot` version. One big advantage is how it automatically uses the `facet_grid` framework to make the plots and include special plots along the diagonal. You could do the same thing with `pairs`, but it was more work.
+
+There are so few Sovereigns who were queens that the density plots on the age at the marriage is. So the spikes in the density plots really just reflect the low queen count and the wide range of queen ages when they are married relative to that count. 
+
+Also, even though the sovereign queens were the monarch, they also were (in general) younger than their consort, while to opposite is true for the kings.
+
+```{r echo=FALSE, fig.asp=1.2}
+numMonDat = select(monDat,
+                   c('sovereign_age','consort_age','age_diff','sovereign_type'))
+pairPlot = ggpairs(numMonDat, aes(color=sovereign_type),
+        columnLabels = c('Sovereign','Consort','Diff','Q/K'),
+        title = 'English Monarchs: Age at marriage') + theme_mine() + 
+  labs(caption = caption_text) 
+
+for(i in 1:pairPlot$nrow){
+  for(j in 1:pairPlot$ncol){
+    pairPlot[i,j] = pairPlot[i,j] + scale_color_manual(values=twoColorPal) +
+      scale_fill_manual(values=twoColorPal)
+  }
+}
+
+ggsave('monarchPairs.png',pairPlot)
+
+pairPlot
+```
+

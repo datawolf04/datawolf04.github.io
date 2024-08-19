@@ -24,7 +24,7 @@ library(paletteer)
 library(RColorBrewer)
 
 load('worldsFairs.Rdata')
-source('helperFunctions.R')
+source('../helperFunctions.R')
 ```
 
 ## Plan and data cleaning
