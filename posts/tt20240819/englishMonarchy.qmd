@@ -12,8 +12,6 @@ resources:
 execute: 
   messages: false
   warning: false
-draft:
-  true
 ---
 
 This week's #TidyTuesday is all about  exploring English Monarchs and Marriages!
