@@ -74,13 +74,14 @@ gdn = Vectorize(getDynastyName)
 
 
 ## Data cleaning
-As one might expect from a dataset that has been scraped from a webpage written by a London history/culture type, there is some inconsistency in how the data has been cataloged. And as the prompt for the week says, some of the early data is "fuzzy". So I want to clean it up.
+As one might expect from a dataset that has been scraped from a webpage written by a London history/culture type, there is some inconsistency in how the data has been cataloged. And as the prompt for the week says, some of the early data is "fuzzy". So I want to clean it up. Here is a quick look at the data:
 
 ```{r echo=FALSE}
 glimpse(monarchDat)
 ```
 
-As you can see from the glimpse above, uncertainty in the dataset is often indicated with `?` or `-` being included in the string. Ultimately I want to work with numeric variables, so I'm going to need to clean them up. I also want to track whether a date or age is uncertain, so I am going to create columns tracking that information.
+As you can see above, uncertainty in the dataset is often indicated with `?` or `-` being included in the string. Ultimately I want to work with numeric variables, for things like age and year, so I'm going to need to clean them up. I also want to track whether a date or age is uncertain, so I am going to create columns tracking that information. All of the queens in the dataset are named Mary, Elizabeth, Anne, or Victoria. Using `str_detect` and some `OR` logic, I believe that I have caught all of them.
+
 ```{r echo=FALSE}
 queenNames='Mary|Elizabeth|Anne|Victoria'
 monarchDat |> 
@@ -105,7 +106,7 @@ glimpse(monDat)
 ```
 
 ## Plan
-Make a plot with sovereign age and consort age given the year of marriage. On this plot I'm going to highlight:
+Make a plot with sovereign age and consort age vs. the year of marriage. On this plot I'm going to highlight:
 
 1. The age gap. If both sovereign and consort have the age recorded in the data, there will be a vertical line drawn from the younger to the elder.
 2. The gender of the sovereign. Kings are light blue and queens are pink.
@@ -143,17 +144,21 @@ ggsave('engMarTimeline.png')
 ## One more visualization
 Pairs plots are fun, and the `ggpairs` function will automatically calculate some correlation values and put them on the plot as well. I've always done these using old school `pairs` and I thought it would be fun to look at one using the `ggplot` version. One big advantage is how it automatically uses the `facet_grid` framework to make the plots and include special plots along the diagonal. You could do the same thing with `pairs`, but it was more work.
 
-There are so few Sovereigns who were queens that the density plots on the age at the marriage is. So the spikes in the density plots really just reflect the low queen count and the wide range of queen ages when they are married relative to that count. 
+A few notes about this plot:
 
-Also, even though the sovereign queens were the monarch, they also were (in general) younger than their consort, while to opposite is true for the kings.
+- The density plots for the sovereign queens are "spikey" (for lack of a better term). There are just so few sovereign queens. Furthermore the age range at marriage is broad enough that this distribution is just not smooth. Until recently, the succession rules heavily favored male heirs. With the new rules recently adapted, maybe in another millenium or two, there will be enough sovereign queens that we can start approaching gender parity in this area.
+- Also, even though the sovereign queens were the monarch, they also were (in general) younger than their consort, while the opposite is true for the kings.
 
 ```{r echo=FALSE, fig.asp=1.2}
 numMonDat = select(monDat,
                    c('sovereign_age','consort_age','age_diff','sovereign_type'))
+
+
 pairPlot = ggpairs(numMonDat, aes(color=sovereign_type),
         columnLabels = c('Sovereign','Consort','Diff','Q/K'),
+        diag = list(continuous = wrap("densityDiag",alpha=0.7)),
         title = 'English Monarchs: Age at marriage') + theme_mine() + 
-  labs(caption = caption_text) 
+  labs(caption = str_glue("{ttStart} <br> {gh} datawolf04 {li} wolf-253b6625a")) 
 
 for(i in 1:pairPlot$nrow){
   for(j in 1:pairPlot$ncol){
@@ -165,5 +170,40 @@ for(i in 1:pairPlot$nrow){
 ggsave('monarchPairs.png',pairPlot)
 
 pairPlot
+```
+
+## The model that wasn't quite there
+
+- I like making different kinds of models. I'm wondering if we can build a model for sovereign age at marriage given inputs like gender and year. I didn't do it here, in part, because I think that there is other work to be done. In particular, how long a sovereign has been in power would be useful data to gather, as well as figuring out how to deal with multiple marriages such as the case of Henry VIII.  
+```{r echo=FALSE}
+monarchDat |> filter(grepl("Henry VIII",sovereign_name))
+```
+
+## Ew
+I thought about ignoring this, but 2024 me simply cannot. I know it was a different time. I am simply upset that a society allowed this sort of predatory behavior under the guise of a self-proclaimed and self-serving monarch declaring his divine right as well as the nobility that enabled and enforced this behavior in service of the accumulation of power. So I'm creating a table and calling it my "Hall of Shame." I'm not sure that age difference in a relationship is the single best way for building this group, but that's the data that I have in front of me to use.
+
+```{r echo=FALSE}
+monDat |> arrange(desc(abs(age_diff))) |>
+  filter(!is.na(age_diff)) |>
+  select(c(names(monarchDat),'age_diff')) |> head() |> gt() |> 
+  tab_header(
+    title=md("Hall of Shame")
+  ) |>
+  tab_spanner(
+    label='Perpetraitor', columns=starts_with('sov')
+  ) |>
+  tab_spanner(
+    label='Victim', columns=starts_with('con')
+  ) |>
+  cols_move_to_end(year_of_marriage) |>
+  cols_label(
+    sovereign_name = "Name",
+    sovereign_age = "Age",
+    consort_name = "Name",
+    consort_age = "Age",
+    year_of_marriage = "Year",
+    age_diff = "Δ"
+  ) |> 
+  my_table_formatting() 
 ```
 

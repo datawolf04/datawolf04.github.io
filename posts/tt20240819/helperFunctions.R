@@ -29,6 +29,7 @@ showtext_auto(enable = TRUE)
 
 theme_set(theme_classic(base_size = 14, base_family = 'sans'))
 
+ttStart <- str_glue("**#TidyTuesday** &bull; Sources: Ian Visits and f. hull dataset")
 ttText <- str_glue("**#TidyTuesday** &bull; Sources: Ian Visits and f. hull dataset, Wikipedia and royal.uk logos")
 gh <- str_glue("<span style='font-family: \"fa6-brands\"'>&#xf09b;</span>")
 li <- str_glue("<span style='font-family:\"fa6-brands\"'>&#xf08c;</span>")
@@ -75,7 +76,7 @@ theme_mine = function(...){
 my_table_formatting = function(df){
   df |>
     tab_source_note(
-      source_note = md(ttText)
+      source_note = md(ttStart)
     ) |>
     tab_style(
       style = list(
@@ -104,6 +105,13 @@ my_table_formatting = function(df){
         cell_text(color = 'white')
       ),
       locations=cells_column_labels()
+    ) |>
+    tab_style(
+      style = list(
+        cell_fill(color = paletteer_d(col_pal_dis_short)[4]),
+        cell_text(color = 'white')
+      ),
+      locations=cells_column_spanners()
     ) 
   }
 
