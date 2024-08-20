@@ -240,7 +240,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="data-cleaning" class="level2">
 <h2 class="anchored" data-anchor-id="data-cleaning">Data cleaning</h2>
-<p>As one might expect from a dataset that has been scraped from a webpage written by a London history/culture type, there is some inconsistency in how the data has been cataloged. And as the prompt for the week says, some of the early data is “fuzzy”. So I want to clean it up.</p>
+<p>As one might expect from a dataset that has been scraped from a webpage written by a London history/culture type, there is some inconsistency in how the data has been cataloged. And as the prompt for the week says, some of the early data is “fuzzy”. So I want to clean it up. Here is a quick look at the data:</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 84
@@ -252,7 +252,7 @@ $ consort_age      &lt;chr&gt; "?", "12", "14", "–", "?", "16", "?", "?", "?",
 $ year_of_marriage &lt;chr&gt; "851(?)", "856", "858", "–", "?", "868", "893", "902"…</code></pre>
 </div>
 </div>
-<p>As you can see from the glimpse above, uncertainty in the dataset is often indicated with <code>?</code> or <code>-</code> being included in the string. Ultimately I want to work with numeric variables, so I’m going to need to clean them up. I also want to track whether a date or age is uncertain, so I am going to create columns tracking that information.</p>
+<p>As you can see above, uncertainty in the dataset is often indicated with <code>?</code> or <code>-</code> being included in the string. Ultimately I want to work with numeric variables, for things like age and year, so I’m going to need to clean them up. I also want to track whether a date or age is uncertain, so I am going to create columns tracking that information. All of the queens in the dataset are named Mary, Elizabeth, Anne, or Victoria. Using <code>str_detect</code> and some <code>OR</code> logic, I believe that I have caught all of them.</p>
 <div class="cell">
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 84
@@ -276,7 +276,7 @@ $ max_age              &lt;dbl&gt; NA, 50, 24, NA, NA, 19, NA, NA, NA, NA, NA, N
 </section>
 <section id="plan" class="level2">
 <h2 class="anchored" data-anchor-id="plan">Plan</h2>
-<p>Make a plot with sovereign age and consort age given the year of marriage. On this plot I’m going to highlight:</p>
+<p>Make a plot with sovereign age and consort age vs.&nbsp;the year of marriage. On this plot I’m going to highlight:</p>
 <ol type="1">
 <li>The age gap. If both sovereign and consort have the age recorded in the data, there will be a vertical line drawn from the younger to the elder.</li>
 <li>The gender of the sovereign. Kings are light blue and queens are pink.</li>
@@ -295,14 +295,578 @@ $ max_age              &lt;dbl&gt; NA, 50, 24, NA, NA, 19, NA, NA, NA, NA, NA, N
 <section id="one-more-visualization" class="level2">
 <h2 class="anchored" data-anchor-id="one-more-visualization">One more visualization</h2>
 <p>Pairs plots are fun, and the <code>ggpairs</code> function will automatically calculate some correlation values and put them on the plot as well. I’ve always done these using old school <code>pairs</code> and I thought it would be fun to look at one using the <code>ggplot</code> version. One big advantage is how it automatically uses the <code>facet_grid</code> framework to make the plots and include special plots along the diagonal. You could do the same thing with <code>pairs</code>, but it was more work.</p>
-<p>There are so few Sovereigns who were queens that the density plots on the age at the marriage is. So the spikes in the density plots really just reflect the low queen count and the wide range of queen ages when they are married relative to that count.</p>
-<p>Also, even though the sovereign queens were the monarch, they also were (in general) younger than their consort, while to opposite is true for the kings.</p>
+<p>A few notes about this plot:</p>
+<ul>
+<li>The density plots for the sovereign queens are “spikey” (for lack of a better term). There are just so few sovereign queens. Furthermore the age range at marriage is broad enough that this distribution is just not smooth. Until recently, the succession rules heavily favored male heirs. With the new rules recently adapted, maybe in another millenium or two, there will be enough sovereign queens that we can start approaching gender parity in this area.</li>
+<li>Also, even though the sovereign queens were the monarch, they also were (in general) younger than their consort, while the opposite is true for the kings.</li>
+</ul>
 <div class="cell">
 <div class="cell-output-display">
 <div>
 <figure class="figure">
 <p><img src="englishMonarchy_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
+</div>
+</div>
+</div>
+</section>
+<section id="the-model-that-wasnt-quite-there" class="level2">
+<h2 class="anchored" data-anchor-id="the-model-that-wasnt-quite-there">The model that wasn’t quite there</h2>
+<ul>
+<li>I like making different kinds of models. I’m wondering if we can build a model for sovereign age at marriage given inputs like gender and year. I didn’t do it here, in part, because I think that there is other work to be done. In particular, how long a sovereign has been in power would be useful data to gather, as well as figuring out how to deal with multiple marriages such as the case of Henry VIII.</li>
+</ul>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 5
+  sovereign_name sovereign_age consort_name        consort_age year_of_marriage
+  &lt;chr&gt;          &lt;chr&gt;         &lt;chr&gt;               &lt;chr&gt;       &lt;chr&gt;           
+1 Henry VIII     18            Catherine of Aragon 24          1509            
+2 Henry VIII     42            Anne Boleyn         32          1533            
+3 Henry VIII     45            Jane Seymour        28          1536            
+4 Henry VIII     49            Anne of Cleves      25          1540            
+5 Henry VIII     49            Catherine Howard    19          1540            
+6 Henry VIII     52            Catherine Parr      31          1543            </code></pre>
+</div>
+</div>
+</section>
+<section id="ew" class="level2">
+<h2 class="anchored" data-anchor-id="ew">Ew</h2>
+<p>I thought about ignoring this, but 2024 me simply cannot. I know it was a different time. I am simply upset that a society allowed this sort of predatory behavior under the guise of a self-proclaimed and self-serving monarch declaring his divine right as well as the nobility that enabled and enforced this behavior in service of the accumulation of power. So I’m creating a table and calling it my “Hall of Shame.” I’m not sure that age difference in a relationship is the single best way for building this group, but that’s the data that I have in front of me to use.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="easuuzfdlp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#easuuzfdlp table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#easuuzfdlp thead, #easuuzfdlp tbody, #easuuzfdlp tfoot, #easuuzfdlp tr, #easuuzfdlp td, #easuuzfdlp th {
+  border-style: none;
+}
+
+#easuuzfdlp p {
+  margin: 0;
+  padding: 0;
+}
+
+#easuuzfdlp .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#easuuzfdlp .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#easuuzfdlp .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#easuuzfdlp .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#easuuzfdlp .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#easuuzfdlp .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#easuuzfdlp .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#easuuzfdlp .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#easuuzfdlp .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#easuuzfdlp .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#easuuzfdlp .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#easuuzfdlp .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#easuuzfdlp .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#easuuzfdlp .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#easuuzfdlp .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#easuuzfdlp .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#easuuzfdlp .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#easuuzfdlp .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#easuuzfdlp .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#easuuzfdlp .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#easuuzfdlp .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#easuuzfdlp .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#easuuzfdlp .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#easuuzfdlp .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#easuuzfdlp .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#easuuzfdlp .gt_left {
+  text-align: left;
+}
+
+#easuuzfdlp .gt_center {
+  text-align: center;
+}
+
+#easuuzfdlp .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#easuuzfdlp .gt_font_normal {
+  font-weight: normal;
+}
+
+#easuuzfdlp .gt_font_bold {
+  font-weight: bold;
+}
+
+#easuuzfdlp .gt_font_italic {
+  font-style: italic;
+}
+
+#easuuzfdlp .gt_super {
+  font-size: 65%;
+}
+
+#easuuzfdlp .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#easuuzfdlp .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#easuuzfdlp .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#easuuzfdlp .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#easuuzfdlp .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#easuuzfdlp .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#easuuzfdlp .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#easuuzfdlp .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#easuuzfdlp div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header gt_heading">
+<th colspan="6" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF"><p>Hall of Shame</p></th>
+</tr>
+<tr class="odd gt_col_headings gt_spanner_row">
+<th colspan="2" id="Perpetraitor" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="colgroup"><span class="gt_column_spanner">Perpetraitor</span></th>
+<th colspan="2" id="Victim" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="colgroup"><span class="gt_column_spanner">Victim</span></th>
+<th rowspan="2" id="Δ" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Δ</th>
+<th rowspan="2" id="Year" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Year</th>
+</tr>
+<tr class="header gt_col_headings">
+<th id="Name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Name</th>
+<th id="Age" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Age</th>
+<th id="Name" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Name</th>
+<th id="Age" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Age</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="sovereign_name">Edward I</td>
+<td class="gt_row gt_right" headers="sovereign_age">60</td>
+<td class="gt_row gt_left" headers="consort_name">Margaret of France</td>
+<td class="gt_row gt_right" headers="consort_age">20</td>
+<td class="gt_row gt_right" headers="age_diff">40</td>
+<td class="gt_row gt_right" headers="year_of_marriage">1299</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="sovereign_name">Æthelwulf</td>
+<td class="gt_row gt_right" headers="sovereign_age">50</td>
+<td class="gt_row gt_left" headers="consort_name">Judith of Flanders</td>
+<td class="gt_row gt_right" headers="consort_age">12</td>
+<td class="gt_row gt_right" headers="age_diff">38</td>
+<td class="gt_row gt_right" headers="year_of_marriage">856</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="sovereign_name">Henry I</td>
+<td class="gt_row gt_right" headers="sovereign_age">53</td>
+<td class="gt_row gt_left" headers="consort_name">Adeliza of Louvain</td>
+<td class="gt_row gt_right" headers="consort_age">18</td>
+<td class="gt_row gt_right" headers="age_diff">35</td>
+<td class="gt_row gt_right" headers="year_of_marriage">1121</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="sovereign_name">Henry VIII</td>
+<td class="gt_row gt_right" headers="sovereign_age">49</td>
+<td class="gt_row gt_left" headers="consort_name">Catherine Howard</td>
+<td class="gt_row gt_right" headers="consort_age">19</td>
+<td class="gt_row gt_right" headers="age_diff">30</td>
+<td class="gt_row gt_right" headers="year_of_marriage">1540</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="sovereign_name">William IV</td>
+<td class="gt_row gt_right" headers="sovereign_age">53</td>
+<td class="gt_row gt_left" headers="consort_name">Adelaide of Saxe-Meiningen</td>
+<td class="gt_row gt_right" headers="consort_age">26</td>
+<td class="gt_row gt_right" headers="age_diff">27</td>
+<td class="gt_row gt_right" headers="year_of_marriage">1818</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="sovereign_name">James II</td>
+<td class="gt_row gt_right" headers="sovereign_age">40</td>
+<td class="gt_row gt_left" headers="consort_name">Mary of Modena</td>
+<td class="gt_row gt_right" headers="consort_age">15</td>
+<td class="gt_row gt_right" headers="age_diff">25</td>
+<td class="gt_row gt_right" headers="year_of_marriage">1673</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="6" class="gt_sourcenote" style="background-color: #3B7C70; color: #FFFFFF"><p><strong>#TidyTuesday</strong> • Sources: Ian Visits and f.&nbsp;hull dataset</p></td>
+</tr>
+</tfoot>
+
+</table>
+
 </div>
 </div>
 </div>
