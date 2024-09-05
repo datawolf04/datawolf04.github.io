@@ -5,11 +5,11 @@
       xmlns:dc="http://purl.org/dc/elements/1.1/" 
       version="2.0">
 <channel>
-<title>Steve&#39;s Data Playground</title>
+<title>Steven Wolf - Data World</title>
 <link>https://datawolf04.github.io/</link>
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
-<generator>quarto-1.5.56</generator>
+<generator>quarto-1.5.57</generator>
 <lastBuildDate>Tue, 20 Aug 2024 00:00:00 GMT</lastBuildDate>
 <item>
   <title>English Monarchy</title>
