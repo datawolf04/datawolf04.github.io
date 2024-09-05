@@ -1,8 +1,8 @@
 ---
 title: "About"
-image: swolfHeadVert.jpg
+image: https://ih1.redbubble.net/image.563601502.2597/mp,840x830,matte,f8f8f8,t-pad,1000x1000,f8f8f8.jpg
 about:
-  template: jolla
+  template: solana
   links:
     - icon: linkedin
       text: LinkedIn
@@ -15,7 +15,17 @@ about:
       href: https://scholar.google.com/citations?user=YMrBRecAAAAJ
 ---
 
-I'm a physicist by training, but a Data Scientist by practice. I've been coding things in R and Python for several years, and I finally decided that I wanted a place to put my fun projects, organize my thoughts, and do other data science related things. In addition to the places you will find me linked to the bottom, you can find me active with [#TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/README.md) and the [Data Science Learning Community](https://dslc.io/).
+![](swolfHeadVert.jpg){width=20% style="float:left; padding:10px"} I'm a physicist by training, but a Data Scientist by practice. I've been coding things in R and Python for several years, and I created this website as a place to put my fun projects, organize my thoughts, and do other data science related things. You can find me on LinkedIn, Github, and Google Scholar (links below). You can find me active within different Data Science spheres including [#TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/README.md) and the [Data Science Learning Community](https://dslc.io/). When I'm not at work, or playing with data, you can find me outside, I love to go hiking and kayaking.
 
-![](https://ih1.redbubble.net/image.563601502.2597/mp,840x830,matte,f8f8f8,t-pad,1000x1000,f8f8f8.jpg){width=60%}
+## Education
+
+- **Michigan State University** | East Lansing, MI  <br> Ph.D. in Physics 2006-2012
+- **Dartmouth College** | Hanover, NH <br> M.S. in Physics 2003-2005
+- **Valparaiso University** | Valparaiso, IN <br> B.S. in Physics and Mathematics 1999-2003
+
+## Experience
+
+- **East Carolina University** | Assistant Professor of Physics | August 2015 -present
+- **Texas State University** | Physics Lecturer | August 2014 - August 2015
+- **Michigan State University** | Research Associate | August 2012 - August 2014
 
