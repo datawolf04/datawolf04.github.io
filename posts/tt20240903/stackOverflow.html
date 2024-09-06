@@ -6,8 +6,11 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="author" content="Steven Wolf">
+<meta name="dcterms.date" content="2024-09-05">
+<meta name="description" content="Where are Stack Overflow users working from? Let’s find out.">
 
-<title>Steven Wolf - Data World</title>
+<title>Stack Overflow Annual Developer Survey – Steven Wolf - Data World</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,27 +23,59 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -68,77 +103,19 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
+<link rel="stylesheet" href="../../styles.css">
+</head>
 
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
-<link rel="alternate" type="application/rss+xml" title="Steven Wolf - Data World" href="index.xml" data-external="1"></head>
-
-<body class="nav-fixed">
+<body class="nav-fixed fullcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Steven Wolf - Data World</span>
     </a>
   </div>
@@ -149,7 +126,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -165,7 +142,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./index.xml"> <i class="bi bi-rss" role="img">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -179,266 +156,170 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">Steven Wolf - Data World</h1>
-                      </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Stack Overflow Annual Developer Survey</h1>
+                  <div>
+        <div class="description">
+          Where are Stack Overflow users working from? Let’s find out.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">tidyTuesday</div>
+                <div class="quarto-category">R</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Steven Wolf </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 5, 2024</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(6)</span></div><div class="category" data-category="R">R <span class="quarto-category-count">(5)</span></div><div class="category" data-category="maps">maps <span class="quarto-category-count">(1)</span></div><div class="category" data-category="python">python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="tidyTuesday">tidyTuesday <span class="quarto-category-count">(5)</span></div><div class="category" data-category="weather">weather <span class="quarto-category-count">(1)</span></div><div class="category" data-category="web-scraping">web-scraping <span class="quarto-category-count">(1)</span></div></div></div>
+    
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
+<p>This week’s dataset is derived from the 2024 Stack Overflow Annual Developer Survey. Conducted in May 2024, the survey gathered responses from over 65,000 developers.</p>
+<p>Given that one of the big trends being discussed in the world right now is working from home vs.&nbsp;going back to the office, I was wondering if there were any trends in this data as to who is working at home. Note, that this dataset did not include gender or race data. In particular, I’m considering 3 questions:</p>
+<ol type="1">
+<li>Does education level matter?</li>
+<li>Does age matter?</li>
+<li>Does experience/expertise matter?</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"soSurvey.RData"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'helperFunctions.R'</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>personalDataCats <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'main_branch'</span>,<span class="st">'age'</span>,<span class="st">'remote_work'</span>,<span class="st">'ed_level'</span>,<span class="st">'years_code'</span>,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">'years_code_pro'</span>,<span class="st">'dev_type'</span>,<span class="st">'org_size'</span>,<span class="st">'country'</span>,<span class="st">'currency'</span>,</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">'comp_total'</span>)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>personData <span class="ot">&lt;-</span> stackoverflow_survey_single_response <span class="sc">|&gt;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(personalDataCats)) <span class="sc">|&gt;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(remote_work))</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>cwRemote <span class="ot">=</span> qname_levels_single_response_crosswalk <span class="sc">|&gt;</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(qname<span class="sc">==</span><span class="st">'remote_work'</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>cwRemote<span class="sc">$</span>label <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Hybrid"</span>,<span class="st">"In-person"</span>,<span class="st">"Remote"</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>remoteLevels <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"In-person"</span>,<span class="st">"Hybrid"</span>,<span class="st">"Remote"</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>personData <span class="ot">&lt;-</span> <span class="fu">left_join</span>(personData,cwRemote,<span class="at">by=</span><span class="fu">join_by</span>(remote_work <span class="sc">==</span> level)) <span class="sc">|&gt;</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">remote_work =</span> <span class="fu">factor</span>(label,<span class="at">levels=</span>remoteLevels)) <span class="sc">|&gt;</span> </span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span>qname <span class="sc">&amp;</span> <span class="sc">!</span>label)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="work-type-and-education-level" class="level2">
+<h2 class="anchored" data-anchor-id="work-type-and-education-level">Work type and education level</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This graph shows the number of responses as well as the level of education that each user has. We can see that most users of Stack Overflow have at least 4-year college degree. This would seem to be in line with the general profile of someone working in a STEM field. It is somewhat difficult to glean what, if any, role there is between work location and education level.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Next, we consider the same data, but we are highlighting the counts based on work location. This plot shows that a large fraction of Stack Overflow users are working in hybrid or remote locations.</p>
+<p>In the following two plots, I’ll show the same information as above, except as percentages rather than raw counts.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Neither of these suggests that education level would predict work location for stack overflow users.</p>
+</section>
+<section id="work-type-and-age" class="level2">
+<h2 class="anchored" data-anchor-id="work-type-and-age">Work type and age</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The above plot looks at the number of responses by age. We can see clearly that most users are between ages 25 and 44.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we see that the age group from 18-24 is working in-person much more than they work hybrid/remote. As this group is college-aged, and most colleges and universities are back to in-person instruction, this could suggest that students who are learning to code at university are using Stack Overflow for help (as this college professor hopes they would). As users age, they tend to find more hybrid/remote roles.</p>
+</section>
+<section id="work-type-and-experience-coding" class="level2">
+<h2 class="anchored" data-anchor-id="work-type-and-experience-coding">Work type and Experience coding</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="stackOverflow_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we see a possible echo of the college idea that I raised above. However, I see a few other things as well.</p>
+<ol type="1">
+<li>There seems to be a significant shift that as people gain experience coding, they move from in-person roles to hybrid/remote roles.</li>
+<li>As you do something for a longer time, you tend to estimate more. All of the responses seem to favor numbers ending in 0 or 5, especially once you get past 10 years. So if someone has 22 years of experience, they will probably round down to 20, or up to 25, rather than stating 20 exactly.</li>
+</ol>
 
 
+</section>
 
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="tidyTuesday,R" data-listing-date-sort="1725494400000" data-listing-file-modified-sort="1725598092942" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="917">
-<div class="thumbnail">
-<p><a href="./posts/tt20240903/stackOverflow.html" class="no-external"></a></p><a href="./posts/tt20240903/stackOverflow.html" class="no-external">
-<p class="card-img-top"><img src="posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-3-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/tt20240903/stackOverflow.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/tt20240903/stackOverflow.html" class="no-external">Stack Overflow Annual Developer Survey</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/tt20240903/stackOverflow.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('tidyTuesday'); return false;">
-tidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/tt20240903/stackOverflow.html" class="no-external">Where are Stack Overflow users working from? Let’s find out.</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/tt20240903/stackOverflow.html" class="no-external">
-<div class="listing-date">
-Sep 5, 2024
-</div>
-<div class="listing-author">
-Steven Wolf
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="tidyTuesday,R" data-listing-date-sort="1724112000000" data-listing-file-modified-sort="1725598092934" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1346">
-<div class="thumbnail">
-<p><a href="./posts/tt20240819/englishMonarchy.html" class="no-external"></a></p><a href="./posts/tt20240819/englishMonarchy.html" class="no-external">
-<p class="card-img-top"><img src="posts/tt20240819/englishMonarchy_files/figure-html/unnamed-chunk-8-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/tt20240819/englishMonarchy.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/tt20240819/englishMonarchy.html" class="no-external">English Monarchy</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/tt20240819/englishMonarchy.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('tidyTuesday'); return false;">
-tidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/tt20240819/englishMonarchy.html" class="no-external">This week’s #TidyTuesday is all about exploring English Monarchs and Marriages!</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/tt20240819/englishMonarchy.html" class="no-external">
-<div class="listing-date">
-Aug 20, 2024
-</div>
-<div class="listing-author">
-Steven Wolf
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="tidyTuesday,R,maps" data-listing-date-sort="1723593600000" data-listing-file-modified-sort="1725598092930" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="960">
-<div class="thumbnail">
-<p><a href="./posts/tt20240813/worldFairs.html" class="no-external"></a></p><a href="./posts/tt20240813/worldFairs.html" class="no-external">
-<p class="card-img-top"><img src="posts/tt20240813/worldFairs_files/figure-html/unnamed-chunk-6-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/tt20240813/worldFairs.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/tt20240813/worldFairs.html" class="no-external">World’s Fairs</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/tt20240813/worldFairs.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('tidyTuesday'); return false;">
-tidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('maps'); return false;">
-maps
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/tt20240813/worldFairs.html" class="no-external">I’ve always wanted to play with making a map-based visualization</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/tt20240813/worldFairs.html" class="no-external">
-<div class="listing-date">
-Aug 14, 2024
-</div>
-<div class="listing-author">
-Steven Wolf
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="weather,python,web-scraping" data-listing-date-sort="1723075200000" data-listing-file-modified-sort="1725598092942" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="327">
-<div class="thumbnail">
-<p><a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external"></a></p><a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external">
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-</a><p><a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external">Scraping Weather Data-Proof of concept</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('weather'); return false;">
-weather
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('python'); return false;">
-python
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('web-scraping'); return false;">
-web-scraping
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external">Scraping weather data near Zebulon, NC</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/weatherScrape240808/weatherScrape.html" class="no-external">
-<div class="listing-date">
-Aug 8, 2024
-</div>
-<div class="listing-author">
-Steven Wolf
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="tidyTuesday,R" data-listing-date-sort="1722988800000" data-listing-file-modified-sort="1725598092914" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1468">
-<div class="thumbnail">
-<p><a href="./posts/olympic240805/olympicMedalData.html" class="no-external"></a></p><a href="./posts/olympic240805/olympicMedalData.html" class="no-external">
-<p class="card-img-top"><img src="posts/olympic240805/olympicMedalData_files/figure-html/unnamed-chunk-7-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/olympic240805/olympicMedalData.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/olympic240805/olympicMedalData.html" class="no-external">Olympic countries: Fun facts and visualizations</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/olympic240805/olympicMedalData.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('tidyTuesday'); return false;">
-tidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/olympic240805/olympicMedalData.html" class="no-external">Countries by participation and medal count</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/olympic240805/olympicMedalData.html" class="no-external">
-<div class="listing-date">
-Aug 7, 2024
-</div>
-<div class="listing-author">
-Steven Wolf
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="tidyTuesday,R" data-listing-date-sort="1722556800000" data-listing-file-modified-sort="1725598092930" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="937">
-<div class="thumbnail">
-<p><a href="./posts/summerMovies/summerMovies.html" class="no-external"></a></p><a href="./posts/summerMovies/summerMovies.html" class="no-external">
-<p class="card-img-top"><img src="posts/summerMovies/summerMovies_files/figure-html/unnamed-chunk-3-1.png"  class="thumbnail-image card-img"/></p>
-</a><p><a href="./posts/summerMovies/summerMovies.html" class="no-external"></a></p>
-</div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/summerMovies/summerMovies.html" class="no-external">Summer Movies</a>
-</h3>
-<div class="listing-subtitle">
-<a href="./posts/summerMovies/summerMovies.html" class="no-external"></a>
-</div>
-<div class="listing-categories">
-<div class="listing-category" onclick="window.quartoListingCategory('tidyTuesday'); return false;">
-tidyTuesday
-</div>
-<div class="listing-category" onclick="window.quartoListingCategory('R'); return false;">
-R
-</div>
-</div>
-<div class="listing-description">
-<a href="./posts/summerMovies/summerMovies.html" class="no-external">Analyzing the IMDB for movies with ‘summer’ in the title</a>
-</div>
-</div>
-<div class="metadata">
-<a href="./posts/summerMovies/summerMovies.html" class="no-external">
-<div class="listing-date">
-Aug 2, 2024
-</div>
-<div class="listing-author">
-Steven Wolf
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">
-No matching items
-</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

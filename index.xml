@@ -10,7 +10,256 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Tue, 20 Aug 2024 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Thu, 05 Sep 2024 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Stack Overflow Annual Developer Survey</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>This week’s dataset is derived from the 2024 Stack Overflow Annual Developer Survey. Conducted in May 2024, the survey gathered responses from over 65,000 developers.</p>
+<p>Given that one of the big trends being discussed in the world right now is working from home vs.&nbsp;going back to the office, I was wondering if there were any trends in this data as to who is working at home. Note, that this dataset did not include gender or race data. In particular, I’m considering 3 questions:</p>
+<ol type="1">
+<li>Does education level matter?</li>
+<li>Does age matter?</li>
+<li>Does experience/expertise matter?</li>
+</ol>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">load</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"soSurvey.RData"</span>)</span>
+<span id="cb1-2"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'helperFunctions.R'</span>)</span>
+<span id="cb1-3"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(tidyverse)</span>
+<span id="cb1-4"><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">library</span>(paletteer)</span>
+<span id="cb1-5"></span>
+<span id="cb1-6">personalDataCats <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'main_branch'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'age'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'remote_work'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'ed_level'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'years_code'</span>,</span>
+<span id="cb1-7">                     <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'years_code_pro'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dev_type'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'org_size'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'country'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'currency'</span>,</span>
+<span id="cb1-8">                     <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'comp_total'</span>)</span>
+<span id="cb1-9"></span>
+<span id="cb1-10">personData <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> stackoverflow_survey_single_response <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-11">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">all_of</span>(personalDataCats)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-12">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">is.na</span>(remote_work))</span>
+<span id="cb1-13"></span>
+<span id="cb1-14">cwRemote <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> qname_levels_single_response_crosswalk <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-15">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">filter</span>(qname<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'remote_work'</span>)</span>
+<span id="cb1-16"></span>
+<span id="cb1-17">cwRemote<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">$</span>label <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hybrid"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"In-person"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Remote"</span>)</span>
+<span id="cb1-18">remoteLevels <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">c</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"In-person"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Hybrid"</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Remote"</span>)</span>
+<span id="cb1-19"></span>
+<span id="cb1-20">personData <span class="ot" style="color: #003B4F;
+background-color: null;
+font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">left_join</span>(personData,cwRemote,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">by=</span><span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">join_by</span>(remote_work <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span> level)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span></span>
+<span id="cb1-21">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">mutate</span>(<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">remote_work =</span> <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">factor</span>(label,<span class="at" style="color: #657422;
+background-color: null;
+font-style: inherit;">levels=</span>remoteLevels)) <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">|&gt;</span> </span>
+<span id="cb1-22">  <span class="fu" style="color: #4758AB;
+background-color: null;
+font-style: inherit;">select</span>(<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>qname <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">&amp;</span> <span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">!</span>label)</span></code></pre></div>
+</div>
+<section id="work-type-and-education-level" class="level2">
+<h2 class="anchored" data-anchor-id="work-type-and-education-level">Work type and education level</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This graph shows the number of responses as well as the level of education that each user has. We can see that most users of Stack Overflow have at least 4-year college degree. This would seem to be in line with the general profile of someone working in a STEM field. It is somewhat difficult to glean what, if any, role there is between work location and education level.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Next, we consider the same data, but we are highlighting the counts based on work location. This plot shows that a large fraction of Stack Overflow users are working in hybrid or remote locations.</p>
+<p>In the following two plots, I’ll show the same information as above, except as percentages rather than raw counts.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Neither of these suggests that education level would predict work location for stack overflow users.</p>
+</section>
+<section id="work-type-and-age" class="level2">
+<h2 class="anchored" data-anchor-id="work-type-and-age">Work type and age</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The above plot looks at the number of responses by age. We can see clearly that most users are between ages 25 and 44.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we see that the age group from 18-24 is working in-person much more than they work hybrid/remote. As this group is college-aged, and most colleges and universities are back to in-person instruction, this could suggest that students who are learning to code at university are using Stack Overflow for help (as this college professor hopes they would). As users age, they tend to find more hybrid/remote roles.</p>
+</section>
+<section id="work-type-and-experience-coding" class="level2">
+<h2 class="anchored" data-anchor-id="work-type-and-experience-coding">Work type and Experience coding</h2>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20240903/stackOverflow_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Here we see a possible echo of the college idea that I raised above. However, I see a few other things as well.</p>
+<ol type="1">
+<li>There seems to be a significant shift that as people gain experience coding, they move from in-person roles to hybrid/remote roles.</li>
+<li>As you do something for a longer time, you tend to estimate more. All of the responses seem to favor numbers ending in 0 or 5, especially once you get past 10 years. So if someone has 22 years of experience, they will probably round down to 20, or up to 25, rather than stating 20 exactly.</li>
+</ol>
+
+
+</section>
+
+ ]]></description>
+  <category>tidyTuesday</category>
+  <category>R</category>
+  <guid>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</guid>
+  <pubDate>Thu, 05 Sep 2024 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>English Monarchy</title>
   <dc:creator>Steven Wolf</dc:creator>
