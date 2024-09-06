@@ -1,0 +1,195 @@
+---
+title: "Stack Overflow Annual Developer Survey"
+description: "Where are Stack Overflow users working from? Let's find out."
+author: "Steven Wolf"
+date: "9/5/2024"
+categories:
+  - tidyTuesday
+  - R 
+execute: 
+  messages: false
+  warning: false
+---
+
+This week's dataset is derived from the 2024 Stack Overflow Annual Developer Survey. Conducted in May 2024, the survey gathered responses from over 65,000 developers.
+
+Given that one of the big trends being discussed in the world right now is working from home vs. going back to the office, I was wondering if there were any trends in this data as to who is working at home. Note, that this dataset did not include gender or race data. In particular, I'm considering 3 questions:
+
+1. Does education level matter?
+2. Does age matter?
+3. Does experience/expertise matter?
+
+```{r}
+load("soSurvey.RData")
+source('helperFunctions.R')
+library(tidyverse)
+library(paletteer)
+
+personalDataCats = c('main_branch','age','remote_work','ed_level','years_code',
+                     'years_code_pro','dev_type','org_size','country','currency',
+                     'comp_total')
+
+personData <- stackoverflow_survey_single_response |>
+  select(all_of(personalDataCats)) |>
+  filter(!is.na(remote_work))
+
+cwRemote = qname_levels_single_response_crosswalk |>
+  filter(qname=='remote_work')
+
+cwRemote$label = c("Hybrid","In-person","Remote")
+remoteLevels = c("In-person","Hybrid","Remote")
+
+personData <- left_join(personData,cwRemote,by=join_by(remote_work == level)) |>
+  mutate(remote_work = factor(label,levels=remoteLevels)) |> 
+  select(!qname & !label)
+```
+
+## Work type and education level
+
+```{r echo=FALSE}
+cwEdLevel = qname_levels_single_response_crosswalk |>
+  filter(qname=='ed_level')
+
+cwEdLevel$label = c(
+  "AA/AS",
+  "BA/BS",
+  "MA/MS",
+  "Primary",
+  "Ph.D",
+  "Secondary",
+  "Some college",
+  "Other"    
+)
+
+edLevels = c(
+  "Primary",
+  "Secondary",
+  "Some college",
+  "AA/AS",
+  "BA/BS",
+  "MA/MS",
+  "Ph.D",
+  "Other"    
+)
+
+tmp1 = personData |> filter(!is.na(ed_level)) |>
+  group_by(remote_work,ed_level) |>    
+  summarize(n=n()) 
+
+groupedPD = left_join(tmp1,cwEdLevel, by=join_by(ed_level == level)) |>
+  mutate(
+    ed_level = label
+  ) |> select(remote_work,ed_level,n) |>
+  mutate(
+    ed_level = factor(ed_level,levels=edLevels),
+  )
+```
+
+```{r echo=FALSE}  
+ggplot(groupedPD,aes(fill=remote_work,x=ed_level,y=n)) +
+  geom_bar(position='stack', stat='identity') + 
+  labs(x = "Education", y="Number of responses",
+       caption = caption_text) +
+  guides(fill=guide_legend(title="Work Location")) + theme_mine() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  scale_fill_paletteer_d("fishualize::Acanthurus_coeruleus")
+```
+
+This graph shows the number of responses as well as the level of education that each user has. We can see that most users of Stack Overflow have at least 4-year college degree. This would seem to be in line with the general profile of someone working in a STEM field. It is somewhat difficult to glean what, if any, role there is between work location and education level.
+
+```{r echo=FALSE}
+ggplot(groupedPD,aes(x=remote_work,fill=ed_level,y=n)) +
+  geom_bar(position='stack', stat='identity') + 
+  labs(x = "Work location", y="Number of responses",
+       caption = caption_text) +
+  guides(fill=guide_legend(title="Education")) + theme_mine() +
+  scale_fill_paletteer_d("PrettyCols::Autumn")
+```
+
+Next, we consider the same data, but we are highlighting the counts based on work location. This plot shows that a large fraction of Stack Overflow users are working in hybrid or remote locations.
+
+In the following two plots, I'll show the same information as above, except as percentages rather than raw counts.
+
+```{r echo=FALSE}
+ggplot(groupedPD,aes(fill=remote_work,x=ed_level,y=n)) +
+  geom_bar(position='fill', stat='identity') + 
+  labs(x = "Education", y="Relative frequency",
+       caption = caption_text) +
+  guides(fill=guide_legend(title="Work Location")) + theme_mine() + 
+  theme(axis.text.x = element_text(angle = 45, hjust=1)) +
+  scale_fill_paletteer_d("fishualize::Acanthurus_coeruleus")
+
+```
+
+```{r echo=FALSE}
+ggplot(groupedPD,aes(x=remote_work,fill=ed_level,y=n)) +
+  geom_bar(position='fill', stat='identity') + 
+  labs(x = "Work location", y="Relative frequency",
+       caption = caption_text) +
+  guides(fill=guide_legend(title="Education")) + theme_mine() +
+  scale_fill_paletteer_d("PrettyCols::Autumn")
+```
+
+Neither of these suggests that education level would predict work location for stack overflow users.
+
+## Work type and age
+
+```{r echo=FALSE}
+cwAge = qname_levels_single_response_crosswalk |>
+  filter(qname=='age')
+
+ageLevels = c("<18", "18-24", "25-34", "35-44", "45-54", "55-64",
+              "65+", "Not Given")
+
+cwAge$label = c("18-24","25-34","35-44","45-54","55-64","65+","Not Given","<18")
+
+
+tmp2 = personData |> filter(!is.na(age)) |>
+  group_by(remote_work,age) |>    
+  summarize(n=n()) 
+
+groupedPD = left_join(tmp2,cwAge, by=join_by(age == level)) |>
+  mutate(
+    age = label
+  )  |> select(remote_work,age,n) |>
+  mutate(
+    age = factor(age,levels=ageLevels)
+  )
+```
+
+```{r echo=FALSE}  
+ggplot(groupedPD,aes(fill=remote_work,x=age,y=n)) +
+  geom_bar(position='stack', stat='identity') + 
+  labs(x = "Age Group", y="Number of responses",
+       caption = caption_text) +
+  guides(fill=guide_legend(title="Work location")) + theme_mine() +
+  scale_fill_paletteer_d("fishualize::Acanthurus_coeruleus")
+```
+
+The above plot looks at the number of responses by age. We can see clearly that most users are between ages 25 and 44. 
+
+```{r echo=FALSE}
+ggplot(groupedPD,aes(x=remote_work,fill=age,y=n)) +
+  geom_bar(position='fill', stat='identity') + 
+  labs(x = "Work location", y="Relative frequency",
+       caption = caption_text) +
+  guides(fill=guide_legend(title="Age Group")) + theme_mine() +
+  scale_fill_paletteer_d("PrettyCols::Autumn")
+```
+
+Here we see that the age group from 18-24 is working in-person much more than they work hybrid/remote. As this group is college-aged, and most colleges and universities are back to in-person instruction, this could suggest that students who are learning to code at university are using Stack Overflow for help (as this college professor hopes they would).  As users age, they tend to find more hybrid/remote roles.
+
+## Work type and Experience coding
+
+```{r echo=FALSE}
+ggplot(personData,aes(x=years_code_pro,y=remote_work,fill=remote_work)) +
+  geom_violin() + guides(fill='none') +
+  labs(x = "Years coding experience", y='',
+       caption = caption_text) + theme_mine() +
+  scale_fill_paletteer_d("PrettyCols::Autumn")
+```
+
+Here we see a possible echo of the college idea that I raised above. However, I see a few other things as well.
+
+1. There seems to be a significant shift that as people gain experience coding, they move from in-person roles to hybrid/remote roles.
+2. As you do something for a longer time, you tend to estimate more. All of the responses seem to favor numbers ending in 0 or 5, especially once you get past 10 years.  So if someone has 22 years of experience, they will probably round down to 20, or up to 25, rather than stating 20 exactly.
