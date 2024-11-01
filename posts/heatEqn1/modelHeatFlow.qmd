@@ -1,14 +1,15 @@
 ---
 title: "Modeling Heat Flow"
-description: "Why is my house so darn hot?"
+description: "Torture is bad. Also, half of my house gets too warm/cold, and that's not my favorite."
 author: "Steven Wolf"
 date: "11/1/2024"
-resources: 
-  - heatboxViz.gif
+number-sections: true
 categories:
   - Heat Equation
   - Python
   - Modeling
+  - 3D system
+  - Finite Difference Method
 execute: 
   messages: false
   warning: false
@@ -55,7 +56,9 @@ $$
 where $\epsilon$ is the emissivity of the blackbody (a number between 0 and 1), and $\sigma = 5.67\times 10^{-8} \frac{\text{W}}{\text{m}^2\text{K}^4}$ is the Stefan-Boltzmann constant.  I'll assume that I can ignore this for now, but will come back to this at a later time.
 
 ## Simple system
-As a "simple" 3D system, I'll model a ["hot box" or "sweatbox" used by some for torture](https://en.wikipedia.org/wiki/Box_(torture)). This is not, nor should it be construed as an endorsement of torture. It's just a simple box, and it gives me some intuitive knobs to use as I work this problem. I will model this as a box with length $L$, width $W$, and height $H$. I'll orient my coordinate system so that the origin is in a lower corner and points $(x,y,z)$ in the region of interest are bounded by the following: $0\leq x\leq L$, $0\leq y \leq W$, and $0\leq z \leq H$.  
+As a "simple" 3D system, I'll model a ["hot box" or "sweatbox" used by some for torture](https://en.wikipedia.org/wiki/Box_(torture)). This is not, nor should it be construed as an endorsement of torture. It's just a simple box, and it gives me some intuitive knobs to use as I work this problem. If you want to skip the details of the math behind the algorithm you can skip to the results in @sec-results.
+
+I will model this as a box with length $L$, width $W$, and height $H$. I'll orient my coordinate system so that the origin is in a lower corner and points $(x,y,z)$ in the region of interest are bounded by the following: $0\leq x\leq L$, $0\leq y \leq W$, and $0\leq z \leq H$.  
 
 ```{python}
 import numpy as np
@@ -70,7 +73,7 @@ T = 30*oneDay # Let this run for several days
 ```
 
 ### Thermal properties of the box
-I will assume that the box is uniform. That means no windows or ventilation. So $h$ and $k$ are constant and uniform on the boundary.  According to Wikipedia, the thermal diffusivity of air is $1.9\times 10^{-7}$ m$^2$/s. According to [this article by Jayamaha *et.al.*](https://doi.org/10.1016/0360-1323(96)00014-5), the heat transfer coefficient for walls varies from 6 to 10 W/m$^2$K.  Looking at the [greenspec.co.uk website](https://www.greenspec.co.uk/building-design/insulation-materials-thermal-properties/) it would seem that most thermal conductivities are on the order of 0.04 W/m K.
+I will assume that the box is uniform. That means no windows or ventilation. So $h$ and $k$ are constant and uniform on the boundary.  According to Wikipedia, the thermal diffusivity of air is $1.9\times 10^{-7}$ m$^2$/s. According to [this article by Jayamaha *et.al.*](https://doi.org/10.1016/0360-1323(96)00014-5), the heat transfer coefficient for walls varies from 6 to 10 $\frac{\text{W}}{\text{m}^2 \text{K}}$. Looking at the [greenspec.co.uk website](https://www.greenspec.co.uk/building-design/insulation-materials-thermal-properties/) it would seem that the thermal conductivity of most building materials is on the order of 0.02-0.04 $\frac{\text{W}}{\text{m K}}$.
 
 ```{python}
 # Heat parameters
@@ -161,8 +164,11 @@ betaG = 10*beta
 
 # Initialize the array
 u = np.empty((tmax,xmax,ymax,zmax))
+uAlt = u
 u_init = (T0+TG)/2
 u.fill(u_init)
+uAlt_init = T0-DT
+uAlt.fill(uAlt_init)
 ```
 
 
@@ -216,6 +222,7 @@ def applyBC(u, l):
   return u
   
 u = applyBC(u, 0)
+uAlt = applyBC(uAlt,0)
 ```
 
 ### Applying the finite difference method to $\dot{u} = \alpha\nabla^2u$
@@ -324,11 +331,12 @@ So the initial condition has the following heatmap:
 plotheatmaps(u,0,xmid,ymid,zmid)
 ```
 
-## Computational results:
+## Results {#sec-results}
 Finally, we will compute the time evolution of the temperature for about a month.
 
 ```{python}
 u = calcHeatEqn(u)
+uAlt = calcHeatEqn(uAlt)
 ```
 
 ### Compare interior temperature to exterior temp
@@ -338,15 +346,20 @@ I'm going to plot the external (air) temperature and compare it to the average t
 airTemp = np.zeros(tmax)
 groundTemp = np.zeros(tmax)
 boxTemp = np.zeros(tmax)
-bTerr = np.zeros(tmax)
+btErr = np.zeros(tmax)
+boxTempAlt = boxTemp
+btaErr = btErr
 boxTempZ = np.zeros((tmax,zmax))
 btzErr = np.zeros((tmax,zmax))
 for l in range(tmax):
   airTemp[l] = vair(T0,DT,t[l])
   groundTemp[l] = vground(TG,t[l])
   ul = u[l, :, :, :]
+  ulAlt = uAlt[l, :, :, :]
   boxTemp[l] = np.mean(ul)
-  bTerr[l] = np.std(ul)
+  boxTempAlt[l] = np.mean(ulAlt)
+  btErr[l] = np.std(ul)
+  btaErr[l] = np.std(ulAlt)
   for k in range(zmax):
     ulk = ul[:,:,k]
     boxTempZ[l,k] = np.mean(ulk)
@@ -354,7 +367,7 @@ for l in range(tmax):
 
 plt.figure(figsize=(6.5,4))
 plt.plot(t,airTemp,label="Air Temp",ls='dashed',linewidth=1)
-plt.errorbar(t,boxTemp,yerr=bTerr, label="Avg. Box Temp",linewidth=5,
+plt.errorbar(t,boxTemp,yerr=btErr, label="Avg. Box Temp",linewidth=5,
   capsize=2, errorevery=24)
 plt.xlabel('Time (s)')
 plt.ylabel('Temperature (deg C)')
@@ -369,7 +382,9 @@ plt.legend(loc="center left", bbox_to_anchor=(1.04,0.5))
 plt.show()
 ```
 
-Just to see that this is stabilizing, and to get an idea of how fast this stabilizes, I'm going to find a daily average temperature as above.
+This matches my intuition that the box should not get quite as hot as the exterior, but should see temperature swings of 5-10$^\circ$C.
+
+Just to see that this is stabilizing, and to get an idea of how fast this stabilizes, I'm going to find a daily average temperature as above. 
 
 ```{python}
 stepsInDay = int(oneDay/Deltat)
@@ -378,14 +393,19 @@ day = np.arange(0,days)
 
 boxTempDay = np.zeros(days)
 btdErr = np.zeros(days)
+boxTempDayAlt = boxTempDay
+btdaErr = btdErr
 boxTempDayZ = np.zeros((days,zmax))
 btdzErr = np.zeros((days,zmax))
 for d in range(days):
     lmin = int(d*stepsInDay)
     lmax = int((d+1)*stepsInDay)
     ul = u[lmin:lmax, :, :, :]
+    ulAlt = uAlt[lmin:lmax, :, :, :]
     boxTempDay[d] = np.mean(ul)
+    boxTempDayAlt[d] = np.mean(ulAlt)
     btdErr[d] = np.std(ul)
+    btdaErr[d] = np.std(ulAlt)
     for k in range(zmax):
         ulk = ul[:,:,:,k]
         boxTempDayZ[d,k] = np.mean(ulk)
@@ -402,6 +422,24 @@ for k in reversed(range(0,zmax,zmax//5)):
     capsize=2)
     
 plt.legend(loc="center left", bbox_to_anchor=(1.04,0.5))
+plt.show()
+```
+
+Also, I've repeated this calculation with the box starting at a different initial temperature. After a month, I expect two identical boxes to exhibit the same behavior--much in the way that the long-term behavior of a Damped-Driven Oscillator is independent of the initial conditions.
+
+```{python}
+fig, (ax0, ax1) = plt.subplots(1,2,figsize=(8,4),sharey=True)
+ax0.plot(t,boxTemp, '-', label=rf"$T_i=${u_init:.0f}")
+ax0.plot(t,boxTempAlt, '--', label=rf"$T_i=${uAlt_init:.0f}")
+ax0.set_xlabel('Time (s)')
+ax0.set_ylabel('Temperature (deg C)')
+ax0.legend()
+
+ax1.plot(day,boxTempDay, 'o', label=rf"$T_i=${u_init:.0f}")
+ax1.plot(day,boxTempDayAlt, 's', label=rf"$T_i=${uAlt_init:.0f}")
+ax1.set_xlabel('Time (days)')
+ax1.set_ylabel('Temperature (deg C)')
+ax1.legend()
 plt.show()
 ```
 
