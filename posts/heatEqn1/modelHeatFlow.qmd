@@ -443,6 +443,10 @@ ax1.legend()
 plt.show()
 ```
 
+These are quite similar. Let's look at this for the first day only.
+
+> Insert code here.
+
 ### Heatmaps
 Let's view the middle cross sections every few hours on the last day:
 
