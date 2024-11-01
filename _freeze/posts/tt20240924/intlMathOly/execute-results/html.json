@@ -1,0 +1,15 @@
+{
+  "hash": "0e33ab82728604f40d4fd3f320525d89",
+  "result": {
+    "engine": "knitr",
+    "markdown": "---\ntitle: \"International Math Olympiad\"\ndescription: \"Does it get any easier?\"\nauthor: \"Steven Wolf\"\ndate: \"9/24/2024\"\ncategories:\n  - tidyTuesday\n  - R \nexecute: \n  messages: false\n  warning: false\ndraft:\n  true\n---\n\n\n\n\n\nThe data for this week comes from International Mathematical Olympiad (IMO).\n\n> The International Mathematical Olympiad (IMO) is the World Championship Mathematics Competition for High School students and is held annually in a different country. The first IMO was held in 1959 in Romania, with 7 countries participating. It has gradually expanded to over 100 countries from 5 continents. The competition consists of 6 problems and is held over two consecutive days with 3 problems each.\n\n\n\n\n\n::: {.cell}\n\n:::\n",
+    "supporting": [],
+    "filters": [
+      "rmarkdown/pagebreak.lua"
+    ],
+    "includes": {},
+    "engineDependencies": {},
+    "preserve": {},
+    "postProcess": true
+  }
+}
