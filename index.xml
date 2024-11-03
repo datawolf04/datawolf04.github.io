@@ -10,7 +10,1600 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.5.57</generator>
-<lastBuildDate>Thu, 05 Sep 2024 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Sun, 03 Nov 2024 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Modeling Heat Flow</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="personal-motivation-for-this-post" class="level2">
+<h2 class="anchored" data-anchor-id="personal-motivation-for-this-post">Personal Motivation for this post</h2>
+<p>I have a house, and I need to improve the heating/cooling in it. Essentially, the problem is that my house is a long and narrow, and the air return is not able to sufficiently draw the cold/hot air from rooms on the far side of the house. Essentially, the air return/exchange system is not sufficient. As a result, half of my house is really hot in the summer/extra chilly in the winter.</p>
+<p>There is some ducting in place intended to aid circulation, but it is ineffective as it doesn’t draw any air from the hot/cold room, relying on diffusion only to drive circulation. Furthermore, it is located in a bedroom rather than the living room which is significantly larger, more distant from the return, and–as a result–has the largest temperature problem. I am planning on installing a duct fan, which will help solve this problem. But that leaves these questions:</p>
+<ol type="1">
+<li>How strong should my duct fan be?</li>
+<li>Will the existing return be enough to alleviate the problem by simply adding in a duct fan?</li>
+<li>If the answer to the previous question is no, where should I put another vent to make the biggest impact?</li>
+</ol>
+<p>I figure I can use my physics brain, and a little code to analyze this problem. So I’m going to spend some time figuring out how to implement the heat equation with appropriate boundary conditions applying them to scenarios that are progressively more complex, until I feel that I can apply them to my own house.</p>
+</section>
+<section id="heat-equation" class="level2">
+<h2 class="anchored" data-anchor-id="heat-equation">Heat Equation</h2>
+<p>All of this starts by understanding heat flow. The heat equation is:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20t%7D%20=%20%5Calpha%20%5Cnabla%5E2u%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?u%20=%20u(x,y,z,t)"> is a function describing the temperature at every point in space and time in the region of interest and <img src="https://latex.codecogs.com/png.latex?%5Calpha"> is the Thermal Diffusivity of the material (which can depend on position as well). There are many boundary conditions that can be applied, but I will apply <em>Robin Conditions</em> which generally apply to convection/conduction.</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Ak%20%5Cleft.%20%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20n%7D%5Cright%7C_%7BS%7D%20=%20h%20%5Cleft(u(S,t)%20-%20v(S,%20t)%5Cright)%0A"></p>
+<p>Here <img src="https://latex.codecogs.com/png.latex?n"> is the direction of the outward normal of the boundary surface, <img src="https://latex.codecogs.com/png.latex?S"> indicates a spatial point on the boundary surface, <img src="https://latex.codecogs.com/png.latex?k"> is the thermal conductivity, <img src="https://latex.codecogs.com/png.latex?h"> is the heat transfer coefficient, and <img src="https://latex.codecogs.com/png.latex?v"> is the temperature on the other side of the boundary. This is the “Newton’s law of cooling” that you may have heard about in an introductory calculus class, although, it is usually presented as:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7BdT%7D%7Bdt%7D%20=%20-a(T-T_0)%0A"> where <img src="https://latex.codecogs.com/png.latex?a"> is some sort of constant, and <img src="https://latex.codecogs.com/png.latex?T_0"> is the temperature of the surroundings. What this means is that the steady-state behavior of this system is that it tends towards the temperature of the surroundings. This has limitations which I will discuss later.</p>
+</section>
+<section id="simple-system" class="level2">
+<h2 class="anchored" data-anchor-id="simple-system">Simple system</h2>
+<p>As a “simple” 3D system, I’ll model a <a href="https://en.wikipedia.org/wiki/Box_(torture)">“hot box” or “sweatbox” used by some for torture</a>. This is not, nor should it be construed as an endorsement of torture. It’s just a simple box, and it gives me some intuitive knobs to use as I work this problem. Also, given the boundary condition that I previously mentioned, this means that the box can never be warmer than the surroundings. This isn’t fully realistic yet, as anyone who has seen a PSA about leaving kids/pets in a hot car even on a “cool” day. But there’s enough here to get me to start writing code.</p>
+<section id="box-dimensions" class="level3">
+<h3 class="anchored" data-anchor-id="box-dimensions">Box dimensions</h3>
+<p>I will model this as a box with length <img src="https://latex.codecogs.com/png.latex?L">, width <img src="https://latex.codecogs.com/png.latex?W">, and height <img src="https://latex.codecogs.com/png.latex?H">. I’ll orient my coordinate system so that the origin is in a lower corner and points <img src="https://latex.codecogs.com/png.latex?(x,y,z)"> in the region of interest are bounded by the following: <img src="https://latex.codecogs.com/png.latex?0%5Cleq%20x%5Cleq%20L">, <img src="https://latex.codecogs.com/png.latex?0%5Cleq%20y%20%5Cleq%20W">, and <img src="https://latex.codecogs.com/png.latex?0%5Cleq%20z%20%5Cleq%20H">.</p>
+<div id="d58290dd" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-3"></span>
+<span id="cb1-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Length and time parameters (meters)</span></span>
+<span id="cb1-5">L <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb1-6">W <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-7">H <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb1-8">oneDay <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># seconds</span></span>
+<span id="cb1-9">T <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>oneDay <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Let this run for several days</span></span></code></pre></div>
+</div>
+</section>
+<section id="thermal-properties-of-the-box" class="level3">
+<h3 class="anchored" data-anchor-id="thermal-properties-of-the-box">Thermal properties of the box</h3>
+<p>I will assume that the box is uniform. That means no windows or ventilation. So <img src="https://latex.codecogs.com/png.latex?h"> and <img src="https://latex.codecogs.com/png.latex?k"> are constant and uniform on the boundary. According to Wikipedia, the thermal diffusivity of air is <img src="https://latex.codecogs.com/png.latex?1.9%5Ctimes%2010%5E%7B-7%7D"> m<img src="https://latex.codecogs.com/png.latex?%5E2">/s. According to <a href="https://doi.org/10.1016/0360-1323(96)00014-5">this article by Jayamaha <em>et.al.</em></a>, the heat transfer coefficient for walls varies from 6 to 10 <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctext%7BW%7D%7D%7B%5Ctext%7Bm%7D%5E2%20%5Ctext%7BK%7D%7D">. Looking at the <a href="https://www.greenspec.co.uk/building-design/insulation-materials-thermal-properties/">greenspec.co.uk website</a> it would seem that the thermal conductivity of most building materials is on the order of 0.02-0.04 <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctext%7BW%7D%7D%7B%5Ctext%7Bm%20K%7D%7D">.</p>
+<div id="01b94115" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Heat parameters</span></span>
+<span id="cb2-2">alpha <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.9e-7</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># meters^2/s for air</span></span>
+<span id="cb2-3">h <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># From Jayamaha</span></span>
+<span id="cb2-4">k <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.04</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># From Greenspec</span></span></code></pre></div>
+</div>
+</section>
+<section id="modeling-exterior-temperature" class="level3">
+<h3 class="anchored" data-anchor-id="modeling-exterior-temperature">Modeling exterior temperature</h3>
+<p>I’m going to assume the air temperature is time-dependent, and takes the form:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Av%5E%7B%5Ctext%7Bair%7D%7D(t)%20=%20T_0%20-%20%5CDelta%20T%20%5Ccos%5Cleft(%5COmega%20t%5Cright)%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?T_0"> is the average temperature of the day, and <img src="https://latex.codecogs.com/png.latex?%5CDelta%20T"> represents the range of temperature. On the ground, I’ll assume the temperature is constant at <img src="https://latex.codecogs.com/png.latex?T_G">. So <img src="https://latex.codecogs.com/png.latex?t=0"> is sunrise. Making these parameters functions is overkill for now, but will be helpful as I get more complicated.</p>
+<div id="604bede8" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Temperature parameters</span></span>
+<span id="cb3-2">T0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">33</span></span>
+<span id="cb3-3">DT <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span></span>
+<span id="cb3-4">TG <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">35</span></span>
+<span id="cb3-5"></span>
+<span id="cb3-6"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> vair(T0,DT,t):</span>
+<span id="cb3-7">  Omega <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>oneDay</span>
+<span id="cb3-8">  vair <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> T0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> DT <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.cos(Omega <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t)</span>
+<span id="cb3-9">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> vair</span>
+<span id="cb3-10"></span>
+<span id="cb3-11"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> vground(TG, t):</span>
+<span id="cb3-12">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> TG</span></code></pre></div>
+</div>
+</section>
+</section>
+<section id="going-from-differential-equations-to-matrix-equations" class="level2">
+<h2 class="anchored" data-anchor-id="going-from-differential-equations-to-matrix-equations">Going from differential equations to matrix equations</h2>
+<p>This is going to get a bit technical, and if you want to skip the details of the math behind the algorithm you can skip to the results in Section&nbsp;5.</p>
+<p>Essentially, the basis for all numerical methods involving systems that evolve in space and time is to replace continuous space and time values with a discrete mesh of space and time values. For this system, we are looking for the temperature at every location in space and time. So we will do this on a reduced space/time grid. Instead of having a function of <img src="https://latex.codecogs.com/png.latex?(x,y,z,t)"> we will have a 4-dimensional matrix that I will denote as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Au(x,y,z,t)%20%5Crightarrow%20u(x_i,y_j,z_k,t_l)%20=%20u%5El_%7Bijk%7D%0A"></p>
+<p>For this I will define:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0Ax_i%20&amp;=%20i%20%5CDelta%20x%20%5C%5C%0Ay_j%20&amp;=%20j%20%5CDelta%20y%20%5C%5C%0Az_k%20&amp;=%20k%20%5CDelta%20z%20%5C%5C%0At_l%20&amp;=%20l%20%5CDelta%20t%20%5C%5C%0A%5Cend%7Balign*%7D%0A"></p>
+<p>where <img src="https://latex.codecogs.com/png.latex?%5CDelta%20x,%20%5CDelta%20y,%20%5CDelta%20z,"> and <img src="https://latex.codecogs.com/png.latex?%5CDelta%20t"> are computational choices. Indeed, this freedom will allow me to choose <img src="https://latex.codecogs.com/png.latex?%5CDelta%20x%20=%20%5CDelta%20y%20=%20%5CDelta%20z">. I will choose <img src="https://latex.codecogs.com/png.latex?%5CDelta%20x%20=%205"> cm and <img src="https://latex.codecogs.com/png.latex?%5CDelta%20t%20=%2015"> minutes. I’ll also define the max indices for this system, and also set up values for the grid. I will also set up the <img src="https://latex.codecogs.com/png.latex?u%5El_%7Bijk%7D"> grid, and fill it with a constant value. Actually, I will do this for two different initial temperatures. If my code is working correctly, the initial temperature of the box should not matter if we let the simulation run for long enough. Think about it this way: Imagine that you have two identical coolers, one filled with ice and the other empty. Now, let the coolers sit for a year in your yard. After that year, the coolers will no longer have a different temperature.</p>
+<div id="2df29995" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Computational parameters (time step and mesh size)</span></span>
+<span id="cb4-2">Deltat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">15</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 15 minutes in seconds</span></span>
+<span id="cb4-3">Deltax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># 5 cm in meters</span></span>
+<span id="cb4-4"></span>
+<span id="cb4-5">xmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(L<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax)</span>
+<span id="cb4-6">ymax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(W<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax)</span>
+<span id="cb4-7">zmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(H<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax)</span>
+<span id="cb4-8">tmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(T<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltat)</span>
+<span id="cb4-9"></span>
+<span id="cb4-10">xmid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> xmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb4-11">ymid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ymax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb4-12">zmid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> zmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb4-13"></span>
+<span id="cb4-14">t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,T,tmax)</span>
+<span id="cb4-15">xgrid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,L,xmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-16">ygrid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,W,ymax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-17">zgrid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,H,zmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-18"></span>
+<span id="cb4-19"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initialize the array(s) with a few different initial temperatures.</span></span>
+<span id="cb4-20">u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.empty((tmax,xmax,ymax,zmax))</span>
+<span id="cb4-21">uAlt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.empty((tmax,xmax,ymax,zmax))</span>
+<span id="cb4-22">u_init <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> T0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>DT</span>
+<span id="cb4-23">u.fill(u_init)</span>
+<span id="cb4-24">uAlt_init <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (T0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>TG)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb4-25">uAlt.fill(uAlt_init)</span></code></pre></div>
+</div>
+<section id="applying-the-finite-difference-method-to-the-boundary-condition" class="level3">
+<h3 class="anchored" data-anchor-id="applying-the-finite-difference-method-to-the-boundary-condition">Applying the Finite difference method to the boundary condition</h3>
+<p>The boundary condition for conduction/convection states that the gradient of the temperature function at the boundary is proportional to the temperature difference across that boundary. For example on the surface where <img src="https://latex.codecogs.com/png.latex?x=0"> (or <img src="https://latex.codecogs.com/png.latex?i=0">), the outward normal direction is in the <img src="https://latex.codecogs.com/png.latex?-x"> direction: <img src="https://latex.codecogs.com/png.latex?%0A%5Cleft.%20k%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20x%7D%5Cright%7C_%7Bx=0%7D%20=%20h(u(x=0,y,z,t)%20-%20v(x=0,y,z,t))%0A"> I will apply the <a href="https://en.wikipedia.org/wiki/Finite_difference_method">finite difference method</a> to find the spatial derivatives. <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20x%7D%20&amp;=%20%5Cfrac%7Bu%5El_%7Bi+1%20jk%7D-u%5El_%7Bijk%7D%7D%7B%5CDelta%20x%7D%20%20%20%5C%5C%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20y%7D%20&amp;=%20%5Cfrac%7Bu%5El_%7Bij+1%20k%7D-u%5El_%7Bijk%7D%7D%7B%5CDelta%20y%7D%20%20%20%5C%5C%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20z%7D%20&amp;=%20%5Cfrac%7Bu%5El_%7Bijk+1%7D-u%5El_%7Bijk%7D%7D%7B%5CDelta%20z%7D%20%20%20%5C%5C%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Therefore, for <img src="https://latex.codecogs.com/png.latex?i=0"> (the <img src="https://latex.codecogs.com/png.latex?x=0"> boundary) we get: <img src="https://latex.codecogs.com/png.latex?%0Au%5El_%7B1jk%7D%20-%20u%5El_%7B0jk%7D%20=%20%5Cfrac%7Bh%5CDelta%20x%7D%7Bk%7D%20%5Cleft(u%5El_%7B0jk%7D%20-%20v%5El_%7Bjk%7D%5Cright)%0A"> Solve for <img src="https://latex.codecogs.com/png.latex?u%5El_%7B0jk%7D">: <img src="https://latex.codecogs.com/png.latex?%0Au%5El_%7B0jk%7D%20=%20%5Cfrac%7Bu%5El_%7B1jk%7D%20+%20%5Cbeta%20v%5El_%7Bjk%7D%7D%7B1+%5Cbeta%7D%0A"></p>
+<p>where I have defined: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbeta%20=%20%5Cfrac%7Bh%20%5CDelta%20x%7D%7Bk%7D%0A"> Note that if <img src="https://latex.codecogs.com/png.latex?%5Cbeta%20=%200"> boundary has an infinite thermal conductivity and <img src="https://latex.codecogs.com/png.latex?u%5El_%7B0jk%7D%20=%20u%5El_%7B1jk%7D"> or <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20n%7D%20=%200">. This is the <em>Neumann Boundary Condition</em>. If <img src="https://latex.codecogs.com/png.latex?%5Cbeta%5Crightarrow%5Cinfty">, we find <img src="https://latex.codecogs.com/png.latex?u%5El_%7B0jk%7D%20=%20v%5El_%7Bjk%7D"> and the temperature at the boundary is equal to the exterior temperature. This is the <em>Dirichelet Boundary Condition</em>.</p>
+<p>Plugging in some numbers, I’ll assume that the proportionality constant <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> for heat exchange with the ground is 10 times larger than the same constant for heat exchange with the air.</p>
+<p>Let’s put this into code and apply the boundary condition to the initial array:</p>
+<div id="0f127a0f" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> h<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Deltax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>k</span>
+<span id="cb5-2">betaG <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>beta</span>
+<span id="cb5-3"></span>
+<span id="cb5-4"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> applyBC(umat, tl):</span>
+<span id="cb5-5">  t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tl<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Deltat</span>
+<span id="cb5-6">  umat[tl, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (umat[tl, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> vair(T0,DT,t))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>beta)</span>
+<span id="cb5-7">  umat[tl, xmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (umat[tl, xmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, :, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> vair(T0,DT,t))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>beta)</span>
+<span id="cb5-8">  umat[tl, :, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (umat[tl, :, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> vair(T0,DT,t))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>beta)</span>
+<span id="cb5-9">  umat[tl, :, ymax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (umat[tl, :, ymax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, :] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> vair(T0,DT,t))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>beta)</span>
+<span id="cb5-10">  umat[tl, :, :, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (umat[tl, :, :, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> betaG <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> vground(TG,t))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>betaG)</span>
+<span id="cb5-11">  umat[tl, :, :, zmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (umat[tl, :, :, zmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> beta <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> vair(T0,DT,t))<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>beta)</span>
+<span id="cb5-12">  </span>
+<span id="cb5-13">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> umat</span>
+<span id="cb5-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## Apply BCs at t=0 to finish initializing array</span></span>
+<span id="cb5-15">u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> applyBC(u, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb5-16">uAlt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> applyBC(uAlt,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span></code></pre></div>
+</div>
+</section>
+<section id="applying-the-finite-difference-method-to-the-heat-equation-dotu-alphanabla2u" class="level3">
+<h3 class="anchored" data-anchor-id="applying-the-finite-difference-method-to-the-heat-equation-dotu-alphanabla2u">Applying the finite difference method to the heat equation: <img src="https://latex.codecogs.com/png.latex?%5Cdot%7Bu%7D%20=%20%5Calpha%5Cnabla%5E2u"></h3>
+<p>I will again apply the <a href="https://en.wikipedia.org/wiki/Finite_difference_method">finite difference method</a> to find the derivatives. The first derivative in time is: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20u%7D%7B%5Cpartial%20t%7D%20=%20%5Cfrac%7Bu%5E%7Bl+1%7D_%7Bijk%7D%20-%20u%5E%7Bl%7D_%7Bijk%7D%7D%7B%5CDelta%20t%7D%0A"></p>
+<p>Another aspect of this method is that the Laplacian at any point can be calculated through the average of the difference between the nearest neighbors of that point and the point itself: <img src="https://latex.codecogs.com/png.latex?%0A%5Cnabla%5E2%20u(x,y,z,t)%20=%20%5Cfrac%7Bu%5El_%7Bi+1%20jk%7D%20+%20u%5El_%7Bi-1%20jk%7D%20+%0A%20%20%20%20u%5El_%7Bij+1k%7D%20+%20u%5El_%7Bij-1k%7D%20+%20u%5El_%7Bijk+1%7D%20+%20u%5El_%7Bijk-1%7D%20-%206%20u%5El_%7Bijk%7D%7D%7B(%5CDelta%20x)%5E2%7D%0A"></p>
+<p>The heat equation becomes: <img src="https://latex.codecogs.com/png.latex?%0Au%5E%7Bl+1%7D_%7Bijk%7D%20=%20u%5El_%7Bijk%7D%20+%20%5Cfrac%7B%5Calpha%20%5CDelta%20t%7D%7B%5CDelta%20x%5E2%7D%0A%20%20%20%20%5Cleft(u%5El_%7Bi+1%20jk%7D%20+%20u%5El_%7Bi-1%20jk%7D%20+%20u%5El_%7Bij+1k%7D%20+%20u%5El_%7Bij-1k%7D%20+%20u%5El_%7Bijk+1%7D%20+%20u%5El_%7Bijk-1%7D%20-%206%20u%5El_%7Bijk%7D%20%5Cright)%0A"> Basically, this equation gives us a method for finding the temperature after a time step given the temperature at the previous time step. I will define the dimensionless constant <img src="https://latex.codecogs.com/png.latex?%5Cgamma"> as follows:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0A%5Cgamma%20=%20%5Cfrac%7B%5Calpha%20%5CDelta%20t%7D%7B%5CDelta%20x%5E2%7D%0A"></p>
+<p>so we finally obtain: <img src="https://latex.codecogs.com/png.latex?%0Au%5E%7Bl+1%7D_%7Bijk%7D%20=%20u%5El_%7Bijk%7D%20+%20%5Cgamma%20%5Cleft(u%5El_%7Bi+1%20jk%7D%20+%20u%5El_%7Bi-1%20jk%7D%20+%20u%5El_%7Bij+1k%7D%20+%0A%20%20%20%20%20%20u%5El_%7Bij-1k%7D%20+%20u%5El_%7Bijk+1%7D%20+%20u%5El_%7Bijk-1%7D%20-%206%20u%5El_%7Bijk%7D%20%5Cright)%0A"></p>
+<p>Now I will convert this to code:</p>
+<div id="5a8d57a8" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">gamma <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> alpha<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Deltat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb6-2"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> calcHeatEqn(umat):</span>
+<span id="cb6-3">    tm, xm, ym, zm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> umat.shape</span>
+<span id="cb6-4">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Apply BCs</span></span>
+<span id="cb6-5">    umat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> applyBC(umat, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb6-6">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> l <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,tm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>):</span>
+<span id="cb6-7">      <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, xm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>):</span>
+<span id="cb6-8">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> j <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, ym<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>):</span>
+<span id="cb6-9">          <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, zm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>):</span>
+<span id="cb6-10">            umat[l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,i,j,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> umat[l,i,j,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> gamma <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (umat[l,i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,j,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb6-11">                  umat[l,i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,j,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> umat[l,i,j<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> umat[l,i,j<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> </span>
+<span id="cb6-12">                  umat[l,i,j,k<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> umat[l,i,j,k<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> umat[l,i,j,k])</span>
+<span id="cb6-13">      umat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> applyBC(umat, l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb6-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> umat</span></code></pre></div>
+</div>
+</section>
+<section id="visualizing-the-temperature" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-the-temperature">Visualizing the temperature:</h3>
+<p>The grid will probably be too fine to visualize well on a 3d heatmap. So I’ll settle for some cross sections. The function <code>plotheatmaps</code> will plot heat maps inside the box for a given time in 3 perpendicular planes.</p>
+<div id="02075b91" class="cell" data-execution_count="7">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> plotheatmaps(umat,l,i,j,k):</span>
+<span id="cb7-2">  Tmin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>([u.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),T0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>DT])</span>
+<span id="cb7-3">  Tmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>([u.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(),T0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>DT])</span>
+<span id="cb7-4">  </span>
+<span id="cb7-5">  xSlice <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> umat[l,i,:,:].transpose()</span>
+<span id="cb7-6">  ySlice <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> umat[l,:,j,:].transpose()</span>
+<span id="cb7-7">  zSlice <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> umat[l,:,:,k].transpose()</span>
+<span id="cb7-8">  </span>
+<span id="cb7-9">  time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Deltat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>l</span>
+<span id="cb7-10">  tMins <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span></span>
+<span id="cb7-11">  theMinutes <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tMins <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span></span>
+<span id="cb7-12">  </span>
+<span id="cb7-13">  tHours <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tMins <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">60</span></span>
+<span id="cb7-14">  theDays <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tHours <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span></span>
+<span id="cb7-15">  theHours <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tHours <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span></span>
+<span id="cb7-16">  </span>
+<span id="cb7-17">  theTime <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(theDays) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" days "</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(theHours) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" hrs "</span>  <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">str</span>(theMinutes) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">" min"</span></span>
+<span id="cb7-18"></span>
+<span id="cb7-19">  xC, yC, zC <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [Deltax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>i, Deltax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>j, Deltax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>k]</span>
+<span id="cb7-20">  </span>
+<span id="cb7-21">  fig, (ax0,ax1,ax2) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(ncols<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,width_ratios<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[ymax,xmax,xmax],</span>
+<span id="cb7-22">              figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>))</span>
+<span id="cb7-23">    </span>
+<span id="cb7-24">  fig.suptitle(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Heatbox Temp at </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>theTime<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> Outdoor Temp = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>vair(T0,DT,time)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> C </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> Ground Temp = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>vground(TG,time)<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> C"</span>)</span>
+<span id="cb7-25">    </span>
+<span id="cb7-26">  im0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax0.pcolormesh(ygrid, zgrid, xSlice, shading<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"flat"</span>, vmin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Tmin, vmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Tmax)</span>
+<span id="cb7-27">  ax0.set_aspect(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb7-28">  ax0.set_title(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"x = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>xC<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> m"</span>)</span>
+<span id="cb7-29">  ax0.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"y"</span>)</span>
+<span id="cb7-30">  ax0.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"z"</span>)</span>
+<span id="cb7-31"></span>
+<span id="cb7-32">  im1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax1.pcolormesh(xgrid, zgrid, ySlice, shading<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"flat"</span>, vmin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Tmin, vmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Tmax)</span>
+<span id="cb7-33">  ax1.set_aspect(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb7-34">  ax1.set_title(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"y = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>yC<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> m"</span>)</span>
+<span id="cb7-35">  ax1.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"x"</span>)</span>
+<span id="cb7-36">  ax1.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"z"</span>)</span>
+<span id="cb7-37">  </span>
+<span id="cb7-38">  im2 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax2.pcolormesh(xgrid, ygrid, zSlice, shading<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"flat"</span>, vmin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Tmin, vmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Tmax)</span>
+<span id="cb7-39">  ax2.set_aspect(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb7-40">  ax2.set_title(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"z = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>zC<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> m"</span>)</span>
+<span id="cb7-41">  ax2.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"x"</span>)</span>
+<span id="cb7-42">  ax2.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"y"</span>)</span>
+<span id="cb7-43">  </span>
+<span id="cb7-44">  fig.tight_layout()</span>
+<span id="cb7-45">  </span>
+<span id="cb7-46">  cax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_axes([ax0.get_position().x0,ax0.get_position().y0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>,</span>
+<span id="cb7-47">                ax2.get_position().x1 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> ax0.get_position().x0, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span>])</span>
+<span id="cb7-48">  fig.colorbar(im2, cax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cax, orientation<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'horizontal'</span>)</span></code></pre></div>
+</details>
+</div>
+<p>So the initial condition has the following heatmap:</p>
+<div id="f7630514" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">plotheatmaps(u,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,xmid,ymid,zmid)</span>
+<span id="cb8-2">plotheatmaps(uAlt,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,xmid,ymid,zmid)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-9-output-1.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-9-output-2.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-results" class="level2">
+<h2 class="anchored" data-anchor-id="sec-results">Results</h2>
+<p>Finally, we will compute the time evolution of the temperature for the two scenarios.</p>
+<div id="3fafa784" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> calcHeatEqn(u)</span>
+<span id="cb9-2">uAlt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> calcHeatEqn(uAlt)</span></code></pre></div>
+</div>
+<section id="different-initial-condition-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="different-initial-condition-comparison">Different initial condition comparison</h3>
+<p>I’m going to start by comparing the behavior of the system given different initial conditions for the starting temperature within the box. The hidden code below crunches the average temperatures for the plots in this and the following sections.</p>
+<div id="6f430d76" class="cell" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## Calculate averages at every time step</span></span>
+<span id="cb10-2">airTemp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(tmax)</span>
+<span id="cb10-3">groundTemp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(tmax)</span>
+<span id="cb10-4">boxTemp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(tmax)</span>
+<span id="cb10-5">btErr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(tmax)</span>
+<span id="cb10-6">boxTempAlt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(tmax)</span>
+<span id="cb10-7">btaErr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(tmax)</span>
+<span id="cb10-8">boxTempZ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((tmax,zmax))</span>
+<span id="cb10-9">btzErr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((tmax,zmax))</span>
+<span id="cb10-10"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> l <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(tmax):</span>
+<span id="cb10-11">  airTemp[l] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vair(T0,DT,t[l])</span>
+<span id="cb10-12">  groundTemp[l] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vground(TG,t[l])</span>
+<span id="cb10-13">  ul <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> u[l, :, :, :]</span>
+<span id="cb10-14">  ulAlt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uAlt[l, :, :, :]</span>
+<span id="cb10-15">  boxTemp[l] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(ul)</span>
+<span id="cb10-16">  boxTempAlt[l] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(ulAlt)</span>
+<span id="cb10-17">  btErr[l] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.std(ul)</span>
+<span id="cb10-18">  btaErr[l] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.std(ulAlt)</span>
+<span id="cb10-19">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(zmax):</span>
+<span id="cb10-20">    ulk <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ul[:,:,k]</span>
+<span id="cb10-21">    boxTempZ[l,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(ulk)</span>
+<span id="cb10-22">    btzErr[l,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.std(ulk)</span>
+<span id="cb10-23"></span>
+<span id="cb10-24"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## Calcs for temp in the day</span></span>
+<span id="cb10-25">stepsInDay <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(oneDay<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltat)</span>
+<span id="cb10-26">days <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(T<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>oneDay)</span>
+<span id="cb10-27">day <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,days)</span>
+<span id="cb10-28"></span>
+<span id="cb10-29">boxTempDay <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(days)</span>
+<span id="cb10-30">btdErr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(days)</span>
+<span id="cb10-31">boxTempDayAlt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(days)</span>
+<span id="cb10-32">btdaErr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(days)</span>
+<span id="cb10-33">boxTempDayZ <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((days,zmax))</span>
+<span id="cb10-34">btdzErr <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros((days,zmax))</span>
+<span id="cb10-35"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> d <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(days):</span>
+<span id="cb10-36">    lmin <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(d<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>stepsInDay)</span>
+<span id="cb10-37">    lmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>((d<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>stepsInDay)</span>
+<span id="cb10-38">    ul <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> u[lmin:lmax, :, :, :]</span>
+<span id="cb10-39">    boxTempDay[d] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(u[lmin:lmax, :, :, :])</span>
+<span id="cb10-40">    boxTempDayAlt[d] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(uAlt[lmin:lmax, :, :, :])</span>
+<span id="cb10-41">    btdErr[d] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.std(u[lmin:lmax, :, :, :])</span>
+<span id="cb10-42">    btdaErr[d] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.std(uAlt[lmin:lmax, :, :, :])</span>
+<span id="cb10-43">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(zmax):</span>
+<span id="cb10-44">        boxTempDayZ[d,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.mean(ul[:,:,:,k])</span>
+<span id="cb10-45">        btdzErr[d,k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.std(ul[:,:,:,k])</span></code></pre></div>
+</details>
+</div>
+<p>As noted previously, after a long enough time, I expect two identical boxes to exhibit the same behavior regardless of their initial conditions–much in the way that the long-term behavior of a Damped-Driven Oscillator is independent of the initial conditions. Let’s check that out here:</p>
+<div id="8e44cdba" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">fig, (ax0, ax1) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>),sharey<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>)</span>
+<span id="cb11-2">ax0.plot(t,boxTemp, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'-'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">rf"$T_i=$</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>u_init<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb11-3">ax0.plot(t,boxTempAlt, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'--'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">rf"$T_i=$</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>uAlt_init<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb11-4">ax0.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Time (s)'</span>)</span>
+<span id="cb11-5">ax0.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature (deg C)'</span>)</span>
+<span id="cb11-6">ax0.legend()</span>
+<span id="cb11-7"></span>
+<span id="cb11-8">ax1.plot(day,boxTempDay, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'o'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">rf"$T_i=$</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>u_init<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb11-9">ax1.plot(day,boxTempDayAlt, <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'s'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">rf"$T_i=$</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>uAlt_init<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span>)</span>
+<span id="cb11-10">ax1.set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Time (days)'</span>)</span>
+<span id="cb11-11">ax1.set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature (deg C)'</span>)</span>
+<span id="cb11-12">ax1.legend()</span>
+<span id="cb11-13">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-12-output-1.png" width="659" height="356" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It would seem that the 10 days that I have simulated is long enough for these systems to reach this “steady state” solution.</p>
+</section>
+<section id="compare-interior-temperature-to-exterior-temp" class="level3">
+<h3 class="anchored" data-anchor-id="compare-interior-temperature-to-exterior-temp">Compare interior temperature to exterior temp</h3>
+<p>I’m going to plot the external (air) temperature and compare it to the average temperature in the box, as well as consider the average temperature in horizontal slices as the change in time.</p>
+<div id="a655e492" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6.5</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb12-2">plt.plot(t,airTemp,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Air Temp"</span>,ls<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'dashed'</span>,linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb12-3">plt.errorbar(t,boxTemp,yerr<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>btErr, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Avg. Box Temp"</span>,linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, capsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, errorevery<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">24</span>)</span>
+<span id="cb12-4">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Time (s)'</span>)</span>
+<span id="cb12-5">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature (deg C)'</span>)</span>
+<span id="cb12-6"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">reversed</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,zmax,zmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)):</span>
+<span id="cb12-7">    zval <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> k<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Deltax</span>
+<span id="cb12-8">    labString <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Avg Temp at z=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>zval<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> m"</span></span>
+<span id="cb12-9">    plt.plot(t,boxTempZ[:,k],label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>labString, linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb12-10">    </span>
+<span id="cb12-11">plt.plot(t,groundTemp,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Ground Temp"</span>,ls<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"dashed"</span>,linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb12-12">plt.legend(loc<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"center left"</span>, bbox_to_anchor<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.04</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>))</span>
+<span id="cb12-13">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-13-output-1.png" width="773" height="356" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Just to see that this is stabilizing, and to get an idea of how fast this stabilizes, I’m going to find a daily average temperature as above.</p>
+<div id="4afd67ba" class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb13-2">plt.errorbar(day,boxTempDay,yerr<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>btdErr, marker<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'o'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Avg. Box Temp"</span>,capsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,linewidth<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb13-3">plt.xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Time (days)'</span>)</span>
+<span id="cb13-4">plt.ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature (deg C)'</span>)</span>
+<span id="cb13-5"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">reversed</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,zmax,zmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>)):</span>
+<span id="cb13-6">    zval <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> k<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Deltax</span>
+<span id="cb13-7">    labString <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Avg Temp at z=</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>zval<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> m"</span></span>
+<span id="cb13-8">    plt.plot(day,boxTempDayZ[:,k], marker<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'o'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>labString) </span>
+<span id="cb13-9">    </span>
+<span id="cb13-10">plt.legend()</span>
+<span id="cb13-11">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-14-output-1.png" width="659" height="356" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="heatmaps" class="level3">
+<h3 class="anchored" data-anchor-id="heatmaps">Heatmaps</h3>
+<p>Let’s view the middle cross sections every few hours on the last day:</p>
+<div id="abf64b23" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> s <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(lmin,lmax,<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(stepsInDay<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">12</span>)):</span>
+<span id="cb14-2">  plotheatmaps(u,s,xmid,ymid,zmid)</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-1.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-2.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-3.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-4.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-5.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-6.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-7.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-8.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-9.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-10.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-11.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow_files/figure-html/cell-15-output-12.png" width="757" height="322" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="summary" class="level2">
+<h2 class="anchored" data-anchor-id="summary">Summary</h2>
+<p>This is working as a proof of concept. Job 1: Done. But there’s more to be done.</p>
+<section id="next-step" class="level3">
+<h3 class="anchored" data-anchor-id="next-step">Next step</h3>
+<p>As a torture device, this leaves much to be desired. Right now, it’s no more effective than a chain-link fence from a temperature perspective. I’ll be working on adding in solar radiation in the next post.</p>
+</section>
+<section id="my-future-plans" class="level3">
+<h3 class="anchored" data-anchor-id="my-future-plans">My future plans:</h3>
+<p>As I seek to make this model more complex. I plan to do things that will slowly make my boring box look more like a house. Things like:</p>
+<ul>
+<li>Making the box house sized and adding an appropriate number of windows.</li>
+<li>Add in interior walls.</li>
+<li>Add in heating and cooling.</li>
+</ul>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Heat Equation</category>
+  <category>Python</category>
+  <category>Modeling</category>
+  <category>3D system</category>
+  <category>Finite Difference Method</category>
+  <guid>https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow.html</guid>
+  <pubDate>Sun, 03 Nov 2024 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Stack Overflow Annual Developer Survey</title>
   <dc:creator>Steven Wolf</dc:creator>

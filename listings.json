@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/heatEqn1/modelHeatFlow.html",
       "/posts/tt20240903/stackOverflow.html",
       "/posts/tt20240819/englishMonarchy.html",
       "/posts/tt20240813/worldFairs.html",
