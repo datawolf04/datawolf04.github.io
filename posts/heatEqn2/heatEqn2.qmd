@@ -1,0 +1,40 @@
+---
+title: "Modeling Heat Flow - Part 2"
+description: "Turning up the heat on the Heatbox"
+author: "Steven Wolf"
+date: "11/5/2024"
+number-sections: true
+categories:
+  - Heat Equation
+  - Python
+  - Modeling
+  - 3D system
+  - Finite Difference Method
+  - Blackbody Radiation
+execute: 
+  messages: false
+  warning: false
+jupyter: python3
+draft:
+  true
+---
+
+## Background
+[Previously, I modeled a "heat box"](../heatEqn1/modelHeatFlow.qmd), but ignored the effects of the sun. As anyone who has had to get into a car that has sat outside for a while on a hot summer day, the inside of the car is warmer than the outside air temperature, and my previous model didn't allow that. So the sun is important.  Consider the following information from [The Humane Society](https://www.humanesociety.org/resources/what-do-if-you-see-pet-parked-car).
+
+> It doesn't have to be that warm outside for a car to become dangerously hot inside.
+>
+> - When it's 72 degrees Fahrenheit outside, the temperature inside your car can heat up to 116 degrees Fahrenheit within an hour.
+> - When it's 80 degrees Fahrenheit outside, the temperature inside your car can heat up to 99 degrees Fahrenheit within 10 minutes.
+> - Rolling down the windows has been shown to have little effect on the temperature inside a car.
+
+My plan for today is to assume that my heat box will heat up similarly to the above generic car, and see what sort of parameters I need to make that work.
+
+## Blackbody Radiation
+It occurs to me that we should treat the box as a blackbody. We generally talk about blackbody radiation for hot things like stars. (The first time I encountered blackbody radiation was in an astronomy course.) I'll assume we can ignore it for now-- if not, the boundary condition will have to describe blackbody radiation:
+
+$$
+k \left. \frac{\partial u}{\partial n}\right|_{\Omega} = \epsilon\sigma \left(u(\Omega,t)^4 - v(\Omega, t)^4\right)
+$$
+
+where $\epsilon$ is the emissivity of the blackbody (a number between 0 and 1), and $\sigma = 5.67\times 10^{-8} \frac{\text{W}}{\text{m}^2\text{K}^4}$ is the Stefan-Boltzmann constant.  

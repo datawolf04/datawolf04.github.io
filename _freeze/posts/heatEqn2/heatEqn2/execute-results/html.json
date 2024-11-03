@@ -1,0 +1,12 @@
+{
+  "hash": "59ff78a92966ed6a21519ed71135cdd8",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Modeling Heat Flow - Part 2\"\ndescription: \"Turning up the heat on the Heatbox\"\nauthor: \"Steven Wolf\"\ndate: \"11/5/2024\"\nnumber-sections: true\ncategories:\n  - Heat Equation\n  - Python\n  - Modeling\n  - 3D system\n  - Finite Difference Method\n  - Blackbody Radiation\nexecute: \n  messages: false\n  warning: false\njupyter: python3\ndraft:\n  true\n---\n\n\n## Background\n[Previously, I modeled a \"heat box\"](../heatEqn1/modelHeatFlow.qmd), but ignored the effects of the sun. As anyone who has had to get into a car that has sat outside for a while on a hot summer day, the inside of the car is warmer than the outside air temperature, and my previous model didn't allow that. So the sun is important.  Consider the following information from [The Humane Society](https://www.humanesociety.org/resources/what-do-if-you-see-pet-parked-car).\n\n> It doesn't have to be that warm outside for a car to become dangerously hot inside.\n>\n> - When it's 72 degrees Fahrenheit outside, the temperature inside your car can heat up to 116 degrees Fahrenheit within an hour.\n> - When it's 80 degrees Fahrenheit outside, the temperature inside your car can heat up to 99 degrees Fahrenheit within 10 minutes.\n> - Rolling down the windows has been shown to have little effect on the temperature inside a car.\n\nMy plan for today is to assume that my heat box will heat up similarly to the above generic car, and see what sort of parameters I need to make that work.\n\n## Blackbody Radiation\nIt occurs to me that we should treat the box as a blackbody. We generally talk about blackbody radiation for hot things like stars. (The first time I encountered blackbody radiation was in an astronomy course.) I'll assume we can ignore it for now-- if not, the boundary condition will have to describe blackbody radiation:\n\n$$\nk \\left. \\frac{\\partial u}{\\partial n}\\right|_{\\Omega} = \\epsilon\\sigma \\left(u(\\Omega,t)^4 - v(\\Omega, t)^4\\right)\n$$\n\nwhere $\\epsilon$ is the emissivity of the blackbody (a number between 0 and 1), and $\\sigma = 5.67\\times 10^{-8} \\frac{\\text{W}}{\\text{m}^2\\text{K}^4}$ is the Stefan-Boltzmann constant.  \n\n",
+    "supporting": [
+      "heatEqn2_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
