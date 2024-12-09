@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.5.57">
+<meta name="generator" content="quarto-1.6.39">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -72,10 +72,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-e26003cea8cd680ca0c55a263523d882.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-49a30fb1c686c173be37e14c159b58c8.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -137,7 +137,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -226,7 +226,39 @@ window.Quarto = {
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#personal-motivation-for-this-post" id="toc-personal-motivation-for-this-post" class="nav-link active" data-scroll-target="#personal-motivation-for-this-post">Personal Motivation for this post</a></li>
+  <li><a href="#heat-equation" id="toc-heat-equation" class="nav-link" data-scroll-target="#heat-equation">Heat Equation</a></li>
+  <li><a href="#simple-system" id="toc-simple-system" class="nav-link" data-scroll-target="#simple-system">Simple system</a>
+  <ul class="collapse">
+  <li><a href="#box-dimensions" id="toc-box-dimensions" class="nav-link" data-scroll-target="#box-dimensions">Box dimensions</a></li>
+  <li><a href="#thermal-properties-of-the-box" id="toc-thermal-properties-of-the-box" class="nav-link" data-scroll-target="#thermal-properties-of-the-box">Thermal properties of the box</a></li>
+  <li><a href="#modeling-exterior-temperature" id="toc-modeling-exterior-temperature" class="nav-link" data-scroll-target="#modeling-exterior-temperature">Modeling exterior temperature</a></li>
+  </ul></li>
+  <li><a href="#going-from-differential-equations-to-matrix-equations" id="toc-going-from-differential-equations-to-matrix-equations" class="nav-link" data-scroll-target="#going-from-differential-equations-to-matrix-equations">Going from differential equations to matrix equations</a>
+  <ul class="collapse">
+  <li><a href="#applying-the-finite-difference-method-to-the-boundary-condition" id="toc-applying-the-finite-difference-method-to-the-boundary-condition" class="nav-link" data-scroll-target="#applying-the-finite-difference-method-to-the-boundary-condition">Applying the Finite difference method to the boundary condition</a></li>
+  <li><a href="#applying-the-finite-difference-method-to-the-heat-equation-dotu-alphanabla2u" id="toc-applying-the-finite-difference-method-to-the-heat-equation-dotu-alphanabla2u" class="nav-link" data-scroll-target="#applying-the-finite-difference-method-to-the-heat-equation-dotu-alphanabla2u">Applying the finite difference method to the heat equation: <span class="math inline">\(\dot{u} = \alpha\nabla^2u\)</span></a></li>
+  <li><a href="#visualizing-the-temperature" id="toc-visualizing-the-temperature" class="nav-link" data-scroll-target="#visualizing-the-temperature">Visualizing the temperature:</a></li>
+  </ul></li>
+  <li><a href="#sec-results" id="toc-sec-results" class="nav-link" data-scroll-target="#sec-results">Results</a>
+  <ul class="collapse">
+  <li><a href="#different-initial-condition-comparison" id="toc-different-initial-condition-comparison" class="nav-link" data-scroll-target="#different-initial-condition-comparison">Different initial condition comparison</a></li>
+  <li><a href="#compare-interior-temperature-to-exterior-temp" id="toc-compare-interior-temperature-to-exterior-temp" class="nav-link" data-scroll-target="#compare-interior-temperature-to-exterior-temp">Compare interior temperature to exterior temp</a></li>
+  <li><a href="#heatmaps" id="toc-heatmaps" class="nav-link" data-scroll-target="#heatmaps">Heatmaps</a></li>
+  </ul></li>
+  <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary">Summary</a>
+  <ul class="collapse">
+  <li><a href="#next-step" id="toc-next-step" class="nav-link" data-scroll-target="#next-step">Next step</a></li>
+  <li><a href="#my-future-plans" id="toc-my-future-plans" class="nav-link" data-scroll-target="#my-future-plans">My future plans:</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -838,8 +870,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   });
   clipboard.on('success', onCopySuccess);
   if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    // For code content inside modals, clipBoardJS needs to be initialized with a container option
-    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
     const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
       text: getTextToCopy,
       container: window.document.getElementById('quarto-embedded-source-code-modal')
@@ -950,7 +980,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (window.Quarto?.typesetMath) {
         window.Quarto.typesetMath(note);
       }
-      // TODO in 1.5, we should make sure this works without a callout special case
       if (note.classList.contains("callout")) {
         return note.outerHTML;
       } else {
