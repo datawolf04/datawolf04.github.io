@@ -10,7 +10,1243 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.6.39</generator>
-<lastBuildDate>Mon, 09 Dec 2024 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Tue, 10 Dec 2024 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Modeling Heat Flow - Part 2b</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/heatEqn2/hotBoxViz.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="visualizing-a-hot-box" class="level2">
+<h2 class="anchored" data-anchor-id="visualizing-a-hot-box">Visualizing a hot box</h2>
+<p>I’ve been <a href="../../posts/heatEqn2/heatEqn2.html">recently modeling a simple system</a> using the heat equation. That last post was full of math, and finally got to making a nice looking visualization. But it was a <em>long</em> time to get there, and I wanted a post that got to the “pretty pictures” part much faster. Plus, I needed to spend time figuring out how to make them look nice. When the “do math” part of my brain fights with the “make it look good” part of my brain, the math part wins because if the math part loses, the looking good part doesn’t matter (because it’s probably wrong). But the “make it look good” part is equally important for good scientific communication. Therefore, this post is important too, and hopefully, more readable that the previous post.</p>
+<section id="toy-model" class="level3">
+<h3 class="anchored" data-anchor-id="toy-model">Toy model</h3>
+<p>As I wanted to get solar heat generation working, I started by making it simple. The premise was this. Consider the following information from <a href="https://www.humanesociety.org/resources/what-do-if-you-see-pet-parked-car">The Humane Society</a>.</p>
+<blockquote class="blockquote">
+<ul>
+<li>When it’s 72 degrees Fahrenheit outside, the temperature inside your car can heat up to 116 degrees Fahrenheit within an hour.</li>
+<li>When it’s 80 degrees Fahrenheit outside, the temperature inside your car can heat up to 99 degrees Fahrenheit within 10 minutes.</li>
+<li>Rolling down the windows has been shown to have little effect on the temperature inside a car.</li>
+</ul>
+</blockquote>
+<p>Assume the above information is correct, and find appropriate parameters to make it so. I did that by assuming the sun is at solar noon (directly overhead) and we are getting direct sunlight at our particular latitude (so it is solar noon on the equinox/first day of spring/fall).</p>
+<p>But that previous post was <strong><em>full</em></strong> of math, and I wanted to make some visualizations to show how the temperature changed. So I decided to simulate for a longer time and build some cool visuals. Since the time window is 10 hours, this is a bit of a “toy model.” (In physics, we call something a toy model when it has a feature that is clearly unrealistic, but helps us develop our intuition for a system, better understand how a key aspect effects a system, and/or develop tools for visualizing or analyzing a system.) But it should give me something to visualize. Later (not in this post) I will do some astrophysics to get the sun moving properly, and handle the latitude correctly so I can come back to earth.</p>
+</section>
+</section>
+<section id="code" class="level2">
+<h2 class="anchored" data-anchor-id="code">Code</h2>
+<p>Import block:</p>
+<div id="37bacb16" class="cell" data-execution_count="1">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.colors <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> mc</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.cm <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cm</span>
+<span id="cb1-5"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> scipy.integrate <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> solve_ivp</span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># The functions in `hotBoxToy` were developed in the previous post</span></span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> hotBoxToy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span></code></pre></div>
+</details>
+</div>
+<p>Parameters are input in the code below, and the simulation runs based on the fit parameters from the previous analysis</p>
+<div id="1b952e2d" class="cell" data-execution_count="2">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Heat parameters</span></span>
+<span id="cb2-2">thermalDiffusivity <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">22.39e-6</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># meters^2/s for air</span></span>
+<span id="cb2-3">heatTransferCoef <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># For a typical metal to air W/m^2K</span></span>
+<span id="cb2-4">thermalConductivity <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># For a typical metal W/mK</span></span>
+<span id="cb2-5">specificHeat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># for aluminum J/kg K</span></span>
+<span id="cb2-6">wallDensity <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3000</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># kg/m^3 for aluminum</span></span>
+<span id="cb2-7">wallThickness <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.002</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># m</span></span>
+<span id="cb2-8">solarIntensity <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1000</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># W/m^2</span></span>
+<span id="cb2-9"></span>
+<span id="cb2-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Length parameters (meters)</span></span>
+<span id="cb2-11">L <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span></span>
+<span id="cb2-12">W <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-13">H <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.5</span></span>
+<span id="cb2-14"></span>
+<span id="cb2-15">Deltax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span></span>
+<span id="cb2-16">xmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(L<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax)</span>
+<span id="cb2-17">ymax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(W<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax)</span>
+<span id="cb2-18">zmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(H<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Deltax)</span>
+<span id="cb2-19"></span>
+<span id="cb2-20">xmid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> xmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-21">ymid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ymax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-22">zmid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> zmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">//</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-23"></span>
+<span id="cb2-24">xgrid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,L,xmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-25">ygrid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,W,ymax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-26">zgrid <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,H,zmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb2-27"></span>
+<span id="cb2-28">u0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.empty((xmax,ymax,zmax))</span>
+<span id="cb2-29"></span>
+<span id="cb2-30">oneHour <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3600</span></span>
+<span id="cb2-31"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Best parameters from previous simulation</span></span>
+<span id="cb2-32">A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.1176e-3</span></span>
+<span id="cb2-33">B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6.6667e-3</span></span>
+<span id="cb2-34">longCalc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> simToyHotBox(A,B,oneHour<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)    </span></code></pre></div>
+</details>
+</div>
+</section>
+<section id="visualizations" class="level2">
+<h2 class="anchored" data-anchor-id="visualizations">Visualizations</h2>
+<p>And now we have the pretty pictures. First we can observe how the heat changes in time.</p>
+<p><img src="https://datawolf04.github.io/posts/heatEqn2/hotBoxToyViz241210.gif" class="img-fluid" style="width:90.0%"> Many of the changes in this animation happens fast. As the Humane society stated, the car gets very hot, very fast. Please don’t leave your pets/kids/anything alive in a car baking in the sunlight. In fact, <a href="https://www.instagram.com/p/CfsLvH2jEFs/?hl=en&amp;img_index=1">fellow Valparaiso University Beacon, Matthew Standridge</a> used his van for baking cookies and cinnamon buns. I hope they were tasty!</p>
+<p>Back to this system–Below is a figure with 4 heatmaps on it showing the system at four times that are during this change in behavior.</p>
+<div id="9137a7ee" class="cell" data-execution_count="3">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">timeIdx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">20</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">80</span>]</span>
+<span id="cb3-2">xm, ym, zm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> u0.shape</span>
+<span id="cb3-3">Y,X,Z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.meshgrid(np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,W,ym),np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,L,xm),np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,H,zm))</span>
+<span id="cb3-4"> </span>
+<span id="cb3-5">kw <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb3-6">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vmin'</span>: longCalc.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),</span>
+<span id="cb3-7">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vmax'</span>: longCalc.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(),</span>
+<span id="cb3-8">    <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'levels'</span>: np.linspace(longCalc.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),longCalc.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb3-9">}</span>
+<span id="cb3-10"></span>
+<span id="cb3-11">cnorm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mc.Normalize(vmin<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>longCalc.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),vmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>longCalc.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>())</span>
+<span id="cb3-12">cbar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cm.ScalarMappable(norm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>cnorm)</span>
+<span id="cb3-13"></span>
+<span id="cb3-14"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set limits of the plot from coord limits</span></span>
+<span id="cb3-15">xmin, xmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, L</span>
+<span id="cb3-16">ymin, ymax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, W</span>
+<span id="cb3-17">zmin, zmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, H</span>
+<span id="cb3-18">xt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,L<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb3-19">yt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,W<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb3-20">zt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,H<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>)</span>
+<span id="cb3-21"></span>
+<span id="cb3-22">i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb3-23">fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">8</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>))</span>
+<span id="cb3-24">cellList <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">221</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">222</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">223</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">224</span>]</span>
+<span id="cb3-25"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> cell <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> cellList:</span>
+<span id="cb3-26">    l <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> timeIdx[i]</span>
+<span id="cb3-27">    theTime <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> longCalc.t[l]</span>
+<span id="cb3-28">    theTitle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Hot Box at t = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>theTime<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> s'</span></span>
+<span id="cb3-29">    umatFlat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> longCalc.y[:,l]</span>
+<span id="cb3-30">    umat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> umatFlat.reshape((xm,ym,zm))</span>
+<span id="cb3-31">    ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_subplot(cell, projection<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3d'</span>)</span>
+<span id="cb3-32">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set title, limits, and labels</span></span>
+<span id="cb3-33">    ax.set_title(theTitle)</span>
+<span id="cb3-34">    ax.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(xlim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[xmin, xmax], ylim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[ymin, ymax], zlim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[zmin, zmax],xlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X [m]'</span>,ylabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Y [m]'</span>,zlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Z [m]'</span>,</span>
+<span id="cb3-35">          xticks<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>xt,yticks<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>yt,zticks<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>zt)</span>
+<span id="cb3-36">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set zoom and angle view</span></span>
+<span id="cb3-37">    ax.view_init(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">45</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb3-38">    ax.set_box_aspect((xm,ym,zm), zoom<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.85</span>)</span>
+<span id="cb3-39">    ax.contourf(X[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], Y[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], umat[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>],</span>
+<span id="cb3-40">                    zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'z'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>H, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb3-41">    ax.contourf(X[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], umat[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], Z[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :],</span>
+<span id="cb3-42">                    zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb3-43">    ax.contourf(umat[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], Y[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], Z[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :],</span>
+<span id="cb3-44">                    zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>L, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb3-45">    i <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb3-46"></span>
+<span id="cb3-47">ghLogo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\uf09b</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb3-48">liLogo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\uf08c</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb3-49">txt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ghLogo<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> datawolf04 </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>liLogo<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> steven-wolf-253b6625a"</span></span>
+<span id="cb3-50">fig.subplots_adjust(bottom<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>,right<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.8</span>)</span>
+<span id="cb3-51">plt.figtext(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>, txt,family<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'DejaVu Sans'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'FontAwesome'</span>],fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb3-52">cbar_ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_axes([<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>])</span>
+<span id="cb3-53">fig.colorbar(cbar, cax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>cbar_ax,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature [deg C]'</span>)</span>
+<span id="cb3-54">plt.show()</span></code></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqn2/hotBoxViz_files/figure-html/cell-4-output-1.png" width="728" height="618" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>These show a few features of importance:</p>
+<ul>
+<li><em>Symmetry</em> in several ways. For example, if consider a point on the left side surface <img src="https://latex.codecogs.com/png.latex?(x,0,z)">, you should get the same temperature at the point <img src="https://latex.codecogs.com/png.latex?(L-x,0,z)">. Similar statements can be made for the front surface and the top surface. That is why I did not show the right, rear and bottom surfaces in this visualization.</li>
+<li><em>The top gets hot</em> – plenty hot. Like <a href="https://www.usatoday.com/story/life/food-dining/2022/07/29/can-you-fry-egg-sidewalk-car/10048288002/">fry an egg on it, hot</a>. Note that 180 deg C is about 350 deg F. That’s plenty hot to cook eggs. Based on the plot from the previous post, you can see that the top of the box gets to about 100 deg C at the hour mark–appropriate for boiling water.</li>
+<li><em>The sides stay cool</em> – as discussed previously, there is still going to be conduction going on, so the box doesn’t reach a uniform temperature.</li>
+</ul>
+<section id="amimation-generation-code" class="level3">
+<h3 class="anchored" data-anchor-id="amimation-generation-code">Amimation generation code</h3>
+<p>Figuring out how to do the animation was an interesting task, especially since most of the examples in the documentation animate things like a position vs.&nbsp;time graph, showing where the object appears later in the motion, and dealing with 3d plots is different in matplotlib. The key to using this method for animating a figure is to name all of the features of the graph that are changing, and creating a function to update each of these features.</p>
+<div id="438231f4" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.animation <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> animation</span>
+<span id="cb4-2"></span>
+<span id="cb4-3"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> makeAni(fname,res,L,W,H,dx):</span>
+<span id="cb4-4">    <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Building the animation"</span>)</span>
+<span id="cb4-5">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create figure with 3D axes</span></span>
+<span id="cb4-6">    fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.figure(figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb4-7">    ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">111</span>, projection<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3d'</span>)</span>
+<span id="cb4-8">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Fill in the plot</span></span>
+<span id="cb4-9">    theTime <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> res.t[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb4-10">    tmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(res.t)</span>
+<span id="cb4-11">    theTitle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Hot Box at t = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>theTime<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> s'</span></span>
+<span id="cb4-12">    figTitle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.suptitle(theTitle)</span>
+<span id="cb4-13"></span>
+<span id="cb4-14">    xm, ym, zm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(L<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>dx), <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(W<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>dx), <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(H<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>dx)</span>
+<span id="cb4-15">    uflat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> res.y[:,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb4-16">    umat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uflat.reshape((xm,ym,zm))</span>
+<span id="cb4-17">    Y,X,Z <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.meshgrid(np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,W,ym),np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,L,xm),np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,H,zm))</span>
+<span id="cb4-18"></span>
+<span id="cb4-19">    kw <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> {</span>
+<span id="cb4-20">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vmin'</span>: res.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),</span>
+<span id="cb4-21">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vmax'</span>: res.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(),</span>
+<span id="cb4-22">        <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'levels'</span>: np.linspace(res.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),res.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>(), <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>),</span>
+<span id="cb4-23">    }</span>
+<span id="cb4-24">    cnorm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mc.Normalize(vmin<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>res.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">min</span>(),vmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>res.y.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">max</span>())</span>
+<span id="cb4-25">    cbar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cm.ScalarMappable(norm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>cnorm)</span>
+<span id="cb4-26">    </span>
+<span id="cb4-27">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot contour surfaces</span></span>
+<span id="cb4-28">    topSurf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.contourf(X[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], Y[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], umat[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'z'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>H, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb4-29">    frontSurf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.contourf(X[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], umat[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], Z[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb4-30">    leftSurf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.contourf(umat[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], Y[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], Z[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>L, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb4-31">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># --</span></span>
+<span id="cb4-32"></span>
+<span id="cb4-33">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set limits of the plot from coord limits</span></span>
+<span id="cb4-34">    xmin, xmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, L</span>
+<span id="cb4-35">    ymin, ymax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, W</span>
+<span id="cb4-36">    zmin, zmax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, H</span>
+<span id="cb4-37">    ax.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(xlim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[xmin, xmax], ylim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[ymin, ymax], zlim<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[zmin, zmax])</span>
+<span id="cb4-38"></span>
+<span id="cb4-39">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set labels </span></span>
+<span id="cb4-40">    ax.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(</span>
+<span id="cb4-41">        xlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'X [m]'</span>,</span>
+<span id="cb4-42">        ylabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Y [m]'</span>,</span>
+<span id="cb4-43">        zlabel<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Z [m]'</span>,</span>
+<span id="cb4-44">        xticks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,L<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>),</span>
+<span id="cb4-45">        yticks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,W<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>),</span>
+<span id="cb4-46">        zticks <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,H<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>),</span>
+<span id="cb4-47">    )</span>
+<span id="cb4-48"></span>
+<span id="cb4-49">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set zoom and angle view</span></span>
+<span id="cb4-50">    ax.view_init(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">40</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">45</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>)</span>
+<span id="cb4-51">    ax.set_box_aspect((xm,ym,zm), zoom<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb4-52"></span>
+<span id="cb4-53">    <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Colorbar</span></span>
+<span id="cb4-54">    fig.subplots_adjust(left<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=-</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.75</span>,bottom<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>,right<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>)</span>
+<span id="cb4-55">    fig.colorbar(cbar, ax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>ax, fraction<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span>, pad<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.075</span>, </span>
+<span id="cb4-56">      label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature [deg C]'</span>)</span>
+<span id="cb4-57">    ghLogo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\uf09b</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb4-58">    liLogo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\uf08c</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb4-59">    txt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ghLogo<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> datawolf04 </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>liLogo<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> steven-wolf-253b6625a"</span></span>
+<span id="cb4-60">    plt.figtext(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>, txt,family<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'DejaVu Sans'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'FontAwesome'</span>],fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb4-61"></span>
+<span id="cb4-62">    <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> update(l):</span>
+<span id="cb4-63">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span> (l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">%</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:</span>
+<span id="cb4-64">            <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"Working on frame </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>l<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> out of </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>tmax<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">."</span>)</span>
+<span id="cb4-65">        uflat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> res.y[:,l]</span>
+<span id="cb4-66">        umat <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uflat.reshape((xm,ym,zm))</span>
+<span id="cb4-67">        theTime <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> res.t[l]</span>
+<span id="cb4-68">        theTitle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Hot Box at t = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>theTime<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> s'</span></span>
+<span id="cb4-69">        figTitle <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.suptitle(theTitle)</span>
+<span id="cb4-70">        topSurf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.contourf(X[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], Y[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], umat[:, :, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'z'</span>, </span>
+<span id="cb4-71">          offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>H, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb4-72">        frontSurf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.contourf(X[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], umat[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], Z[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, :], zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'y'</span>, </span>
+<span id="cb4-73">          offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb4-74">        leftSurf <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ax.contourf(umat[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], Y[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], Z[<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, :, :], </span>
+<span id="cb4-75">          zdir<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'x'</span>, offset<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>L, <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span>kw)</span>
+<span id="cb4-76"></span>
+<span id="cb4-77">        <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> topSurf, frontSurf, leftSurf, figTitle</span>
+<span id="cb4-78"></span>
+<span id="cb4-79">    ani <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> animation.FuncAnimation(fig<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>fig, func<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>update, frames<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>tmax, </span>
+<span id="cb4-80">      interval<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">50</span>, repeat<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">False</span>)</span>
+<span id="cb4-81">    ani.save(fname,writer<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pillow'</span>)    </span>
+<span id="cb4-82"></span>
+<span id="cb4-83"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Builds the animation</span></span>
+<span id="cb4-84">makeAni(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'hotboxLong.gif'</span>,longCalc,L,W,H,Deltax)</span></code></pre></div>
+</div>
+
+
+</section>
+</section>
+
+ ]]></description>
+  <category>Heat Equation</category>
+  <category>Python</category>
+  <category>Modeling</category>
+  <category>3D system</category>
+  <category>Finite Difference Method</category>
+  <category>Animating Plots</category>
+  <guid>https://datawolf04.github.io/posts/heatEqn2/hotBoxViz.html</guid>
+  <pubDate>Tue, 10 Dec 2024 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Modeling Heat Flow - Part 2</title>
   <dc:creator>Steven Wolf</dc:creator>
@@ -4080,7 +5316,6 @@ font-style: inherit;">0.75</span>))</span>
   <category>Modeling</category>
   <category>3D system</category>
   <category>Finite Difference Method</category>
-  <category>Blackbody Radiation</category>
   <guid>https://datawolf04.github.io/posts/heatEqn2/heatEqn2.html</guid>
   <pubDate>Mon, 09 Dec 2024 00:00:00 GMT</pubDate>
 </item>
