@@ -10,7 +10,6 @@ categories:
   - Modeling
   - 3D system
   - Finite Difference Method
-  - Blackbody Radiation
 execute: 
   messages: false
   warning: false
