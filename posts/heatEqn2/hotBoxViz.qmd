@@ -93,6 +93,7 @@ longCalc = simToyHotBox(A,B,oneHour*10, 100)
 And now we have the pretty pictures. First we can observe how the heat changes in time.
 
 ![](hotBoxToyViz241210.gif){width=90%}
+
 Many of the changes in this animation happens fast. As the Humane society stated, the car gets very hot, very fast. Please don't leave your pets/kids/anything alive in a car baking in the sunlight.  In fact, [fellow Valparaiso University Beacon, Matthew Standridge](https://www.instagram.com/p/CfsLvH2jEFs/?hl=en&img_index=1) used his van for baking cookies and cinnamon buns. I hope they were tasty!
 
 Back to this system--Below is a figure with 4 heatmaps on it showing the system at four times that are during this change in behavior.

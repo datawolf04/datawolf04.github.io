@@ -30,7 +30,7 @@ The location of the sun is important because the power deposited into a surface 
 
 ![](surface.png){fig-align="center" width=400} 
 
-The orange ray indicates the direction of the sunlight at the surface, and the dotted line indicates the direction of the line which is perpendicular to the surface. The power generated in the surface due to sunlight will be:
+The orange ray indicates the direction of the sunlight at the surface, and the dotted line indicates the direction of the line that is perpendicular to the surface. The power generated in the surface due to sunlight will be:
 $$
 P = I_{\text{Sun}} A \cos^2\beta
 $$
@@ -44,7 +44,7 @@ where $I_\text{sun}$ is the intensity of the sunlight and $A$ is the area of the
 Given all of these things, it is not as simple as stating that the sun starts at $\beta=-90\deg$ at sunrise and sets at $\beta=+90\deg$.  So I'm going to develop a framework for calculating this.
 
 ### Terrestrial coordinate system
-I'm going to develop a terrestrial coordinate system so that I can calculate the angle of incidence.  I'll begin by considering the tilt of the earth's rotation axis relative to the direction of sunlight. In the figures below, sunlight is in the direction of the yellow rays, the earth is at the origin of the coordinate system, and the z direction is the earth's rotation axis. (I'm indicating the poles by the white blobs on the sphere).
+I'm going to develop a terrestrial coordinate system so that I can calculate the angle of incidence.  I'll begin by considering the tilt of the earth's rotation axis relative to the direction of sunlight. In the figures below, sunlight is in the direction of the yellow rays, the earth is at the origin of the coordinate system, and the z direction is the earth's rotation axis. (I'm indicating the poles by the white blobs on the sphere, and the north pole has the red arrow representing the +z axis poking through it).
 
 ![](seasons.png){fig-align="center" width=800} 
 
@@ -53,7 +53,7 @@ We know that seasons change because the sun's ray's are more/less direct at diff
 $$
 \alpha(T) = \alpha_0 \cos(\Omega_y T)
 $$
-where $T$ is the number of days after the winter solstice, and $\Omega_y = \frac{2\pi}{1\,\text{yr}}$ is the angular frequency of 1 year.
+where $T$ is the number of days after the winter solstice, and $\Omega_y = \frac{2\pi}{1\,\text{yr}}$ is the angular frequency of 1 year. Below, I will create a function `axisTilt` for calculating this angle based on the fraction of a year that has passed since the winter solstice.
 
 ```{python}
 import numpy as np
@@ -75,17 +75,19 @@ $$
 
 If we consider a point on the surface of the earth, it will be useful to use spherical coordinates.  The unit vectors in the $\hat{r}$ and $\hat{\theta}$ directions are depicted on the drawing above ($\hat{\phi}$ is into the screen at the location given).  We know that the spherical unit vectors are:
 
+$$
 \begin{align*}
   \hat{r} &= \sin\theta\cos\phi \hat{i} + \sin\theta\sin\phi \hat{j} + \cos\theta \hat{k} \\
   \hat{\theta} &= \cos\theta\cos\phi \hat{i} + \cos\theta\sin\phi \hat{j} -\sin\theta\hat{k} \\
   \hat{\phi} &= -\sin\phi \hat{i} + \cos\phi\hat{j} \\
 \end{align*}
+$$
 
 Using this coordinate system allows us to interpret several things. First, the polar angle is related to the angle of latitude.
 $$
 \theta = 90\deg - \theta_{L}
 $$
-where $\theta_L$ is the angle of Latitude at the location of interest (North latitude is positive, South latitude is negative.) Yes, I'm using degrees. Yes, it feels kind of dirty. I'll have to convert to radians when I code, but when I look up my current latitude, I'm getting degrees. This has the meaning that:
+where $\theta_L$ is the angle of Latitude at the location of interest (North latitude is positive, South latitude is negative.) Yes, I'm using degrees. Yes, it feels kind of wrong to use degrees. I like using the most natural units I can ($\hbar=c=1$ anyone?). I'll have to convert to radians when I code, but when I look up latitudes on the map, I get degrees.  As I tell my students, knowing what units you have is more important that putting everything into SI units. But I digress.  The relationship between the polar angle and the angle of latitude has the meaning that:
 $$
 \sin{\theta} = \cos\theta_L \quad \text{and} \cos\theta = \sin\theta_L
 $$
@@ -94,7 +96,7 @@ Next, the time of day can be related to the azimuthal angle:
 $$
 \phi = \Omega t
 $$
-where $\Omega = \frac{2\pi}{1 \text{ day}}$ is the angular frequency of the earth's rotation. So $\phi=0$ implies $t=0$, which is solar midnight.
+where $\Omega = \frac{2\pi}{1 \text{ day}}$ is the angular frequency of the earth's rotation. So $\phi=0$ implies $t=0$, which is solar midnight. (No need to standardize clocks across the planet for this.)
 
 Finally, we can also state that the unit vectors noted above are related to the cardinal directions and the local vertical. That is $\hat{r}$ is the local vertical direction, $\hat{\theta}$ points South, and $\hat{\phi}$ points East.
 
@@ -143,8 +145,68 @@ def dayCalc():
 dayCalc()
 ```
 
-### Solar power generation on a box
+### Temperature cycle
+Now that we can put all of these together, I'm going to make decisions about modeling air temperature.  I will make some assumptions.
 
+1. The daily low temperature occurs at sunrise, the daily high temperature occurs at sunset.
+2. Temperature will smoothly increase (like a cosine) during the daylight and smoothly decrease (also like a cosine) during the nighttime.
+
+```{python}
+import matplotlib.pyplot as plt
+
+def getSunriseSunset(axisTilt,thetaLatitude):
+  oneDay = 24*60*60 # seconds
+  Omega = 2*np.pi/oneDay
+  alpha = axisTilt*np.pi/180
+  thetaL = thetaLatitude*np.pi/180
+  tSunrise = np.arccos(-np.tan(alpha)*np.tan(thetaL))/Omega
+  tSunset = oneDay - tSunrise
+  return [tSunrise, tSunset]
+
+def airTemp(t,lowT, highT, axisTilt, thetaLatitude):
+  oneDay = 24*60*60 # seconds
+  avgTemp = (lowT+highT)/2
+  tempDiff = (highT-lowT)/2
+  tRise, tSet = getSunriseSunset(axisTilt,thetaLatitude)
+  tDaylight = tSet-tRise
+  OmegaDay = np.pi/tDaylight
+  OmegaNight = np.pi/(oneDay-tDaylight)
+  
+  if(t < tRise):
+    airTemp = avgTemp - tempDiff * np.cos(OmegaNight * (t-tRise))
+  elif(t < tSet):
+    airTemp = avgTemp - tempDiff * np.cos(OmegaDay * (t-tRise))
+  else:
+    airTemp = avgTemp + tempDiff * np.cos(OmegaNight * (t-tSet))
+  
+  return airTemp
+  
+def makeTempPlot(lowT, highT, axisTilt, thetaLatitude):
+  oneDay = 24*60*60 # seconds
+  t = np.linspace(0,oneDay,24*60)
+  temp = np.zeros(len(t))
+  for i in range(len(t)):
+    temp[i] = airTemp(t[i],lowT, highT, axisTilt, thetaLatitude)
+  T = getSunriseSunset(axisTilt,thetaLatitude)
+  hrs = np.linspace(0,24,25).astype(int)
+  plt.plot(t,temp)
+  plt.axvline(T[0], linestyle='dashed',color='darkgrey')
+  plt.axvline(T[1], linestyle='dashed',color='darkgrey')
+  plt.xticks(ticks=np.linspace(0,oneDay,25),labels=hrs)
+  plt.xticks(ticks=[],minor=True)
+  plt.xlabel('Time of day (hr)')
+  plt.ylabel('Temp (deg C)')
+  plt.show()
+
+makeTempPlot(22,30,-22,35.6)
+```
+
+
+
+## Returning to the box
+Let's integrate all of this astrophysics into our box.
+
+### Solar power generation on a box
 So back to the simple box system, I can set up my box so that it has two faces in the N/S direction, and two faces in the E/W direction.  I will set things up much as I have done before:
 
 ```{python}
@@ -213,14 +275,12 @@ def powerGen(t, umat, startDay, thetaLatitude, intensity, c, rho, penDepth):
   daysSinceWinterSolstice = startDay + t // oneDay
   tiltAngleRad = axisTilt(daysSinceWinterSolstice)*np.pi/180
   thetaL = thetaLatitude*np.pi/180
-  rDotR = np.cos(tiltAngleRad)*np.cos(thetaL)*np.cos(Omega*t) + 
-          np.sin(tiltAngleRad)*np.sin(thetaL)
+  rDotR = np.cos(tiltAngleRad)*np.cos(thetaL)*np.cos(Omega*t) + np.sin(tiltAngleRad)*np.sin(thetaL)
   # If it is daytime, need to add power, else, no power added
   if rDotR <=0:
     topPowerGen[:,:,-1].fill(A * rDotR**2 * intensity)
     # How much power to add to each wall?
-    thetaDotR = np.cos(tiltAngleRad)*np.sin(thetaL)*np.cos(Omega*t) + 
-                np.sin(tiltAngleRad)*np.cos(thetaL)
+    thetaDotR = np.cos(tiltAngleRad)*np.sin(thetaL)*np.cos(Omega*t) + np.sin(tiltAngleRad)*np.cos(thetaL)
     phiDotR = -np.cos(tiltAngleRad)*np.sin(Omega*t)
     # If southern exposure add to south wall, otherwise, there is northern exposure
     if thetaDotR <= 0: 
@@ -237,7 +297,7 @@ def powerGen(t, umat, startDay, thetaLatitude, intensity, c, rho, penDepth):
 ```
 
 
-### Integrating into existing code
+### Boundary convection
 
 This can be integrated with the existing code with a few modifications. Specifically, in the boundary convection function, I will use the heat transfer coefficient, specific heat, and density of the system's walls, as well as the effective thickness of the convection boundary. I will also allow the ground to be a different temperature than the air
 
@@ -247,8 +307,6 @@ This can be integrated with the existing code with a few modifications. Specific
 def bdryConv(t, umat, Tair, Tground, heatTransferCoef, c, rho, convThickness):
   Bair = heatTransferCoef/(c*rho*convThickness)
   Bground = Bair/100
-  
-  Tair, Tground,
   
   bdryTemp = np.zeros_like(umat)
   uSurf = np.zeros_like(umat)
@@ -322,12 +380,9 @@ def lap3DFE(umat,dx):
 
     return lap
   
-def dudt(t, u, alpha, dx, startDay, thetaLatitude, intensity, penDepth, c, rho, 
-          Tair, heatTransferCoef, convThickness):
-    dudt = alpha*lap3DFE(u,dx) + 
-       powerGen(t, umat, startDay, thetaLatitude, intensity, c, rho, penDepth) + 
-       bdryConv(t, umat, Tair, heatTransferCoef, c, rho, convThickness)
-    return dudt
+def dudt(t, u, alpha, dx, startDay, thetaLatitude, intensity, penDepth, c, rho, Tair, heatTransferCoef, convThickness):
+  dudt = alpha*lap3DFE(u,dx) + powerGen(t, umat, startDay, thetaLatitude, intensity, c, rho, penDepth) + bdryConv(t, umat, Tair, heatTransferCoef, c, rho, convThickness)
+  return dudt
 
 def dudtFlat(t, uflat, alpha, dx, startDay, thetaLatitude, intensity, penDepth, c, rho, 
           Tair, heatTransferCoef, convThickness):
