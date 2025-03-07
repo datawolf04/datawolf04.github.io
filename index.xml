@@ -69,7 +69,7 @@
 <section id="ideal-projectile-motion-thinking-about-code" class="level3">
 <h3 class="anchored" data-anchor-id="ideal-projectile-motion-thinking-about-code">Ideal Projectile Motion: Thinking about code</h3>
 <p>At this point, we have fully specified the problem. Any motion is fully specified given the cliff height <img src="https://latex.codecogs.com/png.latex?H">, launch speed <img src="https://latex.codecogs.com/png.latex?v_i">, and launch angle <img src="https://latex.codecogs.com/png.latex?%5Ctheta">. We are done. Computationally, we want to be able to calculate all the important things, and define all of the important functions. I have chosen to use a python <em>class</em> to do so. The nice thing about using classes is that you can specify all of the variables for the system, but not have them cluttering the working environment.</p>
-<div id="3fde400d" class="cell" data-execution_count="1">
+<div id="592037b2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -357,7 +357,7 @@ font-style: inherit;">self</span>.g]</span></code></pre></div>
 <p><img src="https://latex.codecogs.com/png.latex?%0Au(t)%20=%20%5Cleft%5Bx(t),%20y(t),%20v_x(t),%20v_y(t)%20%5Cright%5D%0A"></p>
 <p>We can take the time derivative of this function (I’ll use a dot to signify differentiation with respect to time) and express it in terms of the velocity and acceleration <img src="https://latex.codecogs.com/png.latex?%0A%5Cdot%7Bu%7D(t)%20=%20%5Cleft%5B%5Cdot%7Bx%7D(t),%20%5Cdot%7By%7D(t),%20%5Cdot%7Bv%7D_x(t),%20%5Cdot%7Bv%7D_y(t)%20%5Cright%5D%20=%20%5Cleft%5Bv_x(t),%20v_y(t),%20a_x(t),%20a_y(t)%5Cright%5D%0A"></p>
 <p><code>dragEOM</code> is this function <img src="https://latex.codecogs.com/png.latex?%5Cdot%7Bu%7D(t)"> applied to our projectile system.</p>
-<div id="607c4221" class="cell" data-execution_count="2">
+<div id="dab1ccc2" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -582,7 +582,7 @@ font-style: inherit;">True</span></span></code></pre></div>
 <section id="getting-the-motion" class="level4">
 <h4 class="anchored" data-anchor-id="getting-the-motion">Getting the motion</h4>
 <p>Now that this is done, we can get the motion for this system using the following class:</p>
-<div id="94cc3d2c" class="cell" data-execution_count="3">
+<div id="314a8716" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> scipy.integrate <span class="im" style="color: #00769E;
@@ -770,7 +770,7 @@ font-style: inherit;">3</span>]</span></code></pre></div>
 <li><img src="https://latex.codecogs.com/png.latex?m%20=%201"> kg</li>
 <li><img src="https://latex.codecogs.com/png.latex?c%20=%200.003"> kg/m</li>
 </ul>
-<div id="2750bd66" class="cell" data-execution_count="4">
+<div id="06055768" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -816,7 +816,7 @@ background-color: null;
 font-style: inherit;">0.003</span></span></code></pre></div>
 </div>
 <p>I will visualize this motion in two ways. First, I’ll plot each quantity of the motion (position, velocity, acceleration) vs.&nbsp;time.</p>
-<div id="77226485" class="cell" width="75%" data-execution_count="5">
+<div id="4af973ab" class="cell" width="75%" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">plotCannonCurves(vi,theta,H,m,c)</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -827,7 +827,7 @@ font-style: inherit;">0.003</span></span></code></pre></div>
 </div>
 </div>
 <p>Now I will plot the trajectory (y-coordinate vs x-coordinate). Note that I have added boxes to this plot indicating the cliff location and the water level to help guide the eye. The plot has also been set up with an equal aspect ratio so that the horizontal and vertical distances are the same. The green curve should more closely match the golf ball tracer than the red parabolic path does.</p>
-<div id="bc327811" class="cell" width="75%" data-execution_count="6">
+<div id="689f5507" class="cell" width="75%" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">makeTrajectoryPlot(vi,theta,H,m,c)</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -845,7 +845,7 @@ font-style: inherit;">0.003</span></span></code></pre></div>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cdelta_T%20=%20%5Cfrac%7B%5Cleft%7CT_2%20-%20T_1%5Cright%7C%7D%7BT_2%7D%0A"></p>
 <p>Note that I’m using <img src="https://latex.codecogs.com/png.latex?D_1"> in the denominator of <img src="https://latex.codecogs.com/png.latex?%5Cdelta_D"> and <img src="https://latex.codecogs.com/png.latex?T_2"> in the denominator of <img src="https://latex.codecogs.com/png.latex?%5Cdelta_T">. This is because these are the larger values for each motion.</p>
 <p>I will calculate these quantities for a range of launch velocities, masses, and launch angles keeping the cliff height <img src="https://latex.codecogs.com/png.latex?(H=100%20%5C,%5Ctext%7Bm%7D)"> and drag coefficient <img src="https://latex.codecogs.com/png.latex?(c=0.003%20%5C,%5Ctext%7Bkg/m%7D)"> the same as it was before.</p>
-<div id="42bde218" class="cell" data-execution_count="7">
+<div id="d143cb0b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
@@ -1034,7 +1034,11 @@ font-style: inherit;">max</span>())</span>
 background-color: null;
 font-style: inherit;">=</span> cm.ScalarMappable(norm<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span>cnormD)</span>
+font-style: inherit;">=</span>cnormD,cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'plasma'</span>)</span>
 <span id="cb7-35">cnormT <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> mc.Normalize(vmin<span class="op" style="color: #5E5E5E;
@@ -1111,7 +1115,7 @@ font-style: inherit;">2</span>, :, :].transpose()</span></code></pre></div>
 </details>
 </div>
 <p>Now, let’s examine the model agreement for the range:</p>
-<div id="107d023c" class="cell" width="90%" data-execution_count="8">
+<div id="18bb3c7b" class="cell" width="90%" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">fig1, ax1 <span class="op" style="color: #5E5E5E;
@@ -1136,7 +1140,11 @@ font-style: inherit;">=</span> ax1[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>].contourf(X1,Y1,Z1,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">100</span>)</span>
+font-style: inherit;">100</span>,cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'plasma'</span>)</span>
 <span id="cb8-4">ax1[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>].set_title(<span class="ss" style="color: #20794D;
@@ -1170,7 +1178,11 @@ font-style: inherit;">'Launch angle (deg)'</span>)</span>
 background-color: null;
 font-style: inherit;">1</span>].contourf(X2,Y2,Z2,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">100</span>)</span>
+font-style: inherit;">100</span>,cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'plasma'</span>)</span>
 <span id="cb8-8">ax1[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>].set_title(<span class="ss" style="color: #20794D;
@@ -1209,7 +1221,11 @@ font-style: inherit;">'log'</span>)</span>
 background-color: null;
 font-style: inherit;">2</span>].contourf(X3,Y3,Z3,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">100</span>)</span>
+font-style: inherit;">100</span>,cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'plasma'</span>)</span>
 <span id="cb8-13">ax1[<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span>].set_title(<span class="ss" style="color: #20794D;
@@ -1343,7 +1359,7 @@ font-style: inherit;">'rangeCalcFracDiff.png'</span>)</span>
 </div>
 </div>
 <p>Finally, I’ll examine the model agreement for the time-of-flight:</p>
-<div id="0b127f39" class="cell" width="90%" data-execution_count="9">
+<div id="749b5f6d" class="cell" width="90%" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">fig1, ax1 <span class="op" style="color: #5E5E5E;
@@ -1561,7 +1577,10 @@ background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>)</span>
-<span id="cb9-24">plt.show()</span></code></pre></div>
+<span id="cb9-24">plt.savefig(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'tofCalcFracDiff.png'</span>)</span>
+<span id="cb9-25">plt.show()</span></code></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -1571,40 +1590,260 @@ font-style: inherit;">10</span>)</span>
 </div>
 </div>
 </div>
-<p>Note that the color scales for these plots have different ranges. In particular the max <img src="https://latex.codecogs.com/png.latex?%5Cdelta_T"> value is larger than the max <img src="https://latex.codecogs.com/png.latex?%5Cdelta_D"> value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs.&nbsp;motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance.</p>
-<p>There is an interesting “trough” in the time of flight graphic. You can see that the minimum <img src="https://latex.codecogs.com/png.latex?%5Cdelta_T"> values aren’t along one of the axes as they are for <img src="https://latex.codecogs.com/png.latex?%5Cdelta_T">. This is because for very slow, or nearly vertical launch trajectories, the range isn’t going to be very different as it just doesn’t move very fast in the x-direction. But the time is quite different, and you can start to see the reason for this when you look at the <img src="https://latex.codecogs.com/png.latex?v_y"> vs <img src="https://latex.codecogs.com/png.latex?t"> graph. For the graphs below, you can see that the projectile turns around <img src="https://latex.codecogs.com/png.latex?(v_y=0)"> sooner when air resistance is considered. It’s fun to think about and play around with.</p>
-<div id="9b4c289a" class="cell" width="75%" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">makeTrajectoryPlot(<span class="dv" style="color: #AD0000;
+<p>Note that the color scales for these plots have different ranges. In particular the max <img src="https://latex.codecogs.com/png.latex?%5Cdelta_T"> value is larger than the max <img src="https://latex.codecogs.com/png.latex?%5Cdelta_D"> value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs.&nbsp;motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important, especially for the range calculation. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance.</p>
+<p>There is an interesting “trough” in the time of flight graphic. You can see that the minimum <img src="https://latex.codecogs.com/png.latex?%5Cdelta_T"> values aren’t along one of the axes as they are for <img src="https://latex.codecogs.com/png.latex?%5Cdelta_D">. This is because for very slow, or nearly vertical launch trajectories, the range isn’t going to be very different as it just doesn’t move very fast in the x-direction. Perhaps the best way to think about this is to compare the motion of a gently tossed pebble to a gently tossed feather from the same height. They both land in (about) the same place. So both have a small difference with the vacuum range. The time of flight will be different, since the feather stops going up sooner, and falls with an average acceleration much different than <img src="https://latex.codecogs.com/png.latex?-g">. Yet the motion of the pebble will be much more similar to the vacuum motion since the drag force is much smaller in magnitude than the weight of the pebble.</p>
+<section id="motion-of-a-feather-vs-a-pebble" class="level5">
+<h5 class="anchored" data-anchor-id="motion-of-a-feather-vs-a-pebble">Motion of a “feather” vs a “pebble”</h5>
+<div id="195841e5" class="cell" width="75%" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">vi <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">50</span>,<span class="dv" style="color: #AD0000;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">60</span>,H,<span class="dv" style="color: #AD0000;
+font-style: inherit;">50</span></span>
+<span id="cb10-2">vdir <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">1</span>,c)</span>
-<span id="cb10-2">plotCannonCurves(<span class="dv" style="color: #AD0000;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">50</span>,<span class="dv" style="color: #AD0000;
+font-style: inherit;">85</span></span>
+<span id="cb10-3"></span>
+<span id="cb10-4">vacuum <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">60</span>,H,<span class="dv" style="color: #AD0000;
+font-style: inherit;">=</span> idealProjectile(vi,vdir,H)</span>
+<span id="cb10-5">iTime <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">1</span>,c)</span></code></pre></div>
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,vacuum.tof,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)</span>
+<span id="cb10-6">[iPosx, iPosy] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vacuum.position(iTime)</span>
+<span id="cb10-7">[iVelx, iVely] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vacuum.velocity(iTime)</span>
+<span id="cb10-8">[iAccx, iAccy] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> vacuum.acceleration(iTime)</span>
+<span id="cb10-9"></span>
+<span id="cb10-10">feather <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dragProjectile(vi,vdir,H,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">.1</span>,c)</span>
+<span id="cb10-11">pebble <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> dragProjectile(vi,vdir,H,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,c)</span>
+<span id="cb10-12"></span>
+<span id="cb10-13">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span>,figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span>))</span>
+<span id="cb10-14">fig.suptitle(<span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'Motion of ideal projectile, "feather", and "pebble" for </span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\n</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span></span>
+<span id="cb10-15">        <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f'launch velocity = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>vi<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> m/s and launch angle = </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>vdir<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">:.0f}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> deg'</span>)</span>
+<span id="cb10-16">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].axhline(iAccx,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vacuum'</span>)</span>
+<span id="cb10-17">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].plot(feather.t, feather.ax,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'r'</span>,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'feather'</span>)</span>
+<span id="cb10-18">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].plot(pebble.t, pebble.ax,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'g'</span>,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pebble'</span>)</span>
+<span id="cb10-19">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'time (s)'</span>)</span>
+<span id="cb10-20">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_ylabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'$a_x$ (m/s^2)'</span>)</span>
+<span id="cb10-21">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].legend()</span>
+<span id="cb10-22">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].axhline(iAccy,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vacuum'</span>)</span>
+<span id="cb10-23">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].plot(feather.t, feather.ay,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'r'</span>,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'feather'</span>)</span>
+<span id="cb10-24">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].plot(pebble.t, pebble.ay,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'g'</span>,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pebble'</span>)</span>
+<span id="cb10-25">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'time (s)'</span>)</span>
+<span id="cb10-26">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].set_ylabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'$a_y$ (m/s^2)'</span>)</span>
+<span id="cb10-27">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_ylim(ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].get_ylim())</span>
+<span id="cb10-28">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].legend()</span>
+<span id="cb10-29">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].plot(iPosx,iPosy, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'vacuum'</span>)</span>
+<span id="cb10-30">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].plot(feather.x, feather.y,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'r'</span>, label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'feather'</span>)</span>
+<span id="cb10-31">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].plot(pebble.x, pebble.y,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'g'</span>,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'pebble'</span>)</span>
+<span id="cb10-32">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].axis(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'equal'</span>)</span>
+<span id="cb10-33">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].set_xlim([<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">200</span>])</span>
+<span id="cb10-34">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].set_xlabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'$x$ (m)'</span>)</span>
+<span id="cb10-35">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].set_ylabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'$y$ (m)'</span>)</span>
+<span id="cb10-36">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>].legend()</span>
+<span id="cb10-37">fig.subplots_adjust(wspace<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.4</span>,bottom<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.2</span>)</span>
+<span id="cb10-38">plt.figtext(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.65</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>, txt,family<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'DejaVu Sans'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'FontAwesome'</span>],fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">9</span>)</span>
+<span id="cb10-39">plt.show()</span></code></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag_files/figure-html/cell-11-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="705" height="395"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag_files/figure-html/cell-11-output-2.png" class="quarto-figure quarto-figure-center figure-img" width="723" height="953"></p>
+<p><img src="https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag_files/figure-html/cell-11-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="771" height="394"></p>
 </figure>
 </div>
 </div>
 </div>
 
 
+</section>
 </section>
 </section>
 

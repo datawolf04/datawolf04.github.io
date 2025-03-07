@@ -319,7 +319,7 @@ D = x(T) = v_i\cos\theta T = v_i \cos\theta \frac{v_i\sin\theta + \sqrt{v_i^2 \s
 <section id="ideal-projectile-motion-thinking-about-code" class="level3">
 <h3 class="anchored" data-anchor-id="ideal-projectile-motion-thinking-about-code">Ideal Projectile Motion: Thinking about code</h3>
 <p>At this point, we have fully specified the problem. Any motion is fully specified given the cliff height <span class="math inline">\(H\)</span>, launch speed <span class="math inline">\(v_i\)</span>, and launch angle <span class="math inline">\(\theta\)</span>. We are done. Computationally, we want to be able to calculate all the important things, and define all of the important functions. I have chosen to use a python <em>class</em> to do so. The nice thing about using classes is that you can specify all of the variables for the system, but not have them cluttering the working environment.</p>
-<div id="3fde400d" class="cell" data-execution_count="1">
+<div id="592037b2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> idealProjectile:</span>
@@ -410,7 +410,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 \dot{u}(t) = \left[\dot{x}(t), \dot{y}(t), \dot{v}_x(t), \dot{v}_y(t) \right] = \left[v_x(t), v_y(t), a_x(t), a_y(t)\right]
 \]</span></p>
 <p><code>dragEOM</code> is this function <span class="math inline">\(\dot{u}(t)\)</span> applied to our projectile system.</p>
-<div id="607c4221" class="cell" data-execution_count="2">
+<div id="dab1ccc2" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> dragEOM:</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">'''</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">  Equations of motion for projectile system with turbulent drag fired from an elevated position</span></span>
@@ -455,7 +455,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 <section id="getting-the-motion" class="level4">
 <h4 class="anchored" data-anchor-id="getting-the-motion">Getting the motion</h4>
 <p>Now that this is done, we can get the motion for this system using the following class:</p>
-<div id="94cc3d2c" class="cell" data-execution_count="3">
+<div id="314a8716" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.integrate <span class="im">import</span> solve_ivp</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> dragProjectile:</span>
@@ -505,7 +505,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 <li><span class="math inline">\(m = 1\)</span> kg</li>
 <li><span class="math inline">\(c = 0.003\)</span> kg/m</li>
 </ul>
-<div id="2750bd66" class="cell" data-execution_count="4">
+<div id="06055768" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> projectile <span class="im">import</span> <span class="op">*</span></span>
@@ -517,7 +517,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>c <span class="op">=</span> <span class="fl">0.003</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>I will visualize this motion in two ways. First, I’ll plot each quantity of the motion (position, velocity, acceleration) vs.&nbsp;time.</p>
-<div id="77226485" class="cell" width="75%" data-execution_count="5">
+<div id="4af973ab" class="cell" width="75%" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>plotCannonCurves(vi,theta,H,m,c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -528,7 +528,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 </div>
 </div>
 <p>Now I will plot the trajectory (y-coordinate vs x-coordinate). Note that I have added boxes to this plot indicating the cliff location and the water level to help guide the eye. The plot has also been set up with an equal aspect ratio so that the horizontal and vertical distances are the same. The green curve should more closely match the golf ball tracer than the red parabolic path does.</p>
-<div id="bc327811" class="cell" width="75%" data-execution_count="6">
+<div id="689f5507" class="cell" width="75%" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>makeTrajectoryPlot(vi,theta,H,m,c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -550,7 +550,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 \]</span></p>
 <p>Note that I’m using <span class="math inline">\(D_1\)</span> in the denominator of <span class="math inline">\(\delta_D\)</span> and <span class="math inline">\(T_2\)</span> in the denominator of <span class="math inline">\(\delta_T\)</span>. This is because these are the larger values for each motion.</p>
 <p>I will calculate these quantities for a range of launch velocities, masses, and launch angles keeping the cliff height <span class="math inline">\((H=100 \,\text{m})\)</span> and drag coefficient <span class="math inline">\((c=0.003 \,\text{kg/m})\)</span> the same as it was before.</p>
-<div id="42bde218" class="cell" data-execution_count="7">
+<div id="d143cb0b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.colors <span class="im">as</span> mc</span>
@@ -586,7 +586,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 <span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up properties of the color bar </span></span>
 <span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>cnormD <span class="op">=</span> mc.Normalize(vmin<span class="op">=</span><span class="dv">0</span>,vmax<span class="op">=</span>deltaD.<span class="bu">max</span>())</span>
-<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>cbarD <span class="op">=</span> cm.ScalarMappable(norm<span class="op">=</span>cnormD)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>cbarD <span class="op">=</span> cm.ScalarMappable(norm<span class="op">=</span>cnormD,cmap<span class="op">=</span><span class="st">'plasma'</span>)</span>
 <span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>cnormT <span class="op">=</span> mc.Normalize(vmin<span class="op">=</span><span class="dv">0</span>,vmax<span class="op">=</span>deltaT.<span class="bu">max</span>())</span>
 <span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>cbarT <span class="op">=</span> cm.ScalarMappable(norm<span class="op">=</span>cnormT)</span>
 <span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
@@ -605,21 +605,21 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 </details>
 </div>
 <p>Now, let’s examine the model agreement for the range:</p>
-<div id="107d023c" class="cell" width="90%" data-execution_count="8">
+<div id="18bb3c7b" class="cell" width="90%" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>fig1, ax1 <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">3</span>,figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">4</span>))</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fig1.suptitle(<span class="st">"Comparing predicted range with/without air resistance"</span>)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>CS <span class="op">=</span> ax1[<span class="dv">0</span>].contourf(X1,Y1,Z1,<span class="dv">100</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>CS <span class="op">=</span> ax1[<span class="dv">0</span>].contourf(X1,Y1,Z1,<span class="dv">100</span>,cmap<span class="op">=</span><span class="st">'plasma'</span>)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].set_title(<span class="ss">f'Mass = </span><span class="sc">{</span>masses[nm<span class="op">//</span><span class="dv">2</span>]<span class="sc">:.2f}</span><span class="ss"> kg'</span>,size<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].set_xlabel(<span class="st">'Launch velocity (m/s)'</span>)</span>
 <span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">0</span>].set_ylabel(<span class="st">'Launch angle (deg)'</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].contourf(X2,Y2,Z2,<span class="dv">100</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].contourf(X2,Y2,Z2,<span class="dv">100</span>,cmap<span class="op">=</span><span class="st">'plasma'</span>)</span>
 <span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_title(<span class="ss">f'Launch angle = </span><span class="sc">{</span>launchAngles[na<span class="op">//</span><span class="dv">2</span>]<span class="sc">:.0f}</span><span class="ss"> deg'</span>,size<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_xlabel(<span class="st">'Launch velocity (m/s)'</span>)</span>
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_ylabel(<span class="st">'Mass (kg)'</span>)</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">1</span>].set_yscale(<span class="st">'log'</span>)</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">2</span>].contourf(X3,Y3,Z3,<span class="dv">100</span>)</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">2</span>].contourf(X3,Y3,Z3,<span class="dv">100</span>,cmap<span class="op">=</span><span class="st">'plasma'</span>)</span>
 <span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">2</span>].set_title(<span class="ss">f'Launch velocity = </span><span class="sc">{</span>launchVelocities[nv<span class="op">//</span><span class="dv">2</span>]<span class="sc">:.0f}</span><span class="ss"> m/s'</span>,size<span class="op">=</span><span class="dv">10</span>)</span>
 <span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">2</span>].set_xlabel(<span class="st">'Launch angle (deg)'</span>)</span>
 <span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>ax1[<span class="dv">2</span>].set_ylabel(<span class="st">'Mass (kg)'</span>)</span>
@@ -643,7 +643,7 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 </div>
 </div>
 <p>Finally, I’ll examine the model agreement for the time-of-flight:</p>
-<div id="0b127f39" class="cell" width="90%" data-execution_count="9">
+<div id="749b5f6d" class="cell" width="90%" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig1, ax1 <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">3</span>,figsize<span class="op">=</span>(<span class="dv">7</span>,<span class="dv">4</span>))</span>
@@ -669,7 +669,8 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>liLogo <span class="op">=</span> <span class="st">u"</span><span class="ch">\uf08c</span><span class="st">"</span></span>
 <span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="ss">f"</span><span class="sc">{</span>ghLogo<span class="sc">}</span><span class="ss"> datawolf04 </span><span class="sc">{</span>liLogo<span class="sc">}</span><span class="ss"> steven-wolf-253b6625a"</span></span>
 <span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>plt.figtext(<span class="fl">0.6</span>,<span class="fl">0.01</span>, txt,family<span class="op">=</span>[<span class="st">'DejaVu Sans'</span>,<span class="st">'FontAwesome'</span>],fontsize<span class="op">=</span><span class="dv">10</span>)</span>
-<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>plt.savefig(<span class="st">'tofCalcFracDiff.png'</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -679,28 +680,64 @@ u(t) = \left[x(t), y(t), v_x(t), v_y(t) \right]
 </div>
 </div>
 </div>
-<p>Note that the color scales for these plots have different ranges. In particular the max <span class="math inline">\(\delta_T\)</span> value is larger than the max <span class="math inline">\(\delta_D\)</span> value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs.&nbsp;motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance.</p>
-<p>There is an interesting “trough” in the time of flight graphic. You can see that the minimum <span class="math inline">\(\delta_T\)</span> values aren’t along one of the axes as they are for <span class="math inline">\(\delta_T\)</span>. This is because for very slow, or nearly vertical launch trajectories, the range isn’t going to be very different as it just doesn’t move very fast in the x-direction. But the time is quite different, and you can start to see the reason for this when you look at the <span class="math inline">\(v_y\)</span> vs <span class="math inline">\(t\)</span> graph. For the graphs below, you can see that the projectile turns around <span class="math inline">\((v_y=0)\)</span> sooner when air resistance is considered. It’s fun to think about and play around with.</p>
-<div id="9b4c289a" class="cell" width="75%" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>makeTrajectoryPlot(<span class="dv">50</span>,<span class="dv">60</span>,H,<span class="dv">1</span>,c)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>plotCannonCurves(<span class="dv">50</span>,<span class="dv">60</span>,H,<span class="dv">1</span>,c)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Note that the color scales for these plots have different ranges. In particular the max <span class="math inline">\(\delta_T\)</span> value is larger than the max <span class="math inline">\(\delta_D\)</span> value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs.&nbsp;motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important, especially for the range calculation. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance.</p>
+<p>There is an interesting “trough” in the time of flight graphic. You can see that the minimum <span class="math inline">\(\delta_T\)</span> values aren’t along one of the axes as they are for <span class="math inline">\(\delta_D\)</span>. This is because for very slow, or nearly vertical launch trajectories, the range isn’t going to be very different as it just doesn’t move very fast in the x-direction. Perhaps the best way to think about this is to compare the motion of a gently tossed pebble to a gently tossed feather from the same height. They both land in (about) the same place. So both have a small difference with the vacuum range. The time of flight will be different, since the feather stops going up sooner, and falls with an average acceleration much different than <span class="math inline">\(-g\)</span>. Yet the motion of the pebble will be much more similar to the vacuum motion since the drag force is much smaller in magnitude than the weight of the pebble.</p>
+<section id="motion-of-a-feather-vs-a-pebble" class="level5">
+<h5 class="anchored" data-anchor-id="motion-of-a-feather-vs-a-pebble">Motion of a “feather” vs a “pebble”</h5>
+<div id="195841e5" class="cell" width="75%" data-execution_count="10">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>vi <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>vdir <span class="op">=</span> <span class="dv">85</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>vacuum <span class="op">=</span> idealProjectile(vi,vdir,H)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>iTime <span class="op">=</span> np.linspace(<span class="dv">0</span>,vacuum.tof,<span class="dv">100</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>[iPosx, iPosy] <span class="op">=</span> vacuum.position(iTime)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>[iVelx, iVely] <span class="op">=</span> vacuum.velocity(iTime)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>[iAccx, iAccy] <span class="op">=</span> vacuum.acceleration(iTime)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>feather <span class="op">=</span> dragProjectile(vi,vdir,H,<span class="fl">.1</span>,c)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>pebble <span class="op">=</span> dragProjectile(vi,vdir,H,<span class="dv">10</span>,c)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">3</span>,figsize<span class="op">=</span>(<span class="dv">9</span>,<span class="dv">4</span>))</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="ss">f'Motion of ideal projectile, "feather", and "pebble" for </span><span class="ch">\n</span><span class="ss">'</span><span class="op">+</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f'launch velocity = </span><span class="sc">{</span>vi<span class="sc">:.0f}</span><span class="ss"> m/s and launch angle = </span><span class="sc">{</span>vdir<span class="sc">:.0f}</span><span class="ss"> deg'</span>)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].axhline(iAccx,label<span class="op">=</span><span class="st">'vacuum'</span>)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].plot(feather.t, feather.ax,<span class="st">'r'</span>,label<span class="op">=</span><span class="st">'feather'</span>)</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].plot(pebble.t, pebble.ax,<span class="st">'g'</span>,label<span class="op">=</span><span class="st">'pebble'</span>)</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].set_ylabel(<span class="vs">r'$a_x$ (m/s^2)'</span>)</span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].legend()</span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].axhline(iAccy,label<span class="op">=</span><span class="st">'vacuum'</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].plot(feather.t, feather.ay,<span class="st">'r'</span>,label<span class="op">=</span><span class="st">'feather'</span>)</span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].plot(pebble.t, pebble.ay,<span class="st">'g'</span>,label<span class="op">=</span><span class="st">'pebble'</span>)</span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].set_xlabel(<span class="st">'time (s)'</span>)</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].set_ylabel(<span class="vs">r'$a_y$ (m/s^2)'</span>)</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">0</span>].set_ylim(ax[<span class="dv">1</span>].get_ylim())</span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">1</span>].legend()</span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].plot(iPosx,iPosy, label<span class="op">=</span><span class="st">'vacuum'</span>)</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].plot(feather.x, feather.y,<span class="st">'r'</span>, label<span class="op">=</span><span class="st">'feather'</span>)</span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].plot(pebble.x, pebble.y,<span class="st">'g'</span>,label<span class="op">=</span><span class="st">'pebble'</span>)</span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].axis(<span class="st">'equal'</span>)</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_xlim([<span class="dv">0</span>,<span class="dv">200</span>])</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_xlabel(<span class="vs">r'$x$ (m)'</span>)</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].set_ylabel(<span class="vs">r'$y$ (m)'</span>)</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>ax[<span class="dv">2</span>].legend()</span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>fig.subplots_adjust(wspace<span class="op">=</span><span class="fl">0.4</span>,bottom<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>plt.figtext(<span class="fl">0.65</span>,<span class="fl">0.01</span>, txt,family<span class="op">=</span>[<span class="st">'DejaVu Sans'</span>,<span class="st">'FontAwesome'</span>],fontsize<span class="op">=</span><span class="dv">9</span>)</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="projectileMotionWithDrag_files/figure-html/cell-11-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="705" height="395"></p>
-</figure>
-</div>
-</div>
-<div class="cell-output cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="projectileMotionWithDrag_files/figure-html/cell-11-output-2.png" class="quarto-figure quarto-figure-center figure-img" width="723" height="953"></p>
+<p><img src="projectileMotionWithDrag_files/figure-html/cell-11-output-1.png" class="quarto-figure quarto-figure-center figure-img" width="771" height="394"></p>
 </figure>
 </div>
 </div>
 </div>
 
 
+</section>
 </section>
 </section>
 
