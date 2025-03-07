@@ -111,8 +111,8 @@ class dragProjectile:
   '''
   def __init__(self, vLaunchMag, vLaunchDir, height, mass, dragCoef):
     model = dragEOM(vLaunchMag, vLaunchDir, height, mass, dragCoef)
-    tMax = 2 * model.idealTof
-    tVals = np.linspace(0,tMax,100)
+    tMax = 10 * model.idealTof
+    tVals = np.linspace(0,tMax,1000)
     u0 = model.u0
     sol = solve_ivp(model, t_span=[0,tMax], y0 = u0, t_eval=tVals, events=model.splash, dense_output=True)
     self.tof = sol.t_events[0][0]
@@ -143,10 +143,10 @@ def makeTrajectoryPlot(vi,theta,h,m,c):
   x, y = pos(tt)
   maxY = np.max((np.max(y),np.max(rCan.y)))
   maxX =  1.1* np.max((np.max(x),np.max(rCan.x)))
-  fig, ax = plt.subplots()
+  fig, ax = plt.subplots(figsize=(8,4))
   
-  ax.plot(x,y,'r',label='Ideal')
-  ax.plot(rCan.x,rCan.y,'g',label='With drag')
+  ax.plot(x,y,'r',label='Vacuum')
+  ax.plot(rCan.x,rCan.y,'g',label='Air')
   ax.axis('equal')
   ax.set_xlabel('x (m)')
   ax.set_ylabel('y (m)')
@@ -157,7 +157,8 @@ def makeTrajectoryPlot(vi,theta,h,m,c):
   ax.add_patch(Rectangle((-30,-20),30,y[0]+20, color='slategrey'))
   fig.suptitle(pltTitle)
   ax.legend()
-  plt.figtext(0.8,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
+  fig.subplots_adjust(right=0.9,bottom=0.25)
+  plt.figtext(0.6,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
   plt.show()
     
 def plotCannonCurves(vi,theta,h,m,c):
@@ -184,7 +185,7 @@ def plotCannonCurves(vi,theta,h,m,c):
   
   pltTitle = f'Cannon fired at {float(theta):.0f} deg'
 
-  fig, axs = plt.subplots(3,2, sharex=True, sharey='row',figsize=(5,7))
+  fig, axs = plt.subplots(3,2, sharex=True, sharey='row',figsize=(8,10))
   axs[0,0].plot(timeI,x,label='vacuum')
   axs[0,0].plot(rCan.t,rCan.x,label='air')
   axs[0,0].set_ylabel(r'position $(m)$')
@@ -208,6 +209,6 @@ def plotCannonCurves(vi,theta,h,m,c):
   for i in range(3):
     for j in range(2):
       axs[i,j].legend()
-  plt.figtext(0.8,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
+  plt.figtext(0.6,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
   plt.show()
 

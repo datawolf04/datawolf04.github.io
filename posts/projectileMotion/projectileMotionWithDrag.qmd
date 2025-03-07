@@ -13,12 +13,19 @@ execute:
   messages: false
   warning: false
 jupyter: python3
-draft: true
 ---
 
-I've stalled out a bit on my heat equation modeling project because I've been thinking about ways to make it better. Also, I've been busy with the real world. So I thought I'd adapt something that I've used in class and post it here. In the standard treatment, we often make approximations that may or may not be valid, and never test these approximations. In fact, that's why we physicists often get made fun of, because we are talking about spherical cows. I like to get my students to think beyond spherical cows and give them tools to examine the limits of these approximations.
+:::: {layout="[75, 25]"}
 
-[![ ](spherical-cow.png){width=25% fig-align="center"}](https://www.sphericalcowblog.com/spherical-cows)
+::: {#first-column}
+I've stalled out a bit on my heat equation modeling project because I've been thinking about ways to make it better. Also, I've been busy with the real world. So I thought I'd adapt something that I've used in class and post it here. Plus, I can't let my students have *_all_* the fun, right? In the standard treatment, we often make approximations that may or may not be valid, and never test these approximations. In fact, that's why we physicists often get made fun of, because we are talking about spherical cows. I like to get my students to think beyond spherical cows and give them tools to examine the limits of these approximations. So I'm going to build the models, and then play around a bit.
+:::
+
+::: {#second-column}
+[![ ](spherical-cow.png){width=15% fig-align="center"}](https://www.sphericalcowblog.com/spherical-cows)
+:::
+
+::::
 
 ## A typical Physics 1 projectile motion problem
 I've given this problem (or variations of it) in my physics class for years:
@@ -276,7 +283,7 @@ class dragProjectile:
 ## Comparing motion with/without air resistance
 Now that we have these tools built, we can start to visualize this motion. I'll do this using some functions in my `projectile.py` file to make graphs. I will also include the following numerical values:
 
-- $H = 100$ m
+- $H = 200$ m
 - $v_i = 100$ m/s
 - $\theta = 30$ deg
 - $m = 1$ kg
@@ -287,7 +294,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from projectile import *
 
-H = 100
+H = 200
 vi = 100
 theta = 30
 m = 1
@@ -303,7 +310,7 @@ I will visualize this motion in two ways. First, I'll plot each quantity of the 
 plotCannonCurves(vi,theta,H,m,c)
 ```
 
-Now I will plot the trajectory (y-coordinate vs x-coordinate).
+Now I will plot the trajectory (y-coordinate vs x-coordinate). Note that I have added boxes to this plot indicating the cliff location and the water level to help guide the eye. The plot has also been set up with an equal aspect ratio so that the horizontal and vertical distances are the same. The green curve should more closely match the golf ball tracer than the red parabolic path does.
 
 ```{python}
 #| fig-align: "center"
@@ -312,18 +319,20 @@ Now I will plot the trajectory (y-coordinate vs x-coordinate).
 makeTrajectoryPlot(vi,theta,H,m,c)
 ```
 
-### When should we consider air resistance?
-Since we are usually most concerned with where the projectile will land (have to hit the pirates storming the fort...) let's design a metric for quantifying the difference between the models with/without air resistance. Since I used $D$ to denote the range, I will write $D_1$ to denote the range for model 1 (no air resistance) and $D_2$ to denote the range for model 2 (with air resistance). Therefore the quantity below is the fractional difference between the targeting location of the models.
+### Where to go from here
+Usually, I'll give my students some tasks like finding the maximum range of the projectile, and comparing the model results. I thought that I would do something a little different as it will allow me to compare the model predictions. I will do this using the fractional difference between the two predictions for both the range and the time of flight. Since I used $D$ to denote the range, I will write $D_1$ to denote the range for model 1 (no air resistance) and $D_2$ to denote the range for model 2 (with air resistance). Therefore the quantity below is the fractional difference between the targeting location of the models.
 
 $$
 \delta_D = \frac{\left|D_1 - D_2\right|}{D_1}
 $$
 
-I would also like to calculate a similar quantity related to the time-of-flight
+I will also define a similar quantity related to the time-of-flight.
 
 $$
-\delta_T = \frac{\left|T_1 - T_2\right|}{T_1}
+\delta_T = \frac{\left|T_2 - T_1\right|}{T_2}
 $$
+
+Note that I'm using $D_1$ in the denominator of  $\delta_D$ and $T_2$ in the denominator of $\delta_T$. This is because these are the larger values for each motion.
 
 I will calculate these quantities for a range of launch velocities, masses, and launch angles keeping the cliff height $(H=100 \,\text{m})$ and drag coefficient $(c=0.003 \,\text{kg/m})$ the same as it was before.
 
@@ -333,9 +342,9 @@ I will calculate these quantities for a range of launch velocities, masses, and 
 import matplotlib.colors as mc
 import matplotlib.cm as cm
 
-launchVelocities = np.linspace(0,1000,20)
-launchAngles = np.arange(0,89,5)
-masses = np.linspace(0.1,100,20)
+launchVelocities = np.linspace(0,200,21)
+launchAngles = np.linspace(0,85,18)
+masses = np.logspace(-2,2,19)
 nv = len(launchVelocities)
 na = len(launchAngles)
 nm = len(masses)
@@ -353,7 +362,7 @@ for i in range(nv):
       D2 = m2.maxX
       T1 = m1.tof
       T2 = m2.tof
-      deltaT[i,j,k] = np.abs(T1 - T2)/T1
+      deltaT[i,j,k] = np.abs(T1 - T2)/T2
       if D1<1 and D2 <1:
         # For small ranges (less than 1 meter from the cliff), just set the 
         # fractional difference equal to zero
@@ -362,8 +371,10 @@ for i in range(nv):
         deltaD[i,j,k] = np.abs(D1 - D2)/D1
 
 # Set up properties of the color bar 
-cnorm = mc.Normalize(vmin=0,vmax=1)
-cbar = cm.ScalarMappable(norm=cnorm)
+cnormD = mc.Normalize(vmin=0,vmax=deltaD.max())
+cbarD = cm.ScalarMappable(norm=cnormD)
+cnormT = mc.Normalize(vmin=0,vmax=deltaT.max())
+cbarT = cm.ScalarMappable(norm=cnormT)
 
 # Arrange the calculations into multiple grids for making a heatmap/contour plot
 X1, Y1 = np.meshgrid(launchVelocities, launchAngles)
@@ -379,7 +390,7 @@ Z3 = deltaD[nv//2, :, :].transpose()
 ZZ3 = deltaT[nv//2, :, :].transpose()
 ```
 
-Now, let's examine the range:
+Now, let's examine the model agreement for the range:
 ```{python}
 #| code-fold: true
 #| fig-align: "center"
@@ -395,13 +406,49 @@ ax1[1].contourf(X2,Y2,Z2,100)
 ax1[1].set_title(f'Launch angle = {launchAngles[na//2]:.0f} deg',size=10)
 ax1[1].set_xlabel('Launch velocity (m/s)')
 ax1[1].set_ylabel('Mass (kg)')
+ax1[1].set_yscale('log')
 ax1[2].contourf(X3,Y3,Z3,100)
 ax1[2].set_title(f'Launch velocity = {launchVelocities[nv//2]:.0f} m/s',size=10)
 ax1[2].set_xlabel('Launch angle (deg)')
 ax1[2].set_ylabel('Mass (kg)')
-fig1.subplots_adjust(bottom=0.3,wspace=0.45,right=0.9)
+ax1[2].set_yscale('log')
+fig1.subplots_adjust(bottom=0.3,wspace=0.5,right=0.9)
 cbar_ax = fig1.add_axes([0.2, 0.15, 0.65, 0.02])
-fig1.colorbar(cbar, cax=cbar_ax,label=r'$\delta_D$',orientation='horizontal')
+fig1.colorbar(cbarD, cax=cbar_ax,label=r'$\delta_D$',orientation='horizontal')
+ghLogo = u"\uf09b"
+liLogo = u"\uf08c"
+txt = f"{ghLogo} datawolf04 {liLogo} steven-wolf-253b6625a"
+plt.figtext(0.6,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
+plt.savefig('rangeCalcFracDiff.png')
+plt.show()
+```
+
+
+Finally, I'll examine the model agreement for the time-of-flight:
+```{python}
+#| code-fold: true
+#| fig-align: "center"
+#| width: 90%
+
+fig1, ax1 = plt.subplots(1,3,figsize=(7,4))
+fig1.suptitle("Comparing predicted time of flight with/without air resistance")
+CS = ax1[0].contourf(X1,Y1,ZZ1,100)
+ax1[0].set_title(f'Mass = {masses[nm//2]:.2f} kg',size=10)
+ax1[0].set_xlabel('Launch velocity (m/s)')
+ax1[0].set_ylabel('Launch angle (deg)')
+ax1[1].contourf(X2,Y2,ZZ2,100)
+ax1[1].set_title(f'Launch angle = {launchAngles[na//2]:.0f} deg',size=10)
+ax1[1].set_xlabel('Launch velocity (m/s)')
+ax1[1].set_ylabel('Mass (kg)')
+ax1[1].set_yscale('log')
+ax1[2].contourf(X3,Y3,ZZ3,100)
+ax1[2].set_title(f'Launch velocity = {launchVelocities[nv//2]:.0f} m/s',size=10)
+ax1[2].set_xlabel('Launch angle (deg)')
+ax1[2].set_ylabel('Mass (kg)')
+ax1[2].set_yscale('log')
+fig1.subplots_adjust(bottom=0.3,wspace=0.5,right=0.9)
+cbar_ax = fig1.add_axes([0.2, 0.15, 0.65, 0.02])
+fig1.colorbar(cbarT, cax=cbar_ax,label=r'$\delta_T$',orientation='horizontal')
 ghLogo = u"\uf09b"
 liLogo = u"\uf08c"
 txt = f"{ghLogo} datawolf04 {liLogo} steven-wolf-253b6625a"
@@ -409,35 +456,14 @@ plt.figtext(0.6,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
 plt.show()
 ```
 
-Areas where the color is yellow shows a high level of disagreement between motion in vacuum vs. motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important. And this is what we see in these plots--note the deep blue color in the first 2 panels along the y axis (where the launch velocity is small). This should make sense. Also we note that with large masses, air resistance is less important as well.
+Note that the color scales for these plots have different ranges. In particular the max $\delta_T$ value is larger than the max $\delta_D$ value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs. motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance. 
 
-Finally, examine the Time of Flight:
+There is an interesting "trough" in the time of flight graphic. You can see that the minimum $\delta_T$ values aren't along one of the axes as they are for $\delta_T$. This is because for very slow, or nearly vertical launch trajectories, the range isn't going to be very different as it just doesn't move very fast in the x-direction. But the time is quite different, and you can start to see the reason for this when you look at the $v_y$ vs $t$ graph. For the graphs below, you can see that the projectile turns around $(v_y=0)$ sooner when air resistance is considered. It's fun to think about and play around with. 
 
 ```{python}
-#| code-fold: true
 #| fig-align: "center"
-#| width: 90%
+#| width: 75%
 
-fig2, ax2 = plt.subplots(1,3,figsize=(7,4))
-fig2.suptitle("Comparing predicted TOF with/without air resistance")
-CS = ax2[0].contourf(X1,Y1,ZZ1,100)
-ax2[0].set_title(f'Mass = {masses[nm//2]:.2f} kg',size=10)
-ax2[0].set_xlabel('Launch velocity (m/s)')
-ax2[0].set_ylabel('Launch angle (deg)')
-ax2[1].contourf(X2,Y2,ZZ2,100)
-ax2[1].set_title(f'Launch angle = {launchAngles[na//2]:.0f} deg',size=10)
-ax2[1].set_xlabel('Launch velocity (m/s)')
-ax2[1].set_ylabel('Mass (kg)')
-ax2[2].contourf(X3,Y3,ZZ3,100)
-ax2[2].set_title(f'Launch velocity = {launchVelocities[nv//2]:.0f} m/s',size=10)
-ax2[2].set_xlabel('Launch angle (deg)')
-ax2[2].set_ylabel('Mass (kg)')
-fig2.subplots_adjust(bottom=0.3,wspace=0.45,right=0.9)
-cbar_ax = fig2.add_axes([0.2, 0.15, 0.65, 0.02])
-fig2.colorbar(cbar, cax=cbar_ax,label=r'$\delta_D$',orientation='horizontal')
-ghLogo = u"\uf09b"
-liLogo = u"\uf08c"
-txt = f"{ghLogo} datawolf04 {liLogo} steven-wolf-253b6625a"
-plt.figtext(0.6,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
-plt.show()
+makeTrajectoryPlot(50,60,H,1,c)
+plotCannonCurves(50,60,H,1,c)
 ```
