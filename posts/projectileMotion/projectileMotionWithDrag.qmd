@@ -372,7 +372,7 @@ for i in range(nv):
 
 # Set up properties of the color bar 
 cnormD = mc.Normalize(vmin=0,vmax=deltaD.max())
-cbarD = cm.ScalarMappable(norm=cnormD)
+cbarD = cm.ScalarMappable(norm=cnormD,cmap='plasma')
 cnormT = mc.Normalize(vmin=0,vmax=deltaT.max())
 cbarT = cm.ScalarMappable(norm=cnormT)
 
@@ -398,16 +398,16 @@ Now, let's examine the model agreement for the range:
 
 fig1, ax1 = plt.subplots(1,3,figsize=(7,4))
 fig1.suptitle("Comparing predicted range with/without air resistance")
-CS = ax1[0].contourf(X1,Y1,Z1,100)
+CS = ax1[0].contourf(X1,Y1,Z1,100,cmap='plasma')
 ax1[0].set_title(f'Mass = {masses[nm//2]:.2f} kg',size=10)
 ax1[0].set_xlabel('Launch velocity (m/s)')
 ax1[0].set_ylabel('Launch angle (deg)')
-ax1[1].contourf(X2,Y2,Z2,100)
+ax1[1].contourf(X2,Y2,Z2,100,cmap='plasma')
 ax1[1].set_title(f'Launch angle = {launchAngles[na//2]:.0f} deg',size=10)
 ax1[1].set_xlabel('Launch velocity (m/s)')
 ax1[1].set_ylabel('Mass (kg)')
 ax1[1].set_yscale('log')
-ax1[2].contourf(X3,Y3,Z3,100)
+ax1[2].contourf(X3,Y3,Z3,100,cmap='plasma')
 ax1[2].set_title(f'Launch velocity = {launchVelocities[nv//2]:.0f} m/s',size=10)
 ax1[2].set_xlabel('Launch angle (deg)')
 ax1[2].set_ylabel('Mass (kg)')
@@ -453,17 +453,59 @@ ghLogo = u"\uf09b"
 liLogo = u"\uf08c"
 txt = f"{ghLogo} datawolf04 {liLogo} steven-wolf-253b6625a"
 plt.figtext(0.6,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)
+plt.savefig('tofCalcFracDiff.png')
 plt.show()
 ```
 
-Note that the color scales for these plots have different ranges. In particular the max $\delta_T$ value is larger than the max $\delta_D$ value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs. motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance. 
+Note that the color scales for these plots have different ranges. In particular the max $\delta_T$ value is larger than the max $\delta_D$ value. Given the initial height, it would seem that the time of flight is much more sensitive to air resistance. In general, areas on the plots above where the color is yellow shows a high level of disagreement between motion in vacuum vs. motion in air. Areas where the color is blue/violet shows a low level of disagreement between the models. Since air resistance is dependent on speed, we would expect that at low speeds, air resistance is less important, especially for the range calculation. Given the fact that gravity/weight is the other force of interest, objects with a larger mass are also less sensitive to air resistance. 
 
-There is an interesting "trough" in the time of flight graphic. You can see that the minimum $\delta_T$ values aren't along one of the axes as they are for $\delta_T$. This is because for very slow, or nearly vertical launch trajectories, the range isn't going to be very different as it just doesn't move very fast in the x-direction. But the time is quite different, and you can start to see the reason for this when you look at the $v_y$ vs $t$ graph. For the graphs below, you can see that the projectile turns around $(v_y=0)$ sooner when air resistance is considered. It's fun to think about and play around with. 
+There is an interesting "trough" in the time of flight graphic. You can see that the minimum $\delta_T$ values aren't along one of the axes as they are for $\delta_D$. This is because for very slow, or nearly vertical launch trajectories, the range isn't going to be very different as it just doesn't move very fast in the x-direction. Perhaps the best way to think about this is to compare the motion of a gently tossed pebble to a gently tossed feather from the same height. They both land in (about) the same place.  So both have a small difference with the vacuum range.  The time of flight will be different, since the feather stops going up sooner, and falls with an average acceleration much different than $-g$. Yet the motion of the pebble will be much more similar to the vacuum motion since the drag force is much smaller in magnitude than the weight of the pebble.
+
+##### Motion of a "feather" vs a "pebble"
 
 ```{python}
 #| fig-align: "center"
 #| width: 75%
+#| code-fold: true
 
-makeTrajectoryPlot(50,60,H,1,c)
-plotCannonCurves(50,60,H,1,c)
+vi = 50
+vdir = 85
+
+vacuum = idealProjectile(vi,vdir,H)
+iTime = np.linspace(0,vacuum.tof,100)
+[iPosx, iPosy] = vacuum.position(iTime)
+[iVelx, iVely] = vacuum.velocity(iTime)
+[iAccx, iAccy] = vacuum.acceleration(iTime)
+
+feather = dragProjectile(vi,vdir,H,.1,c)
+pebble = dragProjectile(vi,vdir,H,10,c)
+
+fig, ax = plt.subplots(1,3,figsize=(9,4))
+fig.suptitle(f'Motion of ideal projectile, "feather", and "pebble" for \n'+
+        f'launch velocity = {vi:.0f} m/s and launch angle = {vdir:.0f} deg')
+ax[0].axhline(iAccx,label='vacuum')
+ax[0].plot(feather.t, feather.ax,'r',label='feather')
+ax[0].plot(pebble.t, pebble.ax,'g',label='pebble')
+ax[0].set_xlabel('time (s)')
+ax[0].set_ylabel(r'$a_x$ (m/s^2)')
+ax[0].legend()
+ax[1].axhline(iAccy,label='vacuum')
+ax[1].plot(feather.t, feather.ay,'r',label='feather')
+ax[1].plot(pebble.t, pebble.ay,'g',label='pebble')
+ax[1].set_xlabel('time (s)')
+ax[1].set_ylabel(r'$a_y$ (m/s^2)')
+ax[0].set_ylim(ax[1].get_ylim())
+ax[1].legend()
+ax[2].plot(iPosx,iPosy, label='vacuum')
+ax[2].plot(feather.x, feather.y,'r', label='feather')
+ax[2].plot(pebble.x, pebble.y,'g',label='pebble')
+ax[2].axis('equal')
+ax[2].set_xlim([0,200])
+ax[2].set_xlabel(r'$x$ (m)')
+ax[2].set_ylabel(r'$y$ (m)')
+ax[2].legend()
+fig.subplots_adjust(wspace=0.4,bottom=0.2)
+plt.figtext(0.65,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=9)
+plt.show()
 ```
+
