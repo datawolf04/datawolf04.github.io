@@ -1,0 +1,23 @@
+---
+title: "Puck, meet stick"
+description: "A story involving getting Manim to work to produce a visualization of motion."
+author: "Steven Wolf"
+date: "4/25/2025"
+number-sections: false
+categories:
+  - Python
+  - Modeling
+  - Classes
+  - Motion
+  - Rotation
+  - Manim
+execute: 
+  messages: false
+  warning: false
+jupyter: python3
+draft: true
+---
+
+# The end:
+I can make this pretty video using Manim!
+
