@@ -62,7 +62,7 @@
         "$$\n",
         "where $T$ is the number of days after the winter solstice, and $\\Omega_y = \\frac{2\\pi}{1\\,\\text{yr}}$ is the angular frequency of 1 year. Below, I will create a function `axisTilt` for calculating this angle based on the fraction of a year that has passed since the winter solstice.\n"
       ],
-      "id": "469556e6"
+      "id": "79b9ae2e"
     },
     {
       "cell_type": "code",
@@ -75,7 +75,7 @@
         "  omegaYear = 2*np.pi\n",
         "  axisTilt = maxTilt * np.cos(omegaYear*T)"
       ],
-      "id": "3340e7e5",
+      "id": "76d9e969",
       "execution_count": null,
       "outputs": []
     },
@@ -125,7 +125,7 @@
         "$$\n",
         "If this product is positive, the point of interest is on the night-side of the planet, and if negative, the point of interest is on the day-side of the planet. If this product is 0, then that point is at sunrise or sunset. Let's turn this into a function to determine if it is daytime given the time of day, latitude, and axis tilt. I won't actually use this function, but this suggests a method of determining when a surface is exposed to sunlight.\n"
       ],
-      "id": "12a5748b"
+      "id": "01faba2f"
     },
     {
       "cell_type": "code",
@@ -144,7 +144,7 @@
         "  \n",
         "  return isDay"
       ],
-      "id": "e8cb7e79",
+      "id": "7736f3e8",
       "execution_count": null,
       "outputs": []
     },
@@ -158,7 +158,7 @@
         "$$\n",
         "Implicitly, we are restricting $t$ to be less than one solar day.  Below, I will use this to determine the length of the summer and winter solstice days here in Greenville, NC (Latitude = $35.6 \\deg$ N).\n"
       ],
-      "id": "2cb5339e"
+      "id": "2ebe9c41"
     },
     {
       "cell_type": "code",
@@ -179,7 +179,7 @@
         "  \n",
         "dayCalc()"
       ],
-      "id": "79a29e9d",
+      "id": "9839db8a",
       "execution_count": null,
       "outputs": []
     },
@@ -193,7 +193,7 @@
         "1. The daily low temperature occurs at sunrise, the daily high temperature occurs at sunset.\n",
         "2. Temperature will smoothly increase (like a cosine) during the daylight and smoothly decrease (also like a cosine) during the nighttime.\n"
       ],
-      "id": "c5e00ebc"
+      "id": "4c034ef9"
     },
     {
       "cell_type": "code",
@@ -247,7 +247,7 @@
         "\n",
         "makeTempPlot(22,30,-22,35.6)"
       ],
-      "id": "3ac02bcb",
+      "id": "5eb748df",
       "execution_count": null,
       "outputs": []
     },
@@ -261,7 +261,7 @@
         "### Solar power generation on a box\n",
         "So back to the simple box system, I can set up my box so that it has two faces in the N/S direction, and two faces in the E/W direction.  I will set things up much as I have done before:\n"
       ],
-      "id": "816f07fc"
+      "id": "ac713bc2"
     },
     {
       "cell_type": "code",
@@ -301,7 +301,7 @@
         "\n",
         "u0 = np.empty((xmax,ymax,zmax))"
       ],
-      "id": "b1c51112",
+      "id": "18ea3c0e",
       "execution_count": null,
       "outputs": []
     },
@@ -320,7 +320,7 @@
         "- `rho` The density of the material making up the system's walls\n",
         "- `penDepth` The effective penetration depth of sunlight into the surface\n"
       ],
-      "id": "565709ea"
+      "id": "fa752f12"
     },
     {
       "cell_type": "code",
@@ -364,7 +364,7 @@
         "  powerGen = topPowerGen + northPowerGen + southPowerGen + eastPowerGen + westPowerGen\n",
         "  return powerGen"
       ],
-      "id": "09e9c7e6",
+      "id": "807f0301",
       "execution_count": null,
       "outputs": []
     },
@@ -376,7 +376,7 @@
         "\n",
         "This can be integrated with the existing code with a few modifications. Specifically, in the boundary convection function, I will use the heat transfer coefficient, specific heat, and density of the system's walls, as well as the effective thickness of the convection boundary. I will also allow the ground to be a different temperature than the air\n"
       ],
-      "id": "15bd750f"
+      "id": "bb987d4a"
     },
     {
       "cell_type": "code",
@@ -471,7 +471,7 @@
         "          Tair, heatTransferCoef, convThickness)\n",
         "    return dudt3d.flatten()"
       ],
-      "id": "a9901f7b",
+      "id": "e2d62dc3",
       "execution_count": null,
       "outputs": []
     },
@@ -485,7 +485,7 @@
         "\n",
         "Now we can finally run the model:\n"
       ],
-      "id": "3ca14f88"
+      "id": "a6241c76"
     },
     {
       "cell_type": "code",
@@ -503,16 +503,17 @@
         "\n",
         "    return hotBoxSim"
       ],
-      "id": "90ed3135",
+      "id": "896c2a27",
       "execution_count": null,
       "outputs": []
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/anaconda3/envs/myManim/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,

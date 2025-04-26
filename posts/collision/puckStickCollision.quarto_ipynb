@@ -28,14 +28,15 @@
         "# The end:\n",
         "I can make this pretty video using Manim!\n"
       ],
-      "id": "c875e335"
+      "id": "015d92cb"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/anaconda3/envs/myManim/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,

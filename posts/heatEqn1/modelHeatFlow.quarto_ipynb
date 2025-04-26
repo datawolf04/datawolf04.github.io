@@ -60,7 +60,7 @@
         "### Box dimensions\n",
         "I will model this as a box with length $L$, width $W$, and height $H$. I'll orient my coordinate system so that the origin is in a lower corner and points $(x,y,z)$ in the region of interest are bounded by the following: $0\\leq x\\leq L$, $0\\leq y \\leq W$, and $0\\leq z \\leq H$.  \n"
       ],
-      "id": "781fcf5f"
+      "id": "56b50680"
     },
     {
       "cell_type": "code",
@@ -76,7 +76,7 @@
         "oneDay = 24*60*60 # seconds\n",
         "T = 10*oneDay # Let this run for several days"
       ],
-      "id": "905c6627",
+      "id": "8490c07d",
       "execution_count": null,
       "outputs": []
     },
@@ -87,7 +87,7 @@
         "### Thermal properties of the box\n",
         "I will assume that the box is uniform. That means no windows or ventilation. So $h$ and $k$ are constant and uniform on the boundary.  According to Wikipedia, the thermal diffusivity of air is $1.9\\times 10^{-7}$ m$^2$/s. According to [this article by Jayamaha *et.al.*](https://doi.org/10.1016/0360-1323(96)00014-5), the heat transfer coefficient for walls varies from 6 to 10 $\\frac{\\text{W}}{\\text{m}^2 \\text{K}}$. Looking at the [greenspec.co.uk website](https://www.greenspec.co.uk/building-design/insulation-materials-thermal-properties/) it would seem that the thermal conductivity of most building materials is on the order of 0.02-0.04 $\\frac{\\text{W}}{\\text{m K}}$.\n"
       ],
-      "id": "addfe9a6"
+      "id": "62640e82"
     },
     {
       "cell_type": "code",
@@ -98,7 +98,7 @@
         "h = 10 # From Jayamaha\n",
         "k = 0.04 # From Greenspec"
       ],
-      "id": "b23113ed",
+      "id": "7de9a467",
       "execution_count": null,
       "outputs": []
     },
@@ -116,7 +116,7 @@
         "\n",
         "where $T_0$ is the average temperature of the day, and $\\Delta T$ represents the range of temperature.  On the ground, I'll assume the temperature is constant at $T_G$. So $t=0$ is sunrise. Making these parameters functions is overkill for now, but will be helpful as I get more complicated.\n"
       ],
-      "id": "3849cf75"
+      "id": "1891be7a"
     },
     {
       "cell_type": "code",
@@ -135,7 +135,7 @@
         "def vground(TG, t):\n",
         "  return TG"
       ],
-      "id": "68bcaa61",
+      "id": "94a3914c",
       "execution_count": null,
       "outputs": []
     },
@@ -165,7 +165,7 @@
         "\n",
         "where $\\Delta x, \\Delta y, \\Delta z,$ and $\\Delta t$ are computational choices.  Indeed, this freedom will allow me to choose $\\Delta x = \\Delta y = \\Delta z$. I will choose $\\Delta x = 5$ cm and $\\Delta t = 15$ minutes. I'll also define the max indices for this system, and also set up values for the grid. I will also set up the $u^l_{ijk}$ grid, and fill it with a constant value. Actually, I will do this for two different initial temperatures. If my code is working correctly, the initial temperature of the box should not matter if we let the simulation run for long enough.  Think about it this way: Imagine that you have two identical coolers, one filled with ice and the other empty. Now, let the coolers sit for a year in your yard. After that year, the coolers will no longer have a different temperature. \n"
       ],
-      "id": "22d89765"
+      "id": "298e9d52"
     },
     {
       "cell_type": "code",
@@ -197,7 +197,7 @@
         "uAlt_init = (T0+TG)/2\n",
         "uAlt.fill(uAlt_init)"
       ],
-      "id": "49d40ca5",
+      "id": "316b9de3",
       "execution_count": null,
       "outputs": []
     },
@@ -239,7 +239,7 @@
         "\n",
         "Let's put this into code and apply the boundary condition to the initial array:\n"
       ],
-      "id": "8721686e"
+      "id": "36563c08"
     },
     {
       "cell_type": "code",
@@ -262,7 +262,7 @@
         "u = applyBC(u, 0)\n",
         "uAlt = applyBC(uAlt,0)"
       ],
-      "id": "2e7d4f25",
+      "id": "fe43f110",
       "execution_count": null,
       "outputs": []
     },
@@ -301,7 +301,7 @@
         "\n",
         "Now I will convert this to code:\n"
       ],
-      "id": "846b2729"
+      "id": "36b44dd4"
     },
     {
       "cell_type": "code",
@@ -322,7 +322,7 @@
         "      umat = applyBC(umat, l+1)\n",
         "    return umat"
       ],
-      "id": "cfe1b32f",
+      "id": "0bf77b98",
       "execution_count": null,
       "outputs": []
     },
@@ -333,7 +333,7 @@
         "### Visualizing the temperature:\n",
         "The grid will probably be too fine to visualize well on a 3d heatmap. So I'll settle for some cross sections. The function `plotheatmaps` will plot heat maps inside the box for a given time in 3 perpendicular planes.\n"
       ],
-      "id": "66ba5360"
+      "id": "e532c41d"
     },
     {
       "cell_type": "code",
@@ -390,7 +390,7 @@
         "                ax2.get_position().x1 - ax0.get_position().x0, 0.02])\n",
         "  fig.colorbar(im2, cax = cax, orientation='horizontal')"
       ],
-      "id": "ae1a215c",
+      "id": "89135f0f",
       "execution_count": null,
       "outputs": []
     },
@@ -400,7 +400,7 @@
       "source": [
         "So the initial condition has the following heatmap:"
       ],
-      "id": "ae94bcaf"
+      "id": "dfdc619c"
     },
     {
       "cell_type": "code",
@@ -409,7 +409,7 @@
         "plotheatmaps(u,0,xmid,ymid,zmid)\n",
         "plotheatmaps(uAlt,0,xmid,ymid,zmid)"
       ],
-      "id": "da3e3d32",
+      "id": "84271bc1",
       "execution_count": null,
       "outputs": []
     },
@@ -420,7 +420,7 @@
         "## Results {#sec-results}\n",
         "Finally, we will compute the time evolution of the temperature for the two scenarios.\n"
       ],
-      "id": "5cd1e9ee"
+      "id": "1528b0c3"
     },
     {
       "cell_type": "code",
@@ -429,7 +429,7 @@
         "u = calcHeatEqn(u)\n",
         "uAlt = calcHeatEqn(uAlt)"
       ],
-      "id": "4db48006",
+      "id": "48269df3",
       "execution_count": null,
       "outputs": []
     },
@@ -440,7 +440,7 @@
         "### Different initial condition comparison\n",
         "I'm going to start by comparing the behavior of the system given different initial conditions for the starting temperature within the box. The hidden code below crunches the average temperatures for the plots in this and the following sections.\n"
       ],
-      "id": "efcd970b"
+      "id": "7c27fe75"
     },
     {
       "cell_type": "code",
@@ -494,7 +494,7 @@
         "        boxTempDayZ[d,k] = np.mean(ul[:,:,:,k])\n",
         "        btdzErr[d,k] = np.std(ul[:,:,:,k])"
       ],
-      "id": "96f3656a",
+      "id": "db698ed8",
       "execution_count": null,
       "outputs": []
     },
@@ -504,7 +504,7 @@
       "source": [
         "As noted previously, after a long enough time, I expect two identical boxes to exhibit the same behavior regardless of their initial conditions--much in the way that the long-term behavior of a Damped-Driven Oscillator is independent of the initial conditions. Let's check that out here:\n"
       ],
-      "id": "5f017d06"
+      "id": "dca0f5dd"
     },
     {
       "cell_type": "code",
@@ -524,7 +524,7 @@
         "ax1.legend()\n",
         "plt.show()"
       ],
-      "id": "51f3cb6a",
+      "id": "72084059",
       "execution_count": null,
       "outputs": []
     },
@@ -537,7 +537,7 @@
         "### Compare interior temperature to exterior temp\n",
         "I'm going to plot the external (air) temperature and compare it to the average temperature in the box, as well as consider the average temperature in horizontal slices as the change in time.\n"
       ],
-      "id": "ffe33f19"
+      "id": "7f2d748f"
     },
     {
       "cell_type": "code",
@@ -557,7 +557,7 @@
         "plt.legend(loc=\"center left\", bbox_to_anchor=(1.04,0.5))\n",
         "plt.show()"
       ],
-      "id": "f413bd78",
+      "id": "373a537c",
       "execution_count": null,
       "outputs": []
     },
@@ -567,7 +567,7 @@
       "source": [
         "Just to see that this is stabilizing, and to get an idea of how fast this stabilizes, I'm going to find a daily average temperature as above. \n"
       ],
-      "id": "87f74560"
+      "id": "91316403"
     },
     {
       "cell_type": "code",
@@ -585,7 +585,7 @@
         "plt.legend()\n",
         "plt.show()"
       ],
-      "id": "a2f60dbc",
+      "id": "e1f236ad",
       "execution_count": null,
       "outputs": []
     },
@@ -596,7 +596,7 @@
         "### Heatmaps\n",
         "Let's view the middle cross sections every few hours on the last day:\n"
       ],
-      "id": "285800a6"
+      "id": "59f2139f"
     },
     {
       "cell_type": "code",
@@ -605,7 +605,7 @@
         "for s in range(lmin,lmax,int(stepsInDay/12)):\n",
         "  plotheatmaps(u,s,xmid,ymid,zmid)"
       ],
-      "id": "35994f24",
+      "id": "57883c8f",
       "execution_count": null,
       "outputs": []
     },
@@ -627,14 +627,15 @@
         "- Add in interior walls. \n",
         "- Add in heating and cooling.\n"
       ],
-      "id": "d90e4c5d"
+      "id": "d3fc0f09"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/anaconda3/envs/myManim/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,
