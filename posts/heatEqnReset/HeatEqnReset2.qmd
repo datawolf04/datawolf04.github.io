@@ -1,0 +1,22 @@
+---
+title: "Using the Heat Equation to model a real-world system (Part 2)"
+description: "Why is this so gosh-darn hard sometimes?"
+author: "Steven Wolf"
+date: "07/15/2025"
+number-sections: false
+categories:
+  - Heat Equation
+  - Modeling
+  - Classroom Models vs Real models
+  - Yapping
+execute: 
+  messages: false
+  warning: false
+jupyter: python3
+draft:
+  true
+---
+
+In my last post, I spoke about the issues with modeling a real-world system using the heat equation. Even the simplest 1D system promised some degree of pain. So I wanted to begin discussing numerical methods.
+
+## Introducing the Finite Element Method.

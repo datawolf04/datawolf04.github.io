@@ -1,0 +1,12 @@
+{
+  "hash": "5a0a73c4c0302a995d35c77c03245f05",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Using the Heat Equation to model a real-world system (Part 2)\"\ndescription: \"Why is this so gosh-darn hard sometimes?\"\nauthor: \"Steven Wolf\"\ndate: \"07/15/2025\"\nnumber-sections: false\ncategories:\n  - Heat Equation\n  - Modeling\n  - Classroom Models vs Real models\n  - Yapping\nexecute: \n  messages: false\n  warning: false\njupyter: python3\ndraft:\n  true\n---\n\n",
+    "supporting": [
+      "HeatEqnReset2_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
