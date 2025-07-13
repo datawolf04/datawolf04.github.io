@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.32">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Steven Wolf">
+<meta name="dcterms.date" content="2025-07-13">
+<meta name="description" content="Why is this so gosh-darn hard sometimes?">
+
+<title>Using the Heat Equation to model a real-world system (Part 1) – Steven Wolf - Data World</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-817abd8cdb7be821f1e1333d3d957080.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Steven Wolf - Data World</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://www.linkedin.com/in/steven-wolf-253b6625a"> <i class="bi bi-linkedin" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/datawolf04/"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="../../index.xml"> <i class="bi bi-rss" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Using the Heat Equation to model a real-world system (Part 1)</h1>
+                  <div>
+        <div class="description">
+          Why is this so gosh-darn hard sometimes?
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">Heat Equation</div>
+                <div class="quarto-category">Modeling</div>
+                <div class="quarto-category">Classroom Models vs Real models</div>
+                <div class="quarto-category">Yapping</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Steven Wolf </p>
+            </div>
+    </div>
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">July 13, 2025</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#intro" id="toc-intro" class="nav-link active" data-scroll-target="#intro">Intro</a></li>
+  <li><a href="#modeling-the-heat-characteristics-of-a-system." id="toc-modeling-the-heat-characteristics-of-a-system." class="nav-link" data-scroll-target="#modeling-the-heat-characteristics-of-a-system.">Modeling the heat characteristics of a system.</a>
+  <ul class="collapse">
+  <li><a href="#what-are-green-functions" id="toc-what-are-green-functions" class="nav-link" data-scroll-target="#what-are-green-functions">What are Green functions?</a></li>
+  <li><a href="#the-first-solution-to-the-heat-equation" id="toc-the-first-solution-to-the-heat-equation" class="nav-link" data-scroll-target="#the-first-solution-to-the-heat-equation">The first solution to the heat equation</a></li>
+  </ul></li>
+  <li><a href="#a-more-realistic-system" id="toc-a-more-realistic-system" class="nav-link" data-scroll-target="#a-more-realistic-system">A more realistic system</a></li>
+  <li><a href="#why-stop-now" id="toc-why-stop-now" class="nav-link" data-scroll-target="#why-stop-now">Why stop now?</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<section id="intro" class="level2">
+<h2 class="anchored" data-anchor-id="intro">Intro</h2>
+<p>This is going to be a bit different than usual. I’ve been grappling with my heat equation modeling project and thinking about the difference between the way that this subject is taught vs how it actually can work to describe the real world. For context, when I was an undergrad, I had a Math professor say, “This class is all about the Heat Equation.” Sadly, building a realistic Hot box model such as I have been attempting to do in <a href="../../posts/heatEqn1/modelHeatFlow.html">some</a> <a href="../../posts/heatEqn2/heatEqn2.html">previous</a> <a href="../../posts/heatEqn2/hotBoxViz.html">posts</a> wasn’t covered in a way consistent with realistic physics as that course focused on analytic techniques and methods, and didn’t require us to utilize any computational resources.</p>
+<p>My hope was this: Figure out a way of solving the heat equation in a generic way, then apply the appropriate boundary conditions, adding new tools and methods as things got more complex. That, ultimately didn’t work, so the previous posts were my attempt to roll my own numerical solution. Which works-ish. I find that I’m being bogged down in computational details on problems that have already been solved, and my solution has to be sub-optimal, and is definitely error prone. This is going to be a little meta, rather than data focused, and talk about why it is always nice to work in a large community of smart people.</p>
+<p>Why write all of this? This has been bugging me for over a year as I pick it up and put it down. I really do want to solve a real world problem that has a direct impact on my life.</p>
+</section>
+<section id="modeling-the-heat-characteristics-of-a-system." class="level2">
+<h2 class="anchored" data-anchor-id="modeling-the-heat-characteristics-of-a-system.">Modeling the heat characteristics of a system.</h2>
+<p>As you may or may not know, you need 3 things to model a system’s heat characteristics.</p>
+<ol type="1">
+<li>The Heat Equation. <span class="math display">\[
+\frac{\partial u(\vec{x},t)}{\partial t} - \nabla^2 u(\vec{x},t) = f(\vec{x},t)
+\]</span> Here, we are assuming that <span class="math inline">\(u(\vec{x},t)\)</span> is the temperature at some point in space <span class="math inline">\(\vec{x}\)</span> within our 3D region of interest <span class="math inline">\((\vec{x}\in\Omega\subset\mathbb{R}^3)\)</span>, and some time <span class="math inline">\(t&gt;0\)</span>. The function <span class="math inline">\(f(\vec{x},t)\)</span> describes the internal source generation. I’m playing fast and loose with units, but, I’ll bring those back later. Just ask any self respecting theoretical particle physicist, <span class="math inline">\(\hbar=c=1\)</span>.</li>
+</ol>
+<blockquote class="blockquote">
+<p>A brief aside about term order:</p>
+<p>Also of note, some texts introduce the heat equation with the terms in a different order. I’ve chosen to do it this way because it fits with some of the ways that we model systems in physics. For example, the following equation describes a damped harmonic oscillator: <span class="math display">\[
+\ddot{x}(t) +2\beta\dot{x}(t) + \omega^2x(t) = 0
+\]</span> where <span class="math inline">\(\beta = \frac{2b}{m}\)</span> and <span class="math inline">\(\omega^2=\frac{k}{m}\)</span>. But a <em>driven</em>, damped oscillator is described by: <span class="math display">\[
+\ddot{x}(t) +2\beta\dot{x}(t) + \omega^2x(t) = \frac{F_{\text{ext}}}{m}
+\]</span> This matches the homogeneous/non-homogeneous naming convention for the heat equation. So if you are reading a textbook and it talks about the “Homogeneous form of the heat equation,” it’s really talking about the heat equation without any external sources.</p>
+</blockquote>
+<ol start="2" type="1">
+<li><p>An initial condition. That is we need to know the function <span class="math inline">\(g\)</span>: <span class="math display">\[
+u(\vec{x},0) = g(\vec{x})
+\]</span> which will be determined by the characteristics of the problem.</p></li>
+<li><p>The boundary conditions. That is, there are places at the “edge” of the system $$ where the heat dynamics is changed by the fact that there is a boundary between our object of interest and another material/system. From a mathematical perspective, we model the boundary in one of 3 ways.</p></li>
+</ol>
+<ul>
+<li><p><em>Dirichelet</em> boundary conditions specify the value of the temperature on the boundary <span class="math display">\[
+  u(\vec{x},t) = u^D(\vec{x},t)
+\]</span> for <span class="math inline">\(x\in\partial\Omega\)</span> and <span class="math inline">\(t&gt;0\)</span>. In general, this temperature could depend on the boundary location and time.</p></li>
+<li><p><em>Neumann</em> boundary conditions specify the value of the derivative of the temperature on the boundary <span class="math display">\[
+  \frac{\partial u(\vec{x},t)}{\partial n} = u^N(\vec{x},t)
+\]</span> for <span class="math inline">\(x\in\partial\Omega\)</span> and <span class="math inline">\(t&gt;0\)</span> and <span class="math inline">\(n\)</span> indicates the directional derivative on the boundary surface. Again, the value of this temperature derivative can vary based on the boundary location and time.</p></li>
+<li><p><em>Robin</em> boundary conditions combine the above conditions. Specifically, the linear combination of the two condition types are specified <span class="math display">\[
+u(\vec{x},t) + b \frac{\partial u(\vec{x},t)}{\partial n} = u^R(\vec{x},t)
+\]</span> for <span class="math inline">\(x\in\partial\Omega\)</span> and <span class="math inline">\(t&gt;0\)</span> as before, with <span class="math inline">\(b\)</span> being some given constant.</p></li>
+</ul>
+<p>One way of writing the solution to the heat equation that incorporates all of these elements involves Green functions <span class="math display">\[
+\begin{align*}
+u(\vec{x},t) = &amp;\int_0^{\infty} dt' \int_{\Omega} d^3x' \, G(\vec{x},t;\vec{x}',t')f(\vec{x}',t') \\
+&amp; + \int_{\Omega} d^3x' G(\vec{x},t;\vec{x}',0)u(\vec{x}',0) \\
+&amp; + \int_0^t dt' \int_{\partial\Omega} da' \left[ G(\vec{x},t;\vec{x}',t') \frac{\partial u(\vec{x}',t')}{\partial n'} - u(\vec{x}',t') \frac{\partial G(\vec{x},t;\vec{x}',t')}{\partial n'} \right]
+\end{align*}
+\]</span></p>
+<p>This can be interpreted as follows. The temperature at each point of space and time depends on 1. Line 1: The behavior of the external sources compared to the Green functions. 2. Line 2: The evolution of the initial condition in terms of the Green functions. 3. Line 3: The evolution of the boundary conditions in terms of the Green functions.</p>
+<p>So if we can get those Green functions, we’re in business, right?</p>
+<section id="what-are-green-functions" class="level3">
+<h3 class="anchored" data-anchor-id="what-are-green-functions">What are Green functions?</h3>
+<p>In the context of the heat equation, Green functions are simply functions what solve the non-homogeneous heat equation, with a very special source term that is written in terms of the <a href="https://en.wikipedia.org/wiki/Dirac_delta_function">Dirac Delta Function</a>: <span class="math display">\[
+\frac{\partial G(\vec{x},t;\vec{x}',t')}{\partial t} - \nabla^2 G(\vec{x},t;\vec{x}',t') = \delta^3\left(\vec{x}-\vec{x}'\right)\delta(t-t')
+\]</span> along with the same boundary conditions as the problem that you are interested in. After many pages of algebraic manipulations, and doing some advanced mathematical gymnastics, you can determine the Green functions: <span class="math display">\[
+G(\vec{x},t;\vec{x}',t') = \sum_n \frac{\phi_n(\vec{x}) \phi_n(\vec{x}') \exp\left(-\lambda_n(t-t')\right)}{\lVert\phi_n\rVert^2}
+\]</span> where the functions <span class="math inline">\(\phi_n(\vec{x})\)</span> solve a sort of eigenvalue equation: <span class="math display">\[
+\nabla^2\phi_n(\vec{x}) = -\lambda_n \phi_n(\vec{x})
+\]</span> and the term in the denominator is a sort of normalizing factor defined as: <span class="math display">\[
+\lVert\phi_n\rVert^2 = \int_{\Omega} \lvert\phi_n(\vec{\xi})\rvert^2 d^3\xi
+\]</span></p>
+<p>The issue is becoming what I like to call a whack-a-mole problem. Math is awesome, they’ve invented functions for just about everything. But these functions are often quite complicated. And using them to inform physical models can also be difficult. Let’s see if I can demonstrate.</p>
+</section>
+<section id="the-first-solution-to-the-heat-equation" class="level3">
+<h3 class="anchored" data-anchor-id="the-first-solution-to-the-heat-equation">The first solution to the heat equation</h3>
+<p>Let’s consider the Dirichelet problem found in most textbooks that consider PDEs:</p>
+<blockquote class="blockquote">
+<p>Model a 1D object that has a length of 1, with a uniform initial temperature <span class="math inline">\(T_0\)</span>. Each end of the rod will be held at a temperature of 0. Assume no heat escapes along the length of the rod. There are no external heat sources or sinks.</p>
+</blockquote>
+<p>The answer, outlined in the <a href="./unifDirichelet.pdf">linked document</a> is: <span class="math display">\[
+u(x,t) = \sum_{n=1}^{\infty} \frac{2T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) e^{-(2n-1)^2\pi^2t}
+\]</span></p>
+<p>Let’s note a few things: 1. This is the “easy” problem, and we are already dealing with an infinite series of <span class="math inline">\(\sin\)</span> functions. 2. The physical world really obeys Robin boundary conditions most often. (This is “convection”).</p>
+</section>
+</section>
+<section id="a-more-realistic-system" class="level2">
+<h2 class="anchored" data-anchor-id="a-more-realistic-system">A more realistic system</h2>
+<p>So let’s imagine the easiest system that we could model that has Robin Boundary conditions.</p>
+<p>(Cue <em>Mission: Impossible</em> music)</p>
+<blockquote class="blockquote">
+<p>Your mission, should you choose to accept it, is to model a 1D object that has a length of 1, with a uniform initial temperature <span class="math inline">\(T_0\)</span>. The exterior temperature at each end of the rod is 0. Assume no heat escapes along the length of the rod.</p>
+</blockquote>
+<p>Ok, let’s bite. We have the three elements that we need:</p>
+<ol type="1">
+<li>The (1D) Heat Equation: <span class="math display">\[
+\frac{\partial u(x,t)}{\partial t} - \frac{\partial^2 u(x,t)}{\partial x^2} = 0
+\]</span></li>
+<li>The Initial Condition: <span class="math inline">\(u(x,0)=T_0\)</span>.</li>
+<li>The Boundary conditions, one for each end at <span class="math inline">\(x=0\)</span> and <span class="math inline">\(x=1\)</span> <span class="math display">\[
+u(0,t) + \left. \frac{\partial u(x,t)}{\partial x}\right|_{x=0} = 0 \qquad \text{and} \qquad u(1,t) - \left. \frac{\partial u(x,t)}{\partial x}\right|_{x=1} = 0
+\]</span></li>
+</ol>
+<p>The method that we use is separation of variables (as usual), except in 1D this time: <span class="math display">\[
+u(x,t) = X(x) T(t)
+\]</span> This means that we can write the PDE as: <span class="math display">\[
+\frac{T'(t)}{T(t)} = \frac{X''(x)}{X(x)} = -\lambda
+\]</span> as before. This allows us to rewrite our boundary conditions as: <span class="math display">\[
+X(0) + X'(0) = 0 \quad\text{and}\quad X(1) - X'(1) = 0
+\]</span> Consider some cases:</p>
+<section id="case-1-lambda0" class="level4">
+<h4 class="anchored" data-anchor-id="case-1-lambda0">Case 1: <span class="math inline">\(\lambda=0\)</span></h4>
+<p>If <span class="math inline">\(\lambda=0\)</span> then we can say: <span class="math display">\[
+X''(x) = 0 \quad T'(t)=0 \implies X(x) = ax+b \quad T(t) = c
+\]</span> where <span class="math inline">\(a,b,c\)</span> are arbitrary constants. Let’s apply the boundary condition at <span class="math inline">\(x=0\)</span>: <span class="math display">\[
+\begin{align*}
+0 &amp;= X(0) + X'(0) \\
+&amp;= (a \cdot 0+b) + a \\
+&amp;=a+b \implies b=-a \implies X(x) = a(x-1)
+\end{align*}
+\]</span> Now apply at <span class="math inline">\(x=1\)</span>: <span class="math display">\[
+\begin{align*}
+0 &amp;= X(1) - X'(1) \\
+&amp;= a(1-1) - a \\
+&amp;= -a \implies a=0 \implies X(x) = 0
+\end{align*}
+\]</span> This is, what I like to call the boring solution. So we throw it out.</p>
+</section>
+<section id="case-2-lambda-0-implies-lambda-k2" class="level4">
+<h4 class="anchored" data-anchor-id="case-2-lambda-0-implies-lambda-k2">Case 2: <span class="math inline">\(\lambda &gt; 0 \implies \lambda = k^2\)</span></h4>
+<p>If <span class="math inline">\(\lambda=k^2\)</span> (for some <span class="math inline">\(k&gt;0\)</span>) then we can say: <span class="math display">\[
+X''(x) = -k^2 X(x) \quad T'(t) = -k^2 T(t) \implies X(x) = a\sin(kx)+b\cos(kx) \quad T(t) = ce^{-k^2t}
+\]</span> where <span class="math inline">\(a,b,c\)</span> are arbitrary constants. Let’s apply the boundary condition at <span class="math inline">\(x=0\)</span>: <span class="math display">\[
+\begin{align*}
+0 &amp;= X(0) + X'(0) \\
+&amp;= (a \sin 0 + b \cos 0) + k(a\cos 0 - b\sin 0) \\
+&amp;= b+ka \implies b=-ka \implies X(x) = a\left(\sin(kx) - k \cos(kx)\right)
+\end{align*}
+\]</span> Now apply at <span class="math inline">\(x=1\)</span>: <span class="math display">\[
+\begin{align*}
+0 &amp;= X(1) - X'(1) \\
+&amp;= a\left(\sin k - k \cos k\right) - ka\left(\cos k + k\sin k \right) \\
+&amp;= a\sin k \left(1-k^2\right) - 2ak\cos k \implies \tan k = \frac{2k}{1-k^2}
+\end{align*}
+\]</span> This is good news/bad news. The good news is that <span class="math inline">\(a\)</span> is a free parameter, so we care about these solutions. If you graph <span class="math display">\[
+\tan k = \frac{2k}{1-k^2}
+\]</span> you will see that there are infinitely many <span class="math inline">\(k\)</span> values that solve this problem. However, there is no analytic solution.</p>
+<div id="54272029" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>k <span class="op">=</span> np.linspace(<span class="fl">0.1</span>,<span class="dv">10</span><span class="op">*</span>np.pi,<span class="dv">1000</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>y1 <span class="op">=</span> np.tan(k)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>y2 <span class="op">=</span> <span class="dv">2</span><span class="op">*</span>k<span class="op">/</span>(<span class="dv">1</span><span class="op">-</span>k<span class="op">**</span><span class="dv">2</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Use this to hide the jump discontinuities</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>y1[<span class="bu">abs</span>(y1)<span class="op">&gt;</span><span class="dv">10</span>] <span class="op">=</span> np.nan</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>y2[<span class="bu">abs</span>(y2)<span class="op">&gt;</span><span class="dv">10</span>] <span class="op">=</span> np.nan</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>tol<span class="op">=</span><span class="fl">0.02</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>ks <span class="op">=</span> k[np.<span class="bu">abs</span>(y1<span class="op">-</span>y2)<span class="op">&lt;</span>tol]</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>ys <span class="op">=</span> y1[np.<span class="bu">abs</span>(y1<span class="op">-</span>y2)<span class="op">&lt;</span>tol]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>ticklabs <span class="op">=</span> [<span class="st">'0'</span>,<span class="vs">r"</span><span class="dv">$</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">2</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">3</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">4</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">5</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">6</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  , <span class="vs">r"</span><span class="dv">$</span><span class="vs">7</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">8</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">9</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>, <span class="vs">r"</span><span class="dv">$</span><span class="vs">10</span><span class="er">\</span><span class="vs">pi</span><span class="dv">$</span><span class="vs">"</span>]</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="vs">r"Finding the </span><span class="dv">$</span><span class="vs">k_n</span><span class="dv">$</span><span class="vs">'s for the Robin condition"</span>)</span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>ax.axhline(color<span class="op">=</span><span class="st">'black'</span>,lw<span class="op">=</span><span class="fl">0.5</span>)</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r"</span><span class="dv">$</span><span class="vs">k</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>ax.set_ylim([<span class="op">-</span><span class="dv">5</span>,<span class="dv">5</span>])</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>ax.plot(k,y1,label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="ch">\t</span><span class="vs">an k</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>ax.plot(k,y2,label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="ch">\f</span><span class="vs">rac{2k}{1-k</span><span class="dv">^</span><span class="vs">2}</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>ax.plot(ks,ys,<span class="st">'o'</span>,color<span class="op">=</span><span class="st">'black'</span>,label<span class="op">=</span><span class="vs">r"</span><span class="dv">$</span><span class="vs">k_n</span><span class="dv">$</span><span class="vs">"</span>)</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>ax.grid()</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>ax.set_xticks(np.linspace(<span class="dv">0</span>,<span class="dv">10</span><span class="op">*</span>np.pi,<span class="dv">11</span>))</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>ax.set_xticklabels(ticklabs)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>ax.set_yticks(np.linspace(<span class="op">-</span><span class="dv">5</span>,<span class="dv">5</span>,<span class="dv">5</span>))</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="HeatEquationReset_files/figure-html/cell-2-output-1.png" width="582" height="477" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="case-3-lambda-0-implies-lambda--kappa2" class="level4">
+<h4 class="anchored" data-anchor-id="case-3-lambda-0-implies-lambda--kappa2">Case 3: <span class="math inline">\(\lambda &lt; 0 \implies \lambda = -\kappa^2\)</span></h4>
+<p>These solutions are also trivial and can be ignored. I will leave that proof up to the intrepid reader.</p>
+</section>
+</section>
+<section id="why-stop-now" class="level2">
+<h2 class="anchored" data-anchor-id="why-stop-now">Why stop now?</h2>
+<p>Ok, so this is a problem. In general, it’s best to focus on one hard thing at a time when solving problems, and a purely analytic method will not generalize well to more complex boundary conditions, especially if we respect the physically appropriate boundary condition. Also (and this has really tried my soul), I haven’t thought about practical things like <strong><em>actual units</em></strong>. If I want to model a real-world system, SI units are really helpful for that. Plus, specs for real world materials are available. And if I have to convert something like cubic freedom units per minute to an SI unit, I can do that.</p>
+<p>So in my next post, I’m going to generate a numerical model solving the Robin problem, and compare it to the Dirichelet problem that I solved previously.</p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/datawolf04\.github\.io");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
