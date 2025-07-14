@@ -113,7 +113,7 @@ Let's consider the Dirichelet problem found in most textbooks that consider PDEs
 
 The answer, outlined in the [linked document](./unifDirichelet.pdf) is:
 $$
-u(x,t) = \sum_{n=1}^{\infty} \frac{2T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) e^{-(2n-1)^2\pi^2t}
+u(x,t) = \sum_{n=1}^{\infty} \frac{4T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) e^{-(2n-1)^2\pi^2t}
 $$
 
 Let's note a few things:
