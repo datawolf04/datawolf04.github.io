@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/heatEqnReset/HeatEqnReset2.html",
       "/posts/heatEqnReset/HeatEquationReset.html",
       "/posts/collision/puckStickCollision.html",
       "/posts/projectileMotion/projectileMotionWithDrag.html",

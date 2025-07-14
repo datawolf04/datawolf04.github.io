@@ -10,7 +10,656 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.7.32</generator>
-<lastBuildDate>Sun, 13 Jul 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 14 Jul 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Using the Heat Equation to model a real-world system (Part 2)</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>In my last post, I spoke about the issues with modeling a real-world system using the heat equation. Even the simplest 1D system promised some degree of pain. So I wanted to begin discussing numerical methods. I’ve been going through some materials created by the <a href="https://jsdokken.com/dolfinx-tutorial/index.html">fenics project</a>, and while what I’m presenting below will be somewhat based on those methods, I’m going to skip using their package (for now).</p>
+<section id="applying-the-finite-element-method-to-the-1d-robin-problem" class="level2">
+<h2 class="anchored" data-anchor-id="applying-the-finite-element-method-to-the-1d-robin-problem">Applying the Finite Element Method to the 1D Robin problem</h2>
+<p>In my <a href="../../posts/heatEqnReset/HeatEquationReset.html">last post</a>, I gave myself the following challenge:</p>
+<blockquote class="blockquote">
+<p>Your mission, should you choose to accept it, is to model a 1D object that has a length of 1, with a uniform initial temperature <img src="https://latex.codecogs.com/png.latex?T_0">. The exterior temperature at each end of the rod is 0. Assume no heat escapes along the length of the rod.</p>
+</blockquote>
+<p>Let’s apply the Finite Element method to this problem. In general the setup is the same. We have: 1. The (1D) Heat Equation: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7B%5Cpartial%20u(x,t)%7D%7B%5Cpartial%20t%7D%20-%20%5Cfrac%7B%5Cpartial%5E2%20u(x,t)%7D%7B%5Cpartial%20x%5E2%7D%20=%200%0A"> 2. The Initial Condition: <img src="https://latex.codecogs.com/png.latex?u(x,0)=T_0">. 3. The Boundary conditions, one for each end at <img src="https://latex.codecogs.com/png.latex?x=0"> and <img src="https://latex.codecogs.com/png.latex?x=1"> <img src="https://latex.codecogs.com/png.latex?%0Au(0,t)%20+%20b%20%5Cleft.%20%5Cfrac%7B%5Cpartial%20u(x,t)%7D%7B%5Cpartial%20x%7D%5Cright%7C_%7Bx=0%7D%20=%200%20%5Cqquad%20%5Ctext%7Band%7D%20%5Cqquad%20u(1,t)%20-%20b%5Cleft.%20%5Cfrac%7B%5Cpartial%20u(x,t)%7D%7B%5Cpartial%20x%7D%5Cright%7C_%7Bx=1%7D%20=%200%0A"></p>
+<section id="step-1-discretize-the-time-variable." class="level3">
+<h3 class="anchored" data-anchor-id="step-1-discretize-the-time-variable.">Step 1: Discretize the time variable.</h3>
+<p>Instead of doing separation of variables using the usual analytic methods, we are going to define:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0Au%5Ek(x)%20=%20u(x,t_k)%0A"> where <img src="https://latex.codecogs.com/png.latex?t_k%20=%20k%20%5CDelta%20t">. The parameter <img src="https://latex.codecogs.com/png.latex?%5CDelta%20t"> is something that can be freely chosen, and <img src="https://latex.codecogs.com/png.latex?k"> is an index <img src="https://latex.codecogs.com/png.latex?(0,1,2,%5Cldots)">. Substituting this in, we can write the following: 1. The (1D) Heat Equation: <img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bu%5Ek(x)-u%5E%7Bk-1%7D(x)%7D%7B%5CDelta%20t%7D%20-%20%5Cfrac%7Bd%5E2%20u%5Ek(x)%7D%7Bdx%5E2%7D%20=%200%0A"> 2. The Initial condition: <img src="https://latex.codecogs.com/png.latex?%0Au%5E0(x)%20=%20T_0%0A"> 3. The boundary conditions: <img src="https://latex.codecogs.com/png.latex?%0Au%5Ek(0)%20+%20b%20%5Cleft.%20%5Cfrac%7Bdu%5Ek(x)%7D%7Bdx%7D%5Cright%7C_%7Bx=0%7D%20=%200%20%5Cqquad%20%5Ctext%7Band%7D%20%5Cqquad%20u%5Ek(1)%20-%20b%20%5Cleft.%20%5Cfrac%7Bdu%5Ek(x)%7D%7Bdx%7D%5Cright%7C_%7Bx=1%7D%20=%200%0A"></p>
+</section>
+<section id="step-2-convert-the-heat-equation-to-a-weak-formulation" class="level3">
+<h3 class="anchored" data-anchor-id="step-2-convert-the-heat-equation-to-a-weak-formulation">Step 2: Convert the Heat Equation to a weak formulation</h3>
+<p>This is done by multiplying the PDE by a <em>test function</em> <img src="https://latex.codecogs.com/png.latex?v(x)"> and integrating over the region of interest (in this case, <img src="https://latex.codecogs.com/png.latex?x%5Cin%5B0,1%5D">). <img src="https://latex.codecogs.com/png.latex?%0A%5Cint_0%5E1%20v(x)%20u%5Ek(x)%20dx%20-%20%5CDelta%20t%20%5Cint_0%5E1%20v(x)%20%5Cfrac%7Bd%5E2u%5Ek(x)%7D%7Bdx%5E2%7D%20dx%20=%20%5Cint_0%5E1%20v(x)%20u%5E%7Bk-1%7D(x)%20dx%0A"></p>
+<p>We can now integrate the second term by parts: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cint_0%5E1%20v(x)%20%5Cfrac%7Bd%5E2u%5Ek(x)%7D%7Bdx%5E2%7D%20dx%20%20&amp;=%20%5Cleft%5B%20v(x)%20%5Cfrac%7Bdu%5Ek(x)%7D%7Bdx%7D%20%5Cright%5D_0%5E1%20-%20%5Cint_0%5E1%20%5Cfrac%7Bdv(x)%7D%7Bdx%7D%20%5Cfrac%7Bdu%5Ek(x)%7D%7Bdx%7D%20dx%20%5C%5C%0A%20%20&amp;=%20%5Cleft%5B%20-v(1)%20%5Cfrac%7Bu%5Ek(1)%7D%7Bb%7D%20%20-%20v(0)%20%5Cfrac%7Bu%5Ek(0)%7D%7Bb%7D%20%5Cright%5D%20-%20%5Cint_0%5E1%20%5Cfrac%7Bdv(x)%7D%7Bdx%7D%20%5Cfrac%7Bdu%5Ek(x)%7D%7Bdx%7D%20dx%20%5C%5C%0A%5Cend%7Balign*%7D%0A"> where the term in square brackets is given by applying the boundary conditions. So now we have two things to keep track of:</p>
+<ol type="1">
+<li>The Initial condition: <img src="https://latex.codecogs.com/png.latex?%0Au%5E0(x)%20=%20T_0%0A"></li>
+<li>The weak formulation of the PDE/boundary condition <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Cint_0%5E1%20v(x)%20u%5E%7Bk-1%7D(x)%20dx%20=%20%5Cint_0%5E1%20v(x)%20u%5Ek(x)%20dx%20&amp;+%20%5CDelta%20t%20%5Cint_0%5E1%20%5Cfrac%7Bdv(x)%7D%7Bdx%7D%20%5Cfrac%7Bdu%5Ek(x)%7D%7Bdx%7D%20dx%20%5C%5C%0A&amp;%20+%20%5Cfrac%7B%5CDelta%20t%7D%7Bb%7D%20%5Cleft%5B%20v(1)%20u%5Ek(1)%20+%20v(0)%20u%5Ek(0)%20%5Cright%5D%0A%5Cend%7Balign*%7D%0A"> Notice that the LHS of this equation depends on the test function <img src="https://latex.codecogs.com/png.latex?v(x)"> and the solution of the heat equation at the <em>previous</em> time-step <img src="https://latex.codecogs.com/png.latex?u%5E%7Bk-1%7D(x)">.</li>
+</ol>
+</section>
+<section id="step-3-discretize-the-spatial-variable" class="level3">
+<h3 class="anchored" data-anchor-id="step-3-discretize-the-spatial-variable">Step 3: Discretize the spatial variable</h3>
+<p>Ultimately, this step will allow us to solve this problem as a linear-algebra problem, which is something that computers have been optimized to do very well. We do this by assuming the following: <img src="https://latex.codecogs.com/png.latex?%0Au%5Ek(x)%20=%20%5Csum_%7Bj=1%7D%5EN%20u_j%5Ek%20%5Cvarphi_j(x)%0A"> where <img src="https://latex.codecogs.com/png.latex?x_j%20=%20%5Cfrac%7Bj-1%7D%7BN-1%7D">, <img src="https://latex.codecogs.com/png.latex?h=%5Cfrac%7B1%7D%7BN%7D"> and <img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi_j(x)%20=%0A%5Cbegin%7Bcases%7D%0A%5Cleft(1-%5Cfrac%7B%5Cleft%7Cx-x_j%5Cright%7C%7D%7Bh%7D%5Cright)%20&amp;%5Cleft%7Cx-x_j%5Cright%7C%5Cleq%20h%20%5C%5C%0A0%20&amp;%20%5Ctext%7Belse%7D%0A%5Cend%7Bcases%7D%0A"> This creates a uniform lattice of points. It should be noted that this choice of <img src="https://latex.codecogs.com/png.latex?%5Cvarphi_j(x)"> is method dependant. Also, when working in higher dimensions, a cartesian grid is not optimal. But this is what I’ll use for this problem.</p>
+<section id="simplify-the-initial-condition" class="level4">
+<h4 class="anchored" data-anchor-id="simplify-the-initial-condition">Simplify the Initial condition</h4>
+<p>Let’s insert this definition of <img src="https://latex.codecogs.com/png.latex?u%5Ek(x)"> into our initial condition, multiply by <img src="https://latex.codecogs.com/png.latex?%5Cvarphi_i(x)">, and integrate over the region of interest: <img src="https://latex.codecogs.com/png.latex?%0A%5Cint_0%5E1%20dx%20%5Cvarphi_i(x)%20%5Csum_%7Bj=1%7D%5EN%20u%5E0_j%20%5Cvarphi_j(x)%20=%20%5Cint_0%5E1%20dx%20%5Cvarphi_i(x)%20T_0%0A"> We can simplify this by calculating the integrals: <img src="https://latex.codecogs.com/png.latex?%0A%5Cint_0%5E1%20dx%20%5Cvarphi_i(x)%20=%0A%5Cbegin%7Bcases%7D%0A%5Cfrac%7Bh%7D%7B2%7D%20&amp;i=1%20%5Ctext%7B%20or%20%7D%20i=N%20%5C%5C%0Ah%20&amp;%20%5Ctext%7Belse%7D%0A%5Cend%7Bcases%7D%0A"> and <img src="https://latex.codecogs.com/png.latex?%0A%5Cint_0%5E1%20dx%20%5Cvarphi_i(x)%20%5Cvarphi_j(x)%20=%0A%5Cbegin%7Bcases%7D%0A%5Cfrac%7Bh%7D%7B3%7D%20&amp;%20(i=j=1)%20%5Ctext%7B%20or%20%7D%20(i=j=N)%20%5C%5C%0A%5Cfrac%7B2h%7D%7B3%7D%20&amp;%20(i=j)%20%5Ctext%7B%20and%20%7D%20(i%5Cneq%201%20%5Ctext%7B%20or%20%7D%20i%5Cneq%20N)%20%5C%5C%0A%5Cfrac%7Bh%7D%7B6%7D%20&amp;%20j=i%5Cpm%201%20%5C%5C%0A0%20&amp;%5Ctext%7Belse%7D%0A%5Cend%7Bcases%7D%0A"></p>
+<p>Re-arranging terms, we can find <img src="https://latex.codecogs.com/png.latex?N"> equations: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A2%20u_1%5E0%20+%20u_2%5E0%20=%203%20T_0%20&amp;%5Cqquad%20i=1%20%5C%5C%0Au_%7Bi-1%7D%5E0%20+%204%20u_i%5E0%20+%20u_%7Bi+1%7D%5E0%20=%206%20T_0%20&amp;%5Cqquad%20i%5Cneq%201,%20i%5Cneq%20N%20%5C%5C%0Au_%7BN-1%7D%5E0%20+%202u_N%5E0%20=%203%20T_0%20&amp;%5Cqquad%20i=N%0A%5Cend%7Balign*%7D%0A"></p>
+<p>Since the initial temperature is uniform, this (quite sensibly) can be solved as: <img src="https://latex.codecogs.com/png.latex?%0Au_i%5E0%20=%20T_0%0A"></p>
+</section>
+<section id="simplify-the-weak-formulation" class="level4">
+<h4 class="anchored" data-anchor-id="simplify-the-weak-formulation">Simplify the weak formulation</h4>
+<p>Next we will simplify the weak formulation describing the PDE and Boundary conditions assuming <img src="https://latex.codecogs.com/png.latex?%0Au%5Ek(x)%20=%20%5Csum_%7Bj=1%7D%5EN%20u_j%5Ek%20%5Cvarphi_j(x)%0A"> and <img src="https://latex.codecogs.com/png.latex?%0Av(x)%20=%20%5Cvarphi_i(x)%0A"></p>
+<p>Plugging this in we get: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A%5Csum_%7Bj=1%7D%5EN%20u_j%5E%7Bk-1%7D%20%5Cint_0%5E1%20dx%20%5Cvarphi_i(x)%20%5Cvarphi_j(x)%20=%20&amp;%5Csum_%7Bj=1%7D%5EN%20u_j%5Ek%20%5Cint_0%5E1%20dx%20%5Cvarphi_i(x)%20%5Cvarphi_j(x)%20%5C%5C%0A&amp;+%20%5Csum_%7Bj=1%7D%5EN%20%5CDelta%20t%20u_j%5Ek%20%5Cint_0%5E1%20dx%20%5Cfrac%7Bd%5Cvarphi_i(x)%7D%7Bdx%7D%20%5Cfrac%7Bd%5Cvarphi_j(x)%7D%7Bdx%7D%20%5C%5C%0A&amp;+%20%5Cfrac%7B%5CDelta%20t%7D%7Bb%7D%20%5Csum_%7Bj=1%7D%5EN%20%5Cleft%5B%20%5Cvarphi_i(1)%20u%5Ek_j%20%5Cvarphi_j(1)%20+%20%5Cvarphi_i(0)%20u%5Ek_j%20%5Cvarphi_j(0)%20%5Cright%5D%0A%5Cend%7Balign*%7D%0A"></p>
+<p>We can simplify this again, but we will need to consider the integral below in addition to other integrals we have calculated previously. <img src="https://latex.codecogs.com/png.latex?%0A%5Cint_0%5E1%20dx%20%5Cfrac%7Bd%5Cvarphi_i(x)%7D%7Bdx%7D%20%5Cfrac%7Bd%5Cvarphi_j(x)%7D%7Bdx%7D%20=%0A%5Cbegin%7Bcases%7D%0A%5Cfrac%7B1%7D%7Bh%7D%20&amp;%20(i=j=1)%20%5Ctext%7B%20or%20%7D%20(i=j=N)%20%5C%5C%0A%5Cfrac%7B2%7D%7Bh%7D%20&amp;%20(i=j)%20%5Ctext%7B%20and%20%7D%20(i%5Cneq%201%20%5Ctext%7B%20or%20%7D%20i%5Cneq%20N)%20%5C%5C%0A-%5Cfrac%7B1%7D%7Bh%7D%20&amp;%20j=i%5Cpm%201%20%5C%5C%0A0%20&amp;%5Ctext%7Belse%7D%0A%5Cend%7Bcases%7D%0A"></p>
+<p>Finally, we will note that by the definition of our <img src="https://latex.codecogs.com/png.latex?%5Cvarphi_i(x)"> function, we can simplify the values on the boundary as follows: <img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi_i(0)%20=%20%5Cdelta_%7Bi1%7D%20%5Cqquad%20%5Ctext%7Band%7D%20%5Cqquad%20%5Cvarphi_i(1)%20=%20%5Cdelta_%7BiN%7D%0A"></p>
+<p>This leaves us with the following system of <img src="https://latex.codecogs.com/png.latex?N"> equations to solve: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A2%5Cleft(1+%5Cfrac%7B3(b+h)%5CDelta%20t%7D%7Bbh%5E2%7D%5Cright)%20u_0%5Ek%20+%20%5Cleft(1-%5Cfrac%7B6%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)u_1%5Ek%20&amp;=%202u_0%5E%7Bk-1%7D%20+%20u_1%5E%7Bk-1%7D%20%5Cquad%20i=1%20%5C%5C%0A%5Cleft(1-%5Cfrac%7B6%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)u_%7BN-1%7D%5Ek%20+%202%5Cleft(1+%5Cfrac%7B3(b+h)%5CDelta%20t%7D%7Bbh%5E2%7D%5Cright)%20u_N%5Ek%20&amp;=%20u_%7BN-1%7D%5E%7Bk-1%7D%20+%202u_N%5E%7Bk-1%7D%20%5Cquad%20i=N%20%5C%5C%0A%5Cleft(1-%5Cfrac%7B6%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)u_%7Bi-1%7D%5Ek%20+%204%5Cleft(1+%5Cfrac%7B3%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)%20u_i%5Ek%20+%20%5Cleft(1-%5Cfrac%7B6%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)u_%7Bi+1%7D%5Ek%20&amp;=%20u_%7Bi-1%7D%5E%7Bk-1%7D%20+%204u_i%5E%7Bk-1%7D%20+%20u_%7Bi+1%7D%5E%7Bk-1%7D%20%20%5C%5C%0A&amp;%5Cqquad%20i%5Cneq%201%20%5Ctext%7B%20and%20%7D%20i%5Cneq%20N%20%5C%5C%0A%5Cend%7Balign*%7D%0A"></p>
+<p>This looks somewhat intimidating, but if we define: <img src="https://latex.codecogs.com/png.latex?%0AA%20=%202%5Cleft(1+%5Cfrac%7B3(b+h)%5CDelta%20t%7D%7Bbh%5E2%7D%5Cright)%20%5Cquad%20B=4%5Cleft(1+%5Cfrac%7B3%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)%20%5Cquad%20C=%5Cleft(1-%5Cfrac%7B6%5CDelta%20t%7D%7Bh%5E2%7D%5Cright)%0A"> we get <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0AA%20u_0%5Ek%20+%20C%20u_1%5Ek%20&amp;=%202u_0%5E%7Bk-1%7D%20+%20u_1%5E%7Bk-1%7D%20&amp;%5Cquad%20i=1%20%5C%5C%0AC%20u_%7BN-1%7D%5Ek%20+%20A%20u_N%5Ek%20&amp;=%20u_%7BN-1%7D%5E%7Bk-1%7D%20+%202u_N%5E%7Bk-1%7D%20&amp;%5Cquad%20i=N%20%5C%5C%0ACu_%7Bi-1%7D%5Ek%20+%20B%20u_i%5Ek%20+%20Cu_%7Bi+1%7D%5Ek%20&amp;=%20u_%7Bi-1%7D%5E%7Bk-1%7D%20+%204u_i%5E%7Bk-1%7D%20%20+%20u_%7Bi+1%7D%5E%7Bk-1%7D&amp;%5Cquad%20i%5Cneq%201%20%5Ctext%7B%20and%20%7D%20i%5Cneq%20N%20%5C%5C%0A%5Cend%7Balign*%7D%0A"> We can turn this into a matrix equation: <img src="https://latex.codecogs.com/png.latex?%0AK%20U%20=%20G%0A"> where <img src="https://latex.codecogs.com/png.latex?U"> is a <img src="https://latex.codecogs.com/png.latex?(N%5Ctimes%201)"> matrix made up of the <img src="https://latex.codecogs.com/png.latex?u_i%5Ek">’s, <img src="https://latex.codecogs.com/png.latex?K"> is (assuming <img src="https://latex.codecogs.com/png.latex?N=5">)</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AK%20=%0A%5Cbegin%7Bbmatrix%7D%0AA%20&amp;%20C%20&amp;%200%20&amp;%200%20&amp;%200%20%5C%5C%0AC%20&amp;%20B%20&amp;%20C%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%20C%20&amp;%20B%20&amp;%20C%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%20C%20&amp;%20B%20&amp;%20C%20%5C%5C%0A0%20&amp;%200%20&amp;%200%20&amp;%20C%20&amp;%20A%0A%5Cend%7Bbmatrix%7D%0A"> and <img src="https://latex.codecogs.com/png.latex?G%20=%20G_s%20u%5E%7Bk-1%7D"> is made from the right hand side of the above equation:</p>
+<p><img src="https://latex.codecogs.com/png.latex?%0AG_s%20=%0A%5Cbegin%7Bbmatrix%7D%0A2%20&amp;%201%20&amp;%200%20&amp;%200%20&amp;%200%20%5C%5C%0A1%20&amp;%204%20&amp;%201%20&amp;%200%20&amp;%200%20%5C%5C%0A0%20&amp;%201%20&amp;%204%20&amp;%201%20&amp;%200%20%5C%5C%0A0%20&amp;%200%20&amp;%201%20&amp;%204%20&amp;%201%20%5C%5C%0A0%20&amp;%200%20&amp;%200%20&amp;%201%20&amp;%202%0A%5Cend%7Bbmatrix%7D%0A"> and <img src="https://latex.codecogs.com/png.latex?%0Au%5E%7Bk-1%7D%20=%0A%5Cbegin%7Bbmatrix%7D%0Au%5E%7Bk-1%7D_1%20%5C%5C%0Au%5E%7Bk-1%7D_2%20%5C%5C%0Au%5E%7Bk-1%7D_3%20%5C%5C%0Au%5E%7Bk-1%7D_4%20%5C%5C%0Au%5E%7Bk-1%7D_5%0A%5Cend%7Bbmatrix%7D%0A"></p>
+</section>
+</section>
+</section>
+<section id="lets-make-code" class="level2">
+<h2 class="anchored" data-anchor-id="lets-make-code">Let’s make code!</h2>
+<p>Let’s make some computational choices and code this up. First, I’ll begin by setting up the initial condition.</p>
+<div id="4fee5810" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"></span>
+<span id="cb1-3">N <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">101</span></span>
+<span id="cb1-4">h <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)</span>
+<span id="cb1-5">initTemp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span></span>
+<span id="cb1-6">xi <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,N)</span>
+<span id="cb1-7">u0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> initTemp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.ones(N)</span></code></pre></div>
+</div>
+<p>Next, I’ll define the matrices on the LHS and RHS of the equation above, as well as a few parameters.</p>
+<div id="a83fdbf5" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-2">Dt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span></span>
+<span id="cb2-3">tMax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span></span>
+<span id="cb2-4">tVals <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.arange(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,tMax, Dt)</span>
+<span id="cb2-5"></span>
+<span id="cb2-6">A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Dt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(b<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span>h)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>(b<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>h<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))</span>
+<span id="cb2-7">B <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">3</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Dt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>h<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>)</span>
+<span id="cb2-8">C <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">6</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>Dt<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>h<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span></span>
+<span id="cb2-9"></span>
+<span id="cb2-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## Left hand side</span></span>
+<span id="cb2-11">K <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros([N,N])</span>
+<span id="cb2-12">Gsq <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros([N,N])</span>
+<span id="cb2-13"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>):</span>
+<span id="cb2-14">  K[i,i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> B</span>
+<span id="cb2-15">  K[i, i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> C</span>
+<span id="cb2-16">  K[i, i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> C</span>
+<span id="cb2-17">  Gsq[i,i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span></span>
+<span id="cb2-18">  Gsq[i,i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-19">  Gsq[i,i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb2-20"></span>
+<span id="cb2-21">K[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [A, C]</span>
+<span id="cb2-22">K[N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>:] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [C, A]</span>
+<span id="cb2-23">Gsq[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>:<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]</span>
+<span id="cb2-24">Gsq[N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, N<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>:] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]</span></code></pre></div>
+</div>
+<p>Python can find the new u-matrix in terms of the old u matrix in one line:</p>
+<div id="913556ef" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">newU <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linalg.solve(K,G)</span></code></pre></div>
+</div>
+<p>So let’s build our solution:</p>
+<div id="f2070e76" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">nSteps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(tMax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>Dt)</span>
+<span id="cb4-2">U <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros([N,nSteps])</span>
+<span id="cb4-3"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> k <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(nSteps):</span>
+<span id="cb4-4">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">if</span>(k<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">==</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>):</span>
+<span id="cb4-5">    newU <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.ones(N) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> initTemp</span>
+<span id="cb4-6">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">else</span>:</span>
+<span id="cb4-7">    G <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.matmul(Gsq,oldU)</span>
+<span id="cb4-8">    newU <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linalg.solve(K,G)</span>
+<span id="cb4-9">  U[:, k] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> newU    </span>
+<span id="cb4-10">  oldU <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> newU</span></code></pre></div>
+</div>
+<p>And let’s make a nice 3D plot of the solution:</p>
+<div id="c7c87f6f" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb5-2">T, X <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.meshgrid(tVals, xi)</span>
+<span id="cb5-3"></span>
+<span id="cb5-4">fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.figure()</span>
+<span id="cb5-5">ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">111</span>, projection<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3d'</span>)</span>
+<span id="cb5-6">ax.plot_surface(T,X,U,cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'magma'</span>)</span>
+<span id="cb5-7">ax.set_xlabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">t</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb5-8">ax.set_ylabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">x</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb5-9">ax.set_zlabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb5-10">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="view-some-solutions" class="level2">
+<h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
+<p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
+<div id="38246029" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</div>
+<p>Let’s compare this to the Dirichelet solution from the previous post. <img src="https://latex.codecogs.com/png.latex?%0Au(x,t)%20=%20%5Csum_%7Bn=1%7D%5E%7B%5Cinfty%7D%20%5Cfrac%7B4T_0%7D%7B(2n-1)%5Cpi%7D%5Csin%5Cleft((2n-1)%5Cpi%20x%5Cright)%20e%5E%7B-(2n-1)%5E2%5Cpi%5E2t%7D%0A"> First, let’s note that the only free parameter here is the initial temperature <img src="https://latex.codecogs.com/png.latex?T_0">. There is no equivalent to the “inverse heat transfer coefficient” <img src="https://latex.codecogs.com/png.latex?b"> that I defined for the Robin problem.</p>
+<div id="e3fd3487" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> uDirichelet(t,x,T0):</span>
+<span id="cb6-2">  uD <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span></span>
+<span id="cb6-3">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> n <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>):</span>
+<span id="cb6-4">    term <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">4</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>T0<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>((<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>n<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.sin((<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>n<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>x) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.exp(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span>n<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.pi<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> t)</span>
+<span id="cb6-5">    uD <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> term</span>
+<span id="cb6-6">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> uD</span>
+<span id="cb6-7"></span>
+<span id="cb6-8">uD <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros(U.shape)</span>
+<span id="cb6-9"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(tVals)):</span>
+<span id="cb6-10">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> j <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">len</span>(xi)):</span>
+<span id="cb6-11">    uD[j,i] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uDirichelet(tVals[i],xi[j],initTemp)</span>
+<span id="cb6-12"></span>
+<span id="cb6-13">fig <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.figure()</span>
+<span id="cb6-14">ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">111</span>, projection<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3d'</span>)</span>
+<span id="cb6-15">ax.plot_surface(T,X,uD,cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'magma'</span>)</span>
+<span id="cb6-16">ax.set_xlabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">t</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb6-17">ax.set_ylabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">x</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb6-18">ax.set_zlabel(<span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">$</span><span class="vs" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'</span>)</span>
+<span id="cb6-19">plt.show()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>This is similar to the Robin plot for a very small <img src="https://latex.codecogs.com/png.latex?b"> value</p>
+<div id="5b87d923" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">uRobin(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">101</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">5</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-9-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>Heat Equation</category>
+  <category>Modeling</category>
+  <category>Classroom Models vs Real models</category>
+  <guid>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2.html</guid>
+  <pubDate>Mon, 14 Jul 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Using the Heat Equation to model a real-world system (Part 1)</title>
   <dc:creator>Steven Wolf</dc:creator>
