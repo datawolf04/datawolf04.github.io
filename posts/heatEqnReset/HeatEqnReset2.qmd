@@ -315,6 +315,8 @@ plt.show()
 
 
 ## View some solutions:
+[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]
+
 Note, that we have a property that can change the dynamics of this system, namely $b$, which is related to the (inverse of the) heat transfer coefficient. For the previous plot $b=1$. Compare to these, where $b=5$ and $b=0.5$:
 
 ```{python}
@@ -327,17 +329,17 @@ uRobin(10,101,5,0.002,5).plotTemp()
 uRobin(10,101,5,0.002,0.5).plotTemp()
 ```
 
-Let's compare this to the Dirichelet solution from the previous post.
+Let's compare this to the Dirichlet solution from the previous post. Note, there is a minor difference from the previous post. I have re-indexed the sum starting at 0 since python zero-indexes the functions there, and it's just a little cleaner.
 $$
-u(x,t) = \sum_{n=1}^{\infty} \frac{4T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) e^{-(2n-1)^2\pi^2t}
+u(x,t) = \sum_{n=0}^{\infty} \frac{4T_0}{(2n+1)\pi}\sin\left((2n-+)\pi x\right) e^{-(2n+1)^2\pi^2t}
 $$
 First, let's note that the only free parameter here is the initial temperature $T_0$. There is no equivalent to the "inverse heat transfer coefficient" $b$ that I defined for the Robin problem.
 
 ```{python}
 def uDirichelet(t,x,T0):
   uD = 0
-  for n in range(100):
-    term = 4*T0/((2*n-1)*np.pi) * np.sin((2*n-1)*np.pi*x) * np.exp(-(2*n-1)**2 * np.pi**2 * t)
+  for n in range(200):
+    term = 4*T0/((2*n+1)*np.pi) * np.sin((2*n+1)*np.pi*x) * np.exp(-(2*n+1)**2 * np.pi**2 * t)
     uD += term
   return uD
 
@@ -347,6 +349,7 @@ for i in range(len(tVals)):
     uD[j,i] = uDirichelet(tVals[i],xi[j],initTemp)
 
 fig = plt.figure()
+fig.suptitle("Temperature of 1D bar with Dirichelet boundary conditions")
 ax = fig.add_subplot(111, projection='3d')
 ax.plot_surface(T,X,uD,cmap='magma')
 ax.set_xlabel(r'$t$')
@@ -364,11 +367,11 @@ Although, it should be noted that this doesn't have the odd bump that the Dirich
 ## Where to go from here
 Ok, so I've solved the 1D Robin problem, and compared it to the Dirichlet problem. Why not just make this 3D and roll my own from here?
 
-1. I need to redo all the math every time that I do different shapes/boundary conditions. It would sure be nice if someone else would do that for me.
+1. I need to redo all the math every time that I do different shapes/boundary conditions. It would sure be nice if someone else would do that for me. Like, programmatically. With a peer-reviewed software package.
 2. As you go to 2D and 3D, a rectangular grid/mesh is not as numerically appropriate and can lead to unwanted errors. Quoting J.D. Jackson's Graduate Electricity and Magnetism text:
 
 > A square lattice is not optimal in many problems because the solution may change more rapidly in some parts of the domain of interest than in other parts. In such regions one wishes to have a finer mesh. An [Finite Element Analysis] method with a standard generic shape, but permitting different sizes, will be more flexible and therefore superior.
 
-So, not only would I have to do painstaking math, I'd have to do ***slightly different*** painstaking math. So why should I do this on my own.
+So, not only would I have to do painstaking math, I'd have to do ***slightly different*** painstaking math. As I have convinced myself that I know how the algorithm works, and why different steps are important, I'm comfortable using externally created code.
 
-In my next post, I plan to solve the 1D problems I've solved here using the FENICS code. And generalize to 3D, as well as other shapes.
+In my next post, I plan to solve the 1D problems I've solved here using the [FENICS code](https://fenicsproject.org/). And this will let me generalize this to 3D as well as model a more realistic system.
