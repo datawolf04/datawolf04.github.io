@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Steven Wolf">
-<meta name="dcterms.date" content="2025-07-15">
+<meta name="dcterms.date" content="2025-07-14">
 <meta name="description" content="Why is this so gosh-darn hard sometimes?">
 
 <title>Using the Heat Equation to model a real-world system (Part 2) – Steven Wolf - Data World</title>
@@ -215,7 +215,7 @@ window.Quarto = {
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 15, 2025</p>
+        <p class="date">July 14, 2025</p>
       </div>
     </div>
     
@@ -239,6 +239,7 @@ window.Quarto = {
   </ul></li>
   <li><a href="#lets-make-code" id="toc-lets-make-code" class="nav-link" data-scroll-target="#lets-make-code">Let’s make code!</a></li>
   <li><a href="#view-some-solutions" id="toc-view-some-solutions" class="nav-link" data-scroll-target="#view-some-solutions">View some solutions:</a></li>
+  <li><a href="#where-to-go-from-here" id="toc-where-to-go-from-here" class="nav-link" data-scroll-target="#where-to-go-from-here">Where to go from here</a></li>
   </ul>
 </nav>
     </div>
@@ -418,7 +419,7 @@ u^{k-1}_5
 <section id="lets-make-code" class="level2">
 <h2 class="anchored" data-anchor-id="lets-make-code">Let’s make code!</h2>
 <p>Let’s make some computational choices and code this up. First, I’ll begin by setting up the initial condition.</p>
-<div id="4fee5810" class="cell" data-execution_count="1">
+<div id="4e3667d2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">101</span></span>
@@ -428,7 +429,7 @@ u^{k-1}_5
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>u0 <span class="op">=</span> initTemp <span class="op">*</span> np.ones(N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Next, I’ll define the matrices on the LHS and RHS of the equation above, as well as a few parameters.</p>
-<div id="a83fdbf5" class="cell" data-execution_count="2">
+<div id="8d871a16" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>Dt <span class="op">=</span> <span class="fl">0.1</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>tMax <span class="op">=</span> <span class="dv">3</span></span>
@@ -455,11 +456,11 @@ u^{k-1}_5
 <span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>Gsq[N<span class="op">-</span><span class="dv">1</span>, N<span class="op">-</span><span class="dv">2</span>:] <span class="op">=</span> [<span class="dv">1</span>,<span class="dv">2</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Python can find the new u-matrix in terms of the old u matrix in one line:</p>
-<div id="913556ef" class="cell" data-execution_count="3">
+<div id="1d8c1a00" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>newU <span class="op">=</span> np.linalg.solve(K,G)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>So let’s build our solution:</p>
-<div id="f2070e76" class="cell" data-execution_count="4">
+<div id="d1337f8a" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nSteps <span class="op">=</span> <span class="bu">int</span>(tMax<span class="op">/</span>Dt)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>U <span class="op">=</span> np.zeros([N,nSteps])</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(nSteps):</span>
@@ -472,7 +473,7 @@ u^{k-1}_5
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  oldU <span class="op">=</span> newU</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>And let’s make a nice 3D plot of the solution:</p>
-<div id="c7c87f6f" class="cell" data-execution_count="5">
+<div id="d095c859" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>T, X <span class="op">=</span> np.meshgrid(tVals, xi)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -494,8 +495,9 @@ u^{k-1}_5
 </section>
 <section id="view-some-solutions" class="level2">
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
+<p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <span class="math inline">\(b\)</span>, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <span class="math inline">\(b=1\)</span>. Compare to these, where <span class="math inline">\(b=5\)</span> and <span class="math inline">\(b=0.5\)</span>:</p>
-<div id="38246029" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
+<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
@@ -505,14 +507,14 @@ u^{k-1}_5
 </div>
 </div>
 </div>
-<p>Let’s compare this to the Dirichelet solution from the previous post. <span class="math display">\[
-u(x,t) = \sum_{n=1}^{\infty} \frac{4T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) e^{-(2n-1)^2\pi^2t}
+<p>Let’s compare this to the Dirichlet solution from the previous post. Note, there is a minor difference from the previous post. I have re-indexed the sum starting at 0 since python zero-indexes the functions there, and it’s just a little cleaner. <span class="math display">\[
+u(x,t) = \sum_{n=0}^{\infty} \frac{4T_0}{(2n+1)\pi}\sin\left((2n-+)\pi x\right) e^{-(2n+1)^2\pi^2t}
 \]</span> First, let’s note that the only free parameter here is the initial temperature <span class="math inline">\(T_0\)</span>. There is no equivalent to the “inverse heat transfer coefficient” <span class="math inline">\(b\)</span> that I defined for the Robin problem.</p>
-<div id="e3fd3487" class="cell" data-execution_count="7">
+<div id="65728f0d" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> uDirichelet(t,x,T0):</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  uD <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">100</span>):</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    term <span class="op">=</span> <span class="dv">4</span><span class="op">*</span>T0<span class="op">/</span>((<span class="dv">2</span><span class="op">*</span>n<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>np.pi) <span class="op">*</span> np.sin((<span class="dv">2</span><span class="op">*</span>n<span class="op">-</span><span class="dv">1</span>)<span class="op">*</span>np.pi<span class="op">*</span>x) <span class="op">*</span> np.exp(<span class="op">-</span>(<span class="dv">2</span><span class="op">*</span>n<span class="op">-</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> np.pi<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> t)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> n <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">200</span>):</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    term <span class="op">=</span> <span class="dv">4</span><span class="op">*</span>T0<span class="op">/</span>((<span class="dv">2</span><span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>np.pi) <span class="op">*</span> np.sin((<span class="dv">2</span><span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>)<span class="op">*</span>np.pi<span class="op">*</span>x) <span class="op">*</span> np.exp(<span class="op">-</span>(<span class="dv">2</span><span class="op">*</span>n<span class="op">+</span><span class="dv">1</span>)<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> np.pi<span class="op">**</span><span class="dv">2</span> <span class="op">*</span> t)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    uD <span class="op">+=</span> term</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> uD</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
@@ -522,12 +524,13 @@ u(x,t) = \sum_{n=1}^{\infty} \frac{4T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) 
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    uD[j,i] <span class="op">=</span> uDirichelet(tVals[i],xi[j],initTemp)</span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure()</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(T,X,uD,cmap<span class="op">=</span><span class="st">'magma'</span>)</span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">t</span><span class="dv">$</span><span class="vs">'</span>)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">x</span><span class="dv">$</span><span class="vs">'</span>)</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>ax.set_zlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">u</span><span class="dv">$</span><span class="vs">'</span>)</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">"Temperature of 1D bar with Dirichelet boundary conditions"</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">111</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(T,X,uD,cmap<span class="op">=</span><span class="st">'magma'</span>)</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">t</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">x</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>ax.set_zlabel(<span class="vs">r'</span><span class="dv">$</span><span class="vs">u</span><span class="dv">$</span><span class="vs">'</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -536,9 +539,9 @@ u(x,t) = \sum_{n=1}^{\infty} \frac{4T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) 
 </div>
 </div>
 </div>
-<p>This is similar to the Robin plot for a very small <span class="math inline">\(b\)</span> value</p>
-<div id="5b87d923" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>uRobin(<span class="dv">10</span>,<span class="dv">101</span>,<span class="dv">5</span>,<span class="fl">0.02</span>,<span class="fl">0.005</span>).plotTemp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>This is similar to the Robin plot for a very small <span class="math inline">\(b\)</span> value.</p>
+<div id="56ad215b" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>uRobin(<span class="dv">10</span>,<span class="dv">101</span>,<span class="dv">5</span>,<span class="fl">0.002</span>,<span class="fl">0.005</span>).plotTemp()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -547,6 +550,20 @@ u(x,t) = \sum_{n=1}^{\infty} \frac{4T_0}{(2n-1)\pi}\sin\left((2n-1)\pi x\right) 
 </div>
 </div>
 </div>
+<p>Although, it should be noted that this doesn’t have the odd bump that the Dirichlet solution has for small time values.</p>
+</section>
+<section id="where-to-go-from-here" class="level2">
+<h2 class="anchored" data-anchor-id="where-to-go-from-here">Where to go from here</h2>
+<p>Ok, so I’ve solved the 1D Robin problem, and compared it to the Dirichlet problem. Why not just make this 3D and roll my own from here?</p>
+<ol type="1">
+<li>I need to redo all the math every time that I do different shapes/boundary conditions. It would sure be nice if someone else would do that for me. Like, programmatically. With a peer-reviewed software package.</li>
+<li>As you go to 2D and 3D, a rectangular grid/mesh is not as numerically appropriate and can lead to unwanted errors. Quoting J.D. Jackson’s Graduate Electricity and Magnetism text:</li>
+</ol>
+<blockquote class="blockquote">
+<p>A square lattice is not optimal in many problems because the solution may change more rapidly in some parts of the domain of interest than in other parts. In such regions one wishes to have a finer mesh. An [Finite Element Analysis] method with a standard generic shape, but permitting different sizes, will be more flexible and therefore superior.</p>
+</blockquote>
+<p>So, not only would I have to do painstaking math, I’d have to do <strong><em>slightly different</em></strong> painstaking math. As I have convinced myself that I know how the algorithm works, and why different steps are important, I’m comfortable using externally created code.</p>
+<p>In my next post, I plan to solve the 1D problems I’ve solved here using the <a href="https://fenicsproject.org/">FENICS code</a>. And this will let me generalize this to 3D as well as model a more realistic system.</p>
 
 
 </section>

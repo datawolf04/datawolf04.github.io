@@ -68,7 +68,7 @@
 <section id="lets-make-code" class="level2">
 <h2 class="anchored" data-anchor-id="lets-make-code">Let’s make code!</h2>
 <p>Let’s make some computational choices and code this up. First, I’ll begin by setting up the initial condition.</p>
-<div id="4fee5810" class="cell" data-execution_count="1">
+<div id="4e3667d2" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
@@ -110,7 +110,7 @@ background-color: null;
 font-style: inherit;">*</span> np.ones(N)</span></code></pre></div>
 </div>
 <p>Next, I’ll define the matrices on the LHS and RHS of the equation above, as well as a few parameters.</p>
-<div id="a83fdbf5" class="cell" data-execution_count="2">
+<div id="8d871a16" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">b <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -313,13 +313,13 @@ background-color: null;
 font-style: inherit;">2</span>]</span></code></pre></div>
 </div>
 <p>Python can find the new u-matrix in terms of the old u matrix in one line:</p>
-<div id="913556ef" class="cell" data-execution_count="3">
+<div id="1d8c1a00" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">newU <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.linalg.solve(K,G)</span></code></pre></div>
 </div>
 <p>So let’s build our solution:</p>
-<div id="f2070e76" class="cell" data-execution_count="4">
+<div id="d1337f8a" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">nSteps <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
@@ -370,7 +370,7 @@ background-color: null;
 font-style: inherit;">=</span> newU</span></code></pre></div>
 </div>
 <p>And let’s make a nice 3D plot of the solution:</p>
-<div id="c7c87f6f" class="cell" data-execution_count="5">
+<div id="d095c859" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
@@ -442,8 +442,9 @@ font-style: inherit;">'</span>)</span>
 </section>
 <section id="view-some-solutions" class="level2">
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
+<p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="38246029" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
+<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
@@ -453,8 +454,8 @@ font-style: inherit;">'</span>)</span>
 </div>
 </div>
 </div>
-<p>Let’s compare this to the Dirichelet solution from the previous post. <img src="https://latex.codecogs.com/png.latex?%0Au(x,t)%20=%20%5Csum_%7Bn=1%7D%5E%7B%5Cinfty%7D%20%5Cfrac%7B4T_0%7D%7B(2n-1)%5Cpi%7D%5Csin%5Cleft((2n-1)%5Cpi%20x%5Cright)%20e%5E%7B-(2n-1)%5E2%5Cpi%5E2t%7D%0A"> First, let’s note that the only free parameter here is the initial temperature <img src="https://latex.codecogs.com/png.latex?T_0">. There is no equivalent to the “inverse heat transfer coefficient” <img src="https://latex.codecogs.com/png.latex?b"> that I defined for the Robin problem.</p>
-<div id="e3fd3487" class="cell" data-execution_count="7">
+<p>Let’s compare this to the Dirichlet solution from the previous post. Note, there is a minor difference from the previous post. I have re-indexed the sum starting at 0 since python zero-indexes the functions there, and it’s just a little cleaner. <img src="https://latex.codecogs.com/png.latex?%0Au(x,t)%20=%20%5Csum_%7Bn=0%7D%5E%7B%5Cinfty%7D%20%5Cfrac%7B4T_0%7D%7B(2n+1)%5Cpi%7D%5Csin%5Cleft((2n-+)%5Cpi%20x%5Cright)%20e%5E%7B-(2n+1)%5E2%5Cpi%5E2t%7D%0A"> First, let’s note that the only free parameter here is the initial temperature <img src="https://latex.codecogs.com/png.latex?T_0">. There is no equivalent to the “inverse heat transfer coefficient” <img src="https://latex.codecogs.com/png.latex?b"> that I defined for the Robin problem.</p>
+<div id="65728f0d" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
@@ -474,7 +475,7 @@ font-style: inherit;">in</span> <span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">range</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">100</span>):</span>
+font-style: inherit;">200</span>):</span>
 <span id="cb6-4">    term <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
@@ -489,7 +490,7 @@ font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>n<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -501,7 +502,7 @@ font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>n<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -517,7 +518,7 @@ font-style: inherit;">2</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>n<span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">-</span><span class="dv" style="color: #AD0000;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>)<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -572,7 +573,10 @@ font-style: inherit;">=</span> uDirichelet(tVals[i],xi[j],initTemp)</span>
 <span id="cb6-13">fig <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.figure()</span>
-<span id="cb6-14">ax <span class="op" style="color: #5E5E5E;
+<span id="cb6-14">fig.suptitle(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Temperature of 1D bar with Dirichelet boundary conditions"</span>)</span>
+<span id="cb6-15">ax <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> fig.add_subplot(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -581,12 +585,12 @@ background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'3d'</span>)</span>
-<span id="cb6-15">ax.plot_surface(T,X,uD,cmap<span class="op" style="color: #5E5E5E;
+<span id="cb6-16">ax.plot_surface(T,X,uD,cmap<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'magma'</span>)</span>
-<span id="cb6-16">ax.set_xlabel(<span class="vs" style="color: #20794D;
+<span id="cb6-17">ax.set_xlabel(<span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
 background-color: null;
@@ -597,7 +601,7 @@ background-color: null;
 font-style: inherit;">$</span><span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>)</span>
-<span id="cb6-17">ax.set_ylabel(<span class="vs" style="color: #20794D;
+<span id="cb6-18">ax.set_ylabel(<span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
 background-color: null;
@@ -608,7 +612,7 @@ background-color: null;
 font-style: inherit;">$</span><span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>)</span>
-<span id="cb6-18">ax.set_zlabel(<span class="vs" style="color: #20794D;
+<span id="cb6-19">ax.set_zlabel(<span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">r'</span><span class="dv" style="color: #AD0000;
 background-color: null;
@@ -619,7 +623,7 @@ background-color: null;
 font-style: inherit;">$</span><span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>)</span>
-<span id="cb6-19">plt.show()</span></code></pre></div>
+<span id="cb6-20">plt.show()</span></code></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -628,8 +632,8 @@ font-style: inherit;">'</span>)</span>
 </div>
 </div>
 </div>
-<p>This is similar to the Robin plot for a very small <img src="https://latex.codecogs.com/png.latex?b"> value</p>
-<div id="5b87d923" class="cell" data-execution_count="8">
+<p>This is similar to the Robin plot for a very small <img src="https://latex.codecogs.com/png.latex?b"> value.</p>
+<div id="56ad215b" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">uRobin(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
@@ -638,7 +642,7 @@ font-style: inherit;">101</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>,<span class="fl" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0.02</span>,<span class="fl" style="color: #AD0000;
+font-style: inherit;">0.002</span>,<span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div>
 <div class="cell-output cell-output-display">
@@ -649,6 +653,20 @@ font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div>
 </div>
 </div>
 </div>
+<p>Although, it should be noted that this doesn’t have the odd bump that the Dirichlet solution has for small time values.</p>
+</section>
+<section id="where-to-go-from-here" class="level2">
+<h2 class="anchored" data-anchor-id="where-to-go-from-here">Where to go from here</h2>
+<p>Ok, so I’ve solved the 1D Robin problem, and compared it to the Dirichlet problem. Why not just make this 3D and roll my own from here?</p>
+<ol type="1">
+<li>I need to redo all the math every time that I do different shapes/boundary conditions. It would sure be nice if someone else would do that for me. Like, programmatically. With a peer-reviewed software package.</li>
+<li>As you go to 2D and 3D, a rectangular grid/mesh is not as numerically appropriate and can lead to unwanted errors. Quoting J.D. Jackson’s Graduate Electricity and Magnetism text:</li>
+</ol>
+<blockquote class="blockquote">
+<p>A square lattice is not optimal in many problems because the solution may change more rapidly in some parts of the domain of interest than in other parts. In such regions one wishes to have a finer mesh. An [Finite Element Analysis] method with a standard generic shape, but permitting different sizes, will be more flexible and therefore superior.</p>
+</blockquote>
+<p>So, not only would I have to do painstaking math, I’d have to do <strong><em>slightly different</em></strong> painstaking math. As I have convinced myself that I know how the algorithm works, and why different steps are important, I’m comfortable using externally created code.</p>
+<p>In my next post, I plan to solve the 1D problems I’ve solved here using the <a href="https://fenicsproject.org/">FENICS code</a>. And this will let me generalize this to 3D as well as model a more realistic system.</p>
 
 
 </section>
