@@ -18,8 +18,6 @@
         "  messages: false\n",
         "  warning: false\n",
         "jupyter: python3\n",
-        "draft:\n",
-        "  true\n",
         "---\n",
         "\n",
         "\n",
@@ -246,7 +244,7 @@
         "## Let's make code!\n",
         "Let's make some computational choices and code this up. First, I'll begin by setting up the initial condition.\n"
       ],
-      "id": "f5ac83de"
+      "id": "2709f721"
     },
     {
       "cell_type": "code",
@@ -260,7 +258,7 @@
         "xi = np.linspace(0,1,N)\n",
         "u0 = initTemp * np.ones(N)"
       ],
-      "id": "3ffebfd9",
+      "id": "ac3f42df",
       "execution_count": null,
       "outputs": []
     },
@@ -270,7 +268,7 @@
       "source": [
         "Next, I'll define the matrices on the LHS and RHS of the equation above, as well as a few parameters.\n"
       ],
-      "id": "b33c0dfe"
+      "id": "3856ea56"
     },
     {
       "cell_type": "code",
@@ -301,7 +299,7 @@
         "Gsq[0, 0:2] = [2,1]\n",
         "Gsq[N-1, N-2:] = [1,2]"
       ],
-      "id": "c9145a5f",
+      "id": "b5a458ff",
       "execution_count": null,
       "outputs": []
     },
@@ -311,7 +309,7 @@
       "source": [
         "Python can find the new u-matrix in terms of the old u matrix in one line:\n"
       ],
-      "id": "361b750d"
+      "id": "8f60e3a6"
     },
     {
       "cell_type": "code",
@@ -320,7 +318,7 @@
         "#| eval: false\n",
         "newU = np.linalg.solve(K,G)"
       ],
-      "id": "3593c6d2",
+      "id": "eb044edd",
       "execution_count": null,
       "outputs": []
     },
@@ -330,7 +328,7 @@
       "source": [
         "So let's build our solution:"
       ],
-      "id": "dcb7ab5c"
+      "id": "c43e7f89"
     },
     {
       "cell_type": "code",
@@ -347,7 +345,7 @@
         "  U[:, k] = newU    \n",
         "  oldU = newU"
       ],
-      "id": "bcf79266",
+      "id": "d90622c5",
       "execution_count": null,
       "outputs": []
     },
@@ -357,7 +355,7 @@
       "source": [
         "And let's make a nice 3D plot of the solution:\n"
       ],
-      "id": "5623fd5e"
+      "id": "14946045"
     },
     {
       "cell_type": "code",
@@ -374,7 +372,7 @@
         "ax.set_zlabel(r'$u$')\n",
         "plt.show()"
       ],
-      "id": "41b4542d",
+      "id": "1ad66635",
       "execution_count": null,
       "outputs": []
     },
@@ -385,7 +383,7 @@
         "## View some solutions:\n",
         "Note, that we have a property that can change the dynamics of this system, namely $b$, which is related to the (inverse of the) heat transfer coefficient. For the previous plot $b=1$. Compare to these, where $b=5$ and $b=0.5$:\n"
       ],
-      "id": "b28d2665"
+      "id": "5f49de9c"
     },
     {
       "cell_type": "code",
@@ -399,7 +397,7 @@
         "uRobin(10,101,5,0.002,5).plotTemp()\n",
         "uRobin(10,101,5,0.002,0.5).plotTemp()"
       ],
-      "id": "8e50cbbb",
+      "id": "77202dcf",
       "execution_count": null,
       "outputs": []
     },
@@ -413,7 +411,7 @@
         "$$\n",
         "First, let's note that the only free parameter here is the initial temperature $T_0$. There is no equivalent to the \"inverse heat transfer coefficient\" $b$ that I defined for the Robin problem.\n"
       ],
-      "id": "f175414d"
+      "id": "b8cef77b"
     },
     {
       "cell_type": "code",
@@ -439,7 +437,7 @@
         "ax.set_zlabel(r'$u$')\n",
         "plt.show()"
       ],
-      "id": "5f55462c",
+      "id": "fd87d1e0",
       "execution_count": null,
       "outputs": []
     },
@@ -449,7 +447,7 @@
       "source": [
         "This is similar to the Robin plot for a very small $b$ value."
       ],
-      "id": "435335e2"
+      "id": "b5c4cd3f"
     },
     {
       "cell_type": "code",
@@ -457,7 +455,7 @@
       "source": [
         "uRobin(10,101,5,0.002,0.005).plotTemp()"
       ],
-      "id": "34156594",
+      "id": "6ed85596",
       "execution_count": null,
       "outputs": []
     },
@@ -479,7 +477,7 @@
         "\n",
         "In my next post, I plan to solve the 1D problems I've solved here using the FENICS code. And generalize to 3D, as well as other shapes."
       ],
-      "id": "78e361e5"
+      "id": "98f3c164"
     }
   ],
   "metadata": {

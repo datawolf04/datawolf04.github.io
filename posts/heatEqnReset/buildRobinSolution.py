@@ -43,7 +43,7 @@ class uRobin:
   def plotTemp(self):
     T, X = np.meshgrid(self.tVals, self.xi)
     fig = plt.figure()
-    fig.suptitle(f'Temperature plot for b={self.b:.2f}')
+    fig.suptitle(f'Temperature plot for b={self.b:.4f}')
     ax = fig.add_subplot(111, projection='3d')
     ax.plot_surface(T,X,self.U,cmap='magma')
     ax.set_xlabel(r'$t$')
