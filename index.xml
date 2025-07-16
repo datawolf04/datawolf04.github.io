@@ -444,7 +444,7 @@ font-style: inherit;">'</span>)</span>
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
 <p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
+<div id="b150aac4" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
@@ -674,7 +674,7 @@ font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div>
  ]]></description>
   <category>Heat Equation</category>
   <category>Modeling</category>
-  <category>Classroom Models vs Real models</category>
+  <category>Classroom Models vs Realistic Models</category>
   <guid>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2.html</guid>
   <pubDate>Mon, 14 Jul 2025 00:00:00 GMT</pubDate>
 </item>
@@ -1128,7 +1128,7 @@ font-style: inherit;">5</span>))</span>
  ]]></description>
   <category>Heat Equation</category>
   <category>Modeling</category>
-  <category>Classroom Models vs Real models</category>
+  <category>Classroom Models vs Realistic Models</category>
   <category>Yapping</category>
   <guid>https://datawolf04.github.io/posts/heatEqnReset/HeatEquationReset.html</guid>
   <pubDate>Sun, 13 Jul 2025 00:00:00 GMT</pubDate>
@@ -11254,7 +11254,7 @@ font-style: inherit;">!</span>label)</span></code></pre></div>
 </section>
 
  ]]></description>
-  <category>tidyTuesday</category>
+  <category>TidyTuesday</category>
   <category>R</category>
   <guid>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</guid>
   <pubDate>Thu, 05 Sep 2024 00:00:00 GMT</pubDate>
@@ -11984,7 +11984,7 @@ $ max_age              &lt;dbl&gt; NA, 50, 24, NA, NA, 19, NA, NA, NA, NA, NA, N
 </section>
 
  ]]></description>
-  <category>tidyTuesday</category>
+  <category>TidyTuesday</category>
   <category>R</category>
   <guid>https://datawolf04.github.io/posts/tt20240819/englishMonarchy.html</guid>
   <pubDate>Tue, 20 Aug 2024 00:00:00 GMT</pubDate>
@@ -13774,9 +13774,9 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 </section>
 
  ]]></description>
-  <category>tidyTuesday</category>
+  <category>TidyTuesday</category>
   <category>R</category>
-  <category>maps</category>
+  <category>Maps</category>
   <guid>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</guid>
   <pubDate>Wed, 14 Aug 2024 00:00:00 GMT</pubDate>
 </item>
@@ -14534,9 +14534,9 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
 
 
  ]]></description>
-  <category>weather</category>
-  <category>python</category>
-  <category>web-scraping</category>
+  <category>Weather</category>
+  <category>Python</category>
+  <category>Web-scraping</category>
   <guid>https://datawolf04.github.io/posts/weatherScrape240808/weatherScrape.html</guid>
   <pubDate>Thu, 08 Aug 2024 00:00:00 GMT</pubDate>
 </item>
@@ -15736,7 +15736,7 @@ font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></c
 </section>
 
  ]]></description>
-  <category>tidyTuesday</category>
+  <category>TidyTuesday</category>
   <category>R</category>
   <guid>https://datawolf04.github.io/posts/olympic240805/olympicMedalData.html</guid>
   <pubDate>Wed, 07 Aug 2024 00:00:00 GMT</pubDate>
