@@ -4,7 +4,7 @@ description: "Countries by participation and medal count"
 author: "Steven Wolf"
 date: "8/7/2024"
 categories:
-  - tidyTuesday
+  - TidyTuesday
   - R
 resources: 
   - "olymnpicMedalResults.RData"

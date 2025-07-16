@@ -4,7 +4,7 @@ description: ""
 author: "Steven Wolf"
 date: "8/20/2024"
 categories:
-  - tidyTuesday
+  - TidyTuesday
   - R 
 resources: 
   - "englishMonarchy.RData"

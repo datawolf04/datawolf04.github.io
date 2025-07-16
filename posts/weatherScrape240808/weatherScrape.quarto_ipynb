@@ -1,0 +1,137 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Scraping Weather Data-Proof of concept\"\n",
+        "description: \"Scraping weather data near Zebulon, NC\"\n",
+        "author: \"Steven Wolf\"\n",
+        "date: \"8/8/2024\"\n",
+        "categories:\n",
+        "  - Weather\n",
+        "  - Python\n",
+        "  - Web-scraping\n",
+        "jupyter: python3\n",
+        "---\n",
+        "\n",
+        "\n",
+        "My friend, [Ben Leese](https://benleese.com), was telling me about his most recent project. He has a passion for going through old naturalist's notebooks and pulling out data from the depths of that analog mess and bringing it into the digital world. He was talking to me about how weather could impact different bird behaviors. But he only had binary weather data (Yes, it rained/No, it didn't rain). Furthermore, it was from Raleigh, NC rather than Zebulon, NC. While these places are close on the map, weather is even more local than politics. So I said that I'd try to find some better weather data for him. \n",
+        "\n",
+        "I found this [helpful python script](https://zperzan.github.io/projects/scrape-weather-underground/) for scraping the weather data from [Weather Underground](https://www.wunderground.com), which I will adapt to my purpose. \n"
+      ],
+      "id": "5123f0f8"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import time\n",
+        "import sys\n",
+        "\n",
+        "import numpy as np\n",
+        "import pandas as pd\n",
+        "from bs4 import BeautifulSoup as BS\n",
+        "from selenium import webdriver\n",
+        "from great_tables import GT\n",
+        "from scrape_wunderground import *"
+      ],
+      "id": "9ce76a70",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "I will scrape weather from the [BreakingWind  station](https://www.wunderground.com/dashboard/pws/KNCZEBUL74?cm_ven=localwx_pwsdash) with code `KNCZEBUL74` on 8/1/2024, as I am pretty sure this is the closest station to the desired location.\n"
+      ],
+      "id": "88bb80fb"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "station_id = \"KNCZEBUL74\"\n",
+        "date_id = \"2024-08-01\"\n",
+        "\n",
+        "(\n",
+        "  GT(scrape_wunderground(station_id,date_id).head(20))\n",
+        "    .tab_options(\n",
+        "      column_labels_background_color = \"#3B3A3EFF\",\n",
+        "  )\n",
+        ")"
+      ],
+      "id": "d528e589",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And it works! That being said, I'll have to find a different weather station because this one seems somewhat new. There is only partial data for 5/29/2024.\n"
+      ],
+      "id": "b43a5667"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "date_id = \"2024-05-29\"\n",
+        "(\n",
+        "  GT(scrape_wunderground(station_id,date_id).head(20))\n",
+        "    .tab_options(\n",
+        "      column_labels_background_color = \"#3B3A3EFF\",\n",
+        "  )\n",
+        ")"
+      ],
+      "id": "2c2a515e",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And 5/28/2024 has no data. "
+      ],
+      "id": "420d0a75"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "date_id = \"2024-05-28\"\n",
+        "(\n",
+        "  GT(scrape_wunderground(station_id,date_id).head(20))\n",
+        "    .tab_options(\n",
+        "      column_labels_background_color = \"#3B3A3EFF\",\n",
+        "  )\n",
+        ")"
+      ],
+      "id": "d2c8f79f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "I will have to find a different nearby weather station for this purpose of finding Ben some weather data for the time period he is interested in (mid 1970s). And, once I succeed at that, I will have to aggregate the 5-minute data to daily data. But once that's done, my friend should have more than enough weather data to help him with his model.\n"
+      ],
+      "id": "19ad89f2"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "name": "python3",
+      "language": "python",
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/usr/share/jupyter/kernels/python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

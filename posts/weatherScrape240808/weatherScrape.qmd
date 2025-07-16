@@ -4,9 +4,9 @@ description: "Scraping weather data near Zebulon, NC"
 author: "Steven Wolf"
 date: "8/8/2024"
 categories:
-  - weather
-  - python
-  - web-scraping
+  - Weather
+  - Python
+  - Web-scraping
 jupyter: python3
 ---
 

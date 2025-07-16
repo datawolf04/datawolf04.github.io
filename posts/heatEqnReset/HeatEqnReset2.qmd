@@ -7,7 +7,7 @@ number-sections: false
 categories:
   - Heat Equation
   - Modeling
-  - Classroom Models vs Real models
+  - Classroom Models vs Realistic Models
 execute: 
   messages: false
   warning: false

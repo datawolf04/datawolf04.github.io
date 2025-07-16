@@ -4,7 +4,7 @@ description: "Where are Stack Overflow users working from? Let's find out."
 author: "Steven Wolf"
 date: "9/5/2024"
 categories:
-  - tidyTuesday
+  - TidyTuesday
   - R 
 execute: 
   messages: false
