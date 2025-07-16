@@ -102,7 +102,7 @@
         "# The code\n",
         "I put all of this together in the code [linked here](collisionViz/puckStickCollision.py) and reproduced below. In order for it to work, you'll need to have manim installed on your computer.\n"
       ],
-      "id": "94af283c"
+      "id": "6c20eb76"
     },
     {
       "cell_type": "code",
@@ -312,7 +312,7 @@
         "# To render video run the following in a terminal:\n",
         "# manim -pql puckStickCollision.py puckStickCollision"
       ],
-      "id": "d61b1f33",
+      "id": "7f139970",
       "execution_count": null,
       "outputs": []
     }
