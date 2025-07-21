@@ -10,7 +10,726 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.7.32</generator>
-<lastBuildDate>Mon, 14 Jul 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Mon, 21 Jul 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Using the Heat Equation to model a real-world system (Part 3)</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset3.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="finally-lets-use-some-software-to-do-this" class="level2">
+<h2 class="anchored" data-anchor-id="finally-lets-use-some-software-to-do-this">Finally, let’s use some software to do this</h2>
+<p>If you have been following my recent series of posts, I’ve been <a href="../../posts/heatEqnReset/HeatEquationReset.html">talking about why solving the heat equation for a real problem is hard</a>, and then <a href="../../posts/heatEqnReset/HeatEqnReset2.html">I did some tedious Linear Algebra</a>. All to solve a simple 1D heat equation problem. Now the plan is to repeat this analysis for the Dirichlet boundary condition using the <a href="https://fenicsproject.org">FENICSx software</a>.</p>
+<p>I’m not going to re-create the math, but, if you follow what I have done previously, you will see that we can define the bilinear form: <img src="https://latex.codecogs.com/png.latex?%0Aa(u%5Ek,%20v)%20=%20%5Cint_%5COmega%20%5Cleft(u%5Ek(%5Cvec%7Bx%7D)v(%5Cvec%7Bx%7D)%20+%20%5CDelta%20t%20%5Cnabla%20u%5Ek(%5Cvec%7Bx%7D)%20%5Ccdot%20%5Cnabla%20v(%5Cvec%7Bx%7D)%5Cright)%20d%5E3x%20%20+%20%5Csum_l%20%5Cint_%7B%5CGamma_R%5El%7D%20h_l%5Ek%20u%5Ek(%5Cvec%7Bx%7D)%20v(%5Cvec%7Bx%7D)%20ds%0A"> and the linear form: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0AL(v)%20=%20&amp;%5Cint_%5COmega%20%5Cleft(u%5E%7Bk-1%7D(%5Cvec%7Bx%7D)v(%5Cvec%7Bx%7D)%20+%20%5CDelta%20t%20f%5Ek(%5Cvec%7Bx%7D)%20v(%5Cvec%7Bx%7D)%5Cright)d%5E3x%20%5C%5C%0A&amp;+%20%5Csum_l%20%5Cint_%7B%5CGamma_R%5El%7D%20h_l%5Ek%20s%5Ek_l(%5Cvec%7Bx%7D)%20v(%5Cvec%7Bx%7D)%20ds%20+%20%5Csum_j%20%5Cint_%7B%5CGamma_N%5Ej%7D%20g_j%5Ek%20v(%5Cvec%7Bx%7D)%20ds%0A%5Cend%7Balign*%7D%0A"> of the heat equation.</p>
+<p>At this point in the previous analysis, we set up a mesh and converted the hard integral problem into a Linear algebra problem. For example, we defined a function: <img src="https://latex.codecogs.com/png.latex?%0A%5Cvarphi_m(x,y,z)%20=%0A%5Cbegin%7Bcases%7D%0A%5Cleft(1-%5Cfrac%7B%5Cleft%7Cx-x_i%5Cright%7C%7D%7Bh%7D%5Cright)%20%5Cleft(1-%5Cfrac%7B%5Cleft%7Cy-y_j%5Cright%7C%7D%7Bh%7D%5Cright)%20%5Cleft(1-%5Cfrac%7B%5Cleft%7Cz-z_k%5Cright%7C%7D%7Bh%7D%5Cright)%20&amp;%5Cleft%7Cx-x_i%5Cright%7C%5Cleq%20h%0A%5Cleft%7Cy-y_j%5Cright%7C%5Cleq%20h%20%5Cleft%7Cz-x_k%5Cright%7C%5Cleq%20h%20%5C%5C%0A0%20&amp;%5Ctext%7Belse%7D%0A%5Cend%7Bcases%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?%0A%5Cvec%7Bx%7D_m%20=%20(x_i,%20y_j,%20z_k)%0A"> Then we chose: <img src="https://latex.codecogs.com/png.latex?%0Av(%5Cvec%7Bx%7D)%20=%20%5Cvarphi_n(%5Cvec%7Bx%7D)%0A"> and <img src="https://latex.codecogs.com/png.latex?%0Au%5Ek(%5Cvec%7Bx%7D)%20=%20%5Csum_m%20u%5Ek_m%20%5Cvarphi_m(%5Cvec%7Bx%7D)%0A"> But each of these choices has consequences about the accuracy and stability of the computation. For example, mesh size/shape are known to be important, especially if the solution is likely to vary a great deal in a region. The beauty of FENICSx is that they do the crazy math that I did by hand last time, and they handle all the boundaries too.</p>
+<p>The upside of using FENICSx (or a similar framework) is that the code does the tedious parts for me. This allows me to focus on the physical aspects of the problem. <em>And</em>, all of the other kinds of systems that I would want to model are able to be described using appropriate meshes and/or geometries. The downside is that in addition to needing to know/understand all of the modeling bits that we’ve done already, you need to have an understanding of the weak formulation, informing you why this approach is needed and works to solve the problem. Merely wrapping my head around this has (in part) explained the gap between my <a href="../../posts/heatEqn1/modelHeatFlow.html">first heat equation post</a> and this more recent series.</p>
+<p>In some sense, by solving the Dirichlet rod problem with FENICSx, I’m brining a nuke to a fist fight. Ok, so I’ll “win”. But learning how to build a nuke is only worthwhile if I am going to model more complex things. Which, if we go to the way-back machine, we’ll remember that my goal was to figure out why my house was so daggone hot even though my AC was on full blast all summer. So (to continue the analogy) the nuke is warranted. This has been, and continues to be, part of a long process for me to learn “nuclear physics” so my model is worthwhile.</p>
+</section>
+<section id="fenicsx-solution" class="level2">
+<h2 class="anchored" data-anchor-id="fenicsx-solution">FENICSx Solution</h2>
+<p>Let’s build this solution using FENICSx. Start by importing some libraries that are going to be required.</p>
+<div id="5e2f964d" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> np</span>
+<span id="cb1-2"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> plt</span>
+<span id="cb1-3"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.colors <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> mc</span>
+<span id="cb1-4"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> matplotlib.cm <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> cm</span>
+<span id="cb1-5"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## FENICSx assumes that you are going to be doing some heavy computations and will take advantage of parallel </span></span>
+<span id="cb1-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## processing capabilities. The PETSC and MPI packages allow you to do this.</span></span>
+<span id="cb1-7"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> petsc4py <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> PETSc</span>
+<span id="cb1-8"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> mpi4py <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> MPI</span>
+<span id="cb1-9"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">## These allow you to generate meshes and do the finite element method.</span></span>
+<span id="cb1-10"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dolfinx <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> mesh, fem</span>
+<span id="cb1-11"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> ufl</span>
+<span id="cb1-12"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> dolfinx.fem.petsc <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> assemble_vector, assemble_matrix, create_vector, apply_lifting, set_bc</span>
+<span id="cb1-13"><span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">from</span> uDiricheletExact <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span></span></code></pre></div>
+</div>
+<p>Set up the simulation parameters. Define the mesh and function space. Under the hood, the <code>fem.functionspace</code> command is creating a polynomial basis function under the hood.</p>
+<div id="ac682360" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span> </span>
+<span id="cb2-2">final_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Final time for the simulation</span></span>
+<span id="cb2-3">dt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Time step size</span></span>
+<span id="cb2-4">num_steps <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>((final_time <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> t) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span> dt)  </span>
+<span id="cb2-5">T0 <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10.0</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initial temperature distribution along the rod</span></span>
+<span id="cb2-6">tPlot <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, final_time, num_steps<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Time points for plotting</span></span>
+<span id="cb2-7"></span>
+<span id="cb2-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define the mesh </span></span>
+<span id="cb2-9">n_elements <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">32</span></span>
+<span id="cb2-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a 1D domain representing the rod from 0 to 1</span></span>
+<span id="cb2-11">domain <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mesh.create_interval(</span>
+<span id="cb2-12">    MPI.COMM_WORLD,  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># MPI communicator</span></span>
+<span id="cb2-13">    n_elements,  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Number of elements in the mesh</span></span>
+<span id="cb2-14">    [<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>]  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Interval from 0 to 1 (the length of the rod)</span></span>
+<span id="cb2-15">)</span>
+<span id="cb2-16"></span>
+<span id="cb2-17"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a function space for the finite element method</span></span>
+<span id="cb2-18">V <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.functionspace( </span>
+<span id="cb2-19">    domain, (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Lagrange'</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Linear Lagrange elements (polynomials)</span></span>
+<span id="cb2-20">)</span></code></pre></div>
+</div>
+<p>Set up the initial condition <code>u_n</code> and set up a “working solution” <code>uh</code>.</p>
+<div id="7cc96f3d" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> initial_condition(x):</span>
+<span id="cb3-2">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> np.full(x.shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], T0, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>np.float64)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initial temperature T0</span></span>
+<span id="cb3-3"></span>
+<span id="cb3-4">u_n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.Function(V)</span>
+<span id="cb3-5">u_n.name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"u_n"</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Name the function for clarity</span></span>
+<span id="cb3-6">u_n.interpolate(initial_condition)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Interpolate the initial condition into the function space</span></span>
+<span id="cb3-7"></span>
+<span id="cb3-8"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define solution variable</span></span>
+<span id="cb3-9">uh <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.Function(V)</span>
+<span id="cb3-10">uh.name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"uh"</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Name the function for clarity </span></span>
+<span id="cb3-11">uh.interpolate(initial_condition)</span></code></pre></div>
+</div>
+<p>Set up the (Dirichlet) boundary conditions for the problem:</p>
+<div id="00ebdd98" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">uD <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.Constant(domain, PETSc.ScalarType(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># u(0,t) = 0 and u(1,t) = 0</span></span>
+<span id="cb4-2"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create facet to cell connectivity required to determine boundary facets</span></span>
+<span id="cb4-3">fdim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> domain.topology.dim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span> <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span></span>
+<span id="cb4-4"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Locate the boundary facets of the mesh</span></span>
+<span id="cb4-5">boundary_facets <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mesh.locate_entities_boundary(</span>
+<span id="cb4-6">  domain, <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Domain mesh</span></span>
+<span id="cb4-7">  fdim,  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Dimension of the facets (1D for a rod)</span></span>
+<span id="cb4-8">  <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: np.full(x.shape[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>], <span class="va" style="color: #111111;
+background-color: null;
+font-style: inherit;">True</span>, dtype<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">bool</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># All facets are boundary facets</span></span>
+<span id="cb4-9">)</span>
+<span id="cb4-10">boundary_dofs <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.locate_dofs_topological(V, fdim, boundary_facets)</span>
+<span id="cb4-11">bc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.dirichletbc(uD, boundary_dofs, V)</span></code></pre></div>
+</div>
+<p>Set up the required functions for the variational problem including the source term (which is zero in this case). Then, define the <img src="https://latex.codecogs.com/png.latex?a(u,v)"> and <img src="https://latex.codecogs.com/png.latex?L(v)"> in terms of these functions, and convert to a form suitable for FENICSx.</p>
+<div id="e4c7e20c" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ufl.TrialFunction(V)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Trial function for the finite element method</span></span>
+<span id="cb5-2">v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> ufl.TestFunction(V)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Test function for the finite element method</span></span>
+<span id="cb5-3">f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.Constant(domain, PETSc.ScalarType(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Source term (zero in this case)</span></span>
+<span id="cb5-4"></span>
+<span id="cb5-5">a <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> u <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ufl.dx <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ufl.inner(ufl.grad(u), ufl.grad(v)) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ufl.dx</span>
+<span id="cb5-6">L <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> (u_n <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> dt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> f) <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> v <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> ufl.dx</span>
+<span id="cb5-7">bilinear_form <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.form(a)</span>
+<span id="cb5-8">linear_form <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fem.form(L)</span></code></pre></div>
+</div>
+<p>Do the Linear Algebra required</p>
+<div id="c83ffa77" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Assemble the Linear Algebra structures</span></span>
+<span id="cb6-2">A <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> assemble_matrix(bilinear_form, bcs<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[bc])</span>
+<span id="cb6-3">A.assemble()  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Assemble the matrix A</span></span>
+<span id="cb6-4">b <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> create_vector(linear_form)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a vector for the right-hand side</span></span>
+<span id="cb6-5"></span>
+<span id="cb6-6"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a linear solver</span></span>
+<span id="cb6-7">solver <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> PETSc.KSP().create(domain.comm)</span>
+<span id="cb6-8">solver.setOperators(A)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set the matrix A for the solver</span></span>
+<span id="cb6-9">solver.setType(PETSc.KSP.Type.PREONLY)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use a preconditioner</span></span>
+<span id="cb6-10">solver.getPC().setType(PETSc.PC.Type.LU)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Use LU preconditioner</span></span></code></pre></div>
+</div>
+<p>And prepare to make a plot. I’ll make a 3D surface plot and the variable <code>Uc</code> is my computational solution.</p>
+<div id="3f3e99b3" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">xMesh <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> domain.geometry.x[: ,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]</span>
+<span id="cb7-2">Tc, Xc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.meshgrid(tPlot, xMesh)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a mesh grid for plotting</span></span>
+<span id="cb7-3">Uc <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.zeros_like(Tc)</span>
+<span id="cb7-4">Uc[:, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> u_n.x.array  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initial condition for plotting</span></span></code></pre></div>
+</div>
+<p>Now, repeat the process for each time-step, filling in the <code>Uc</code> array as we go:</p>
+<div id="7600fd4e" class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">in</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">range</span>(num_steps):</span>
+<span id="cb8-2">  t <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+=</span> dt  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Current time</span></span>
+<span id="cb8-3"></span>
+<span id="cb8-4">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Update the RHS reusing the previous solution</span></span>
+<span id="cb8-5">  <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">with</span> b.localForm() <span class="im" style="color: #00769E;
+background-color: null;
+font-style: inherit;">as</span> loc_b:</span>
+<span id="cb8-6">    loc_b.<span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">set</span>(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>)</span>
+<span id="cb8-7">  </span>
+<span id="cb8-8">  assemble_vector(b, linear_form)</span>
+<span id="cb8-9">  apply_lifting(b, [bilinear_form], [[bc]])  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Apply boundary conditions</span></span>
+<span id="cb8-10">  b.ghostUpdate(addv<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>PETSc.InsertMode.ADD_VALUES, mode<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>PETSc.ScatterMode.REVERSE)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Update ghost values</span></span>
+<span id="cb8-11">  set_bc(b, [bc])  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set the boundary conditions</span></span>
+<span id="cb8-12"></span>
+<span id="cb8-13">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Solve linear problem</span></span>
+<span id="cb8-14">  solver.solve(b, uh.x.petsc_vec)</span>
+<span id="cb8-15">  uh.x.scatter_forward()</span>
+<span id="cb8-16"></span>
+<span id="cb8-17">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Update the solution at the current time step for plotting</span></span>
+<span id="cb8-18">  Uc[:, i<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uh.x.array</span>
+<span id="cb8-19">  </span>
+<span id="cb8-20">  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Update solution at previous time step (u_n)</span></span>
+<span id="cb8-21">  u_n.x.array[:] <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uh.x.array</span></code></pre></div>
+</div>
+<section id="make-a-pretty-picture" class="level3">
+<h3 class="anchored" data-anchor-id="make-a-pretty-picture">Make a pretty picture</h3>
+<p>So, let’s see how this computation compares to the exact solution.</p>
+<div id="26ec2f0b" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">x_exact <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">100</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Points along the rod for exact solution</span></span>
+<span id="cb9-2">Te, Xe <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.meshgrid(tPlot, x_exact)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a mesh grid for exact solution</span></span>
+<span id="cb9-3">Ue <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> uDiricheletExact(Te, Xe, T0)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Compute the exact solution at time t</span></span>
+<span id="cb9-4"></span>
+<span id="cb9-5">cnorm <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mc.Normalize(vmin<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>,vmax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>T0)</span>
+<span id="cb9-6">cbar <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> cm.ScalarMappable(norm<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>cnorm)</span>
+<span id="cb9-7"></span>
+<span id="cb9-8">fig, ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> plt.subplots(ncols<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>, subplot_kw<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>{<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'projection'</span>: <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'3d'</span>},figsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">14</span>,<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">7</span>) ) <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a 3D plot</span></span>
+<span id="cb9-9">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].plot_surface(Xc, Tc, Uc, cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'viridis'</span>, edgecolor<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'none'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot the FENICS solution</span></span>
+<span id="cb9-10">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'FENICS Solution'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Title for FENICS solution</span></span>
+<span id="cb9-11">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Position along the rod (x)'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># X-axis label</span></span>
+<span id="cb9-12">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Time (t)'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Y-axis label</span></span>
+<span id="cb9-13">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>].set_zlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Z-axis label</span></span>
+<span id="cb9-14">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].plot_surface(Xe, Te, Ue, cmap<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'viridis'</span>, edgecolor<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'none'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Plot the exact solution</span></span>
+<span id="cb9-15">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].set_title(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Exact Solution'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Title for exact solution</span></span>
+<span id="cb9-16">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].set_xlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Position along the rod (x)'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># X-axis label</span></span>
+<span id="cb9-17">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].set_ylabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Time (t)'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Y-axis label</span></span>
+<span id="cb9-18">ax[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>].set_zlabel(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Z-axis label</span></span>
+<span id="cb9-19">plt.tight_layout()  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Adjust layout to prevent overlap</span></span>
+<span id="cb9-20">plt.suptitle(<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Dirichlet Problem for a Unit Rod'</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Overall title for the plot</span></span>
+<span id="cb9-21">plt.subplots_adjust(top<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Adjust the top margin to fit</span></span>
+<span id="cb9-22">ghLogo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\uf09b</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb9-23">liLogo <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">u"</span><span class="ch" style="color: #20794D;
+background-color: null;
+font-style: inherit;">\uf08c</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"</span></span>
+<span id="cb9-24">txt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;">f"</span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>ghLogo<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> datawolf04 </span><span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">{</span>liLogo<span class="sc" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">}</span><span class="ss" style="color: #20794D;
+background-color: null;
+font-style: inherit;"> steven-wolf-253b6625a"</span></span>
+<span id="cb9-25">fig.subplots_adjust(bottom<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span>,right<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.85</span>)</span>
+<span id="cb9-26">plt.figtext(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.75</span>,<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.01</span>, txt,family<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>[<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'DejaVu Sans'</span>,<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'FontAwesome'</span>],fontsize<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">10</span>)</span>
+<span id="cb9-27">cbar_ax <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> fig.add_axes([<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.9</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.02</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.7</span>])</span>
+<span id="cb9-28">fig.colorbar(cbar, cax<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>cbar_ax,label<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">'Temperature [arb. units]'</span>)</span>
+<span id="cb9-29">plt.show()  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Show the plot</span></span></code></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset3_files/figure-html/cell-10-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>WooHoo!</p>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Ok, now that I have kicked the tires on FENICSx, I’m going to call it a day. My next step will be to replicate my Robin Condition. Then I’ll go to 3D and make a model for a sweatbox. I’ll need to fold back in my solar radiation work to make this happen. And I’ll have to think about the physics (because I just haven’t been thinking about things like space/time/temperature units since the reboot).</p>
+<p>I also know that I’ve only touched on the edges of this software suite. My plans are to figure out more complex meshes. (For example, if I want to model a house, I’ll need to make walls and windows and stuff like that.) I will also need to figure out PyVista - software that they use to make nice visualizations, especially for 3D objects.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Heat Equation</category>
+  <category>Modeling</category>
+  <category>Bringing a nuke to a fist-fight</category>
+  <guid>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset3.html</guid>
+  <pubDate>Mon, 21 Jul 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Using the Heat Equation to model a real-world system (Part 2)</title>
   <dc:creator>Steven Wolf</dc:creator>
@@ -444,7 +1163,7 @@ font-style: inherit;">'</span>)</span>
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
 <p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="b150aac4" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
+<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
