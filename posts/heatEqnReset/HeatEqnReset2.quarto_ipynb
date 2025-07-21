@@ -244,7 +244,7 @@
         "## Let's make code!\n",
         "Let's make some computational choices and code this up. First, I'll begin by setting up the initial condition.\n"
       ],
-      "id": "1674fbbc"
+      "id": "5c3047c7"
     },
     {
       "cell_type": "code",
@@ -258,7 +258,7 @@
         "xi = np.linspace(0,1,N)\n",
         "u0 = initTemp * np.ones(N)"
       ],
-      "id": "0572cd23",
+      "id": "f9db133e",
       "execution_count": null,
       "outputs": []
     },
@@ -268,7 +268,7 @@
       "source": [
         "Next, I'll define the matrices on the LHS and RHS of the equation above, as well as a few parameters.\n"
       ],
-      "id": "b135e267"
+      "id": "f3389bc0"
     },
     {
       "cell_type": "code",
@@ -299,7 +299,7 @@
         "Gsq[0, 0:2] = [2,1]\n",
         "Gsq[N-1, N-2:] = [1,2]"
       ],
-      "id": "f9186688",
+      "id": "1979cda1",
       "execution_count": null,
       "outputs": []
     },
@@ -309,7 +309,7 @@
       "source": [
         "Python can find the new u-matrix in terms of the old u matrix in one line:\n"
       ],
-      "id": "39d5c0da"
+      "id": "09f08bc3"
     },
     {
       "cell_type": "code",
@@ -318,7 +318,7 @@
         "#| eval: false\n",
         "newU = np.linalg.solve(K,G)"
       ],
-      "id": "9c19aac8",
+      "id": "2e97fb8b",
       "execution_count": null,
       "outputs": []
     },
@@ -328,7 +328,7 @@
       "source": [
         "So let's build our solution:"
       ],
-      "id": "2d8c8f6b"
+      "id": "f19cd62d"
     },
     {
       "cell_type": "code",
@@ -345,7 +345,7 @@
         "  U[:, k] = newU    \n",
         "  oldU = newU"
       ],
-      "id": "76986932",
+      "id": "cbdb259c",
       "execution_count": null,
       "outputs": []
     },
@@ -355,7 +355,7 @@
       "source": [
         "And let's make a nice 3D plot of the solution:\n"
       ],
-      "id": "2a1853fc"
+      "id": "636b9183"
     },
     {
       "cell_type": "code",
@@ -372,7 +372,7 @@
         "ax.set_zlabel(r'$u$')\n",
         "plt.show()"
       ],
-      "id": "609b8f7c",
+      "id": "dd44f832",
       "execution_count": null,
       "outputs": []
     },
@@ -385,7 +385,7 @@
         "\n",
         "Note, that we have a property that can change the dynamics of this system, namely $b$, which is related to the (inverse of the) heat transfer coefficient. For the previous plot $b=1$. Compare to these, where $b=5$ and $b=0.5$:\n"
       ],
-      "id": "8af685dc"
+      "id": "f3e2de41"
     },
     {
       "cell_type": "code",
@@ -399,7 +399,7 @@
         "uRobin(10,101,5,0.002,5).plotTemp()\n",
         "uRobin(10,101,5,0.002,0.5).plotTemp()"
       ],
-      "id": "eab66f6c",
+      "id": "9ef4993f",
       "execution_count": null,
       "outputs": []
     },
@@ -413,7 +413,7 @@
         "$$\n",
         "First, let's note that the only free parameter here is the initial temperature $T_0$. There is no equivalent to the \"inverse heat transfer coefficient\" $b$ that I defined for the Robin problem.\n"
       ],
-      "id": "30fd0d56"
+      "id": "5f8bbdd8"
     },
     {
       "cell_type": "code",
@@ -440,7 +440,7 @@
         "ax.set_zlabel(r'$u$')\n",
         "plt.show()"
       ],
-      "id": "3c1ca57c",
+      "id": "9bdeeb89",
       "execution_count": null,
       "outputs": []
     },
@@ -450,7 +450,7 @@
       "source": [
         "This is similar to the Robin plot for a very small $b$ value."
       ],
-      "id": "3bebc88f"
+      "id": "9cc57dd6"
     },
     {
       "cell_type": "code",
@@ -458,7 +458,7 @@
       "source": [
         "uRobin(10,101,5,0.002,0.005).plotTemp()"
       ],
-      "id": "26577d9c",
+      "id": "f4c117f9",
       "execution_count": null,
       "outputs": []
     },
@@ -480,7 +480,7 @@
         "\n",
         "In my next post, I plan to solve the 1D problems I've solved here using the [FENICS code](https://fenicsproject.org/). And this will let me generalize this to 3D as well as model a more realistic system."
       ],
-      "id": "657c7655"
+      "id": "5869441b"
     }
   ],
   "metadata": {

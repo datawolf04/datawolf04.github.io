@@ -21,7 +21,7 @@
         "\n",
         "I found this [helpful python script](https://zperzan.github.io/projects/scrape-weather-underground/) for scraping the weather data from [Weather Underground](https://www.wunderground.com), which I will adapt to my purpose. \n"
       ],
-      "id": "899a58ea"
+      "id": "5298a1b7"
     },
     {
       "cell_type": "code",
@@ -37,7 +37,7 @@
         "from great_tables import GT\n",
         "from scrape_wunderground import *"
       ],
-      "id": "fbf757aa",
+      "id": "00ff7688",
       "execution_count": null,
       "outputs": []
     },
@@ -47,7 +47,7 @@
       "source": [
         "I will scrape weather from the [BreakingWind  station](https://www.wunderground.com/dashboard/pws/KNCZEBUL74?cm_ven=localwx_pwsdash) with code `KNCZEBUL74` on 8/1/2024, as I am pretty sure this is the closest station to the desired location.\n"
       ],
-      "id": "f582e515"
+      "id": "5526c604"
     },
     {
       "cell_type": "code",
@@ -63,7 +63,7 @@
         "  )\n",
         ")"
       ],
-      "id": "d60dd906",
+      "id": "db524157",
       "execution_count": null,
       "outputs": []
     },
@@ -73,7 +73,7 @@
       "source": [
         "And it works! That being said, I'll have to find a different weather station because this one seems somewhat new. There is only partial data for 5/29/2024.\n"
       ],
-      "id": "f03e9462"
+      "id": "9706ddd2"
     },
     {
       "cell_type": "code",
@@ -87,7 +87,7 @@
         "  )\n",
         ")"
       ],
-      "id": "dc757ac7",
+      "id": "0aa91cbe",
       "execution_count": null,
       "outputs": []
     },
@@ -97,7 +97,7 @@
       "source": [
         "And 5/28/2024 has no data. "
       ],
-      "id": "73124155"
+      "id": "33ef09b5"
     },
     {
       "cell_type": "code",
@@ -111,7 +111,7 @@
         "  )\n",
         ")"
       ],
-      "id": "b4fd6c11",
+      "id": "a3078f14",
       "execution_count": null,
       "outputs": []
     },
@@ -121,7 +121,7 @@
       "source": [
         "I will have to find a different nearby weather station for this purpose of finding Ben some weather data for the time period he is interested in (mid 1970s). And, once I succeed at that, I will have to aggregate the 5-minute data to daily data. But once that's done, my friend should have more than enough weather data to help him with his model.\n"
       ],
-      "id": "14c98e1c"
+      "id": "4444b4d8"
     }
   ],
   "metadata": {
