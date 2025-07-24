@@ -19,7 +19,7 @@ draft:
 
 ## Where's the physics?
 
-[Last time](HeatEqnReset2.qmd), I solved the 1D bar problem with Robin boundary conditions. And I promised to make this algorithmic using the [FENICS Project code](https://fenicsproject.org/), and I'll get there, but we need to take a bit of an aside. Specifically, it's time to do some physics. Let's look at the heat equation that I presented previously through the eye of a physicist.
+[Previously](HeatEqnReset2.qmd), I solved the 1D bar problem with Robin boundary conditions. And I promised to make this algorithmic using the [FENICS Project code](https://fenicsproject.org/), and [I have done that](HeatEqnReset3). Actually, [I've done that twice](HeatEqnRobinRod.qmd), but we need to take a bit of an aside. Specifically, it's time to do some physics. Let's look at the heat equation that I presented previously through the eye of a physicist.
 
 $$
 \frac{\partial u(\vec{x},t)}{\partial t} - \nabla^2 u(\vec{x},t) = f(\vec{x},t)
