@@ -2,74 +2,78 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://datawolf04.github.io/posts/collision/puckStickCollision.html</loc>
-    <lastmod>2025-07-24T15:03:44.883Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.707Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqn2/hotBoxViz.html</loc>
-    <lastmod>2025-07-24T15:03:44.889Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.714Z</lastmod>
   </url>
   <url>
-    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEquationReset.html</loc>
-    <lastmod>2025-07-24T15:03:44.890Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow.html</loc>
-    <lastmod>2025-07-24T15:03:44.887Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/tt20240819/englishMonarchy.html</loc>
-    <lastmod>2025-07-24T15:03:44.910Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/summerMovies/summerMovies.html</loc>
-    <lastmod>2025-07-24T15:03:44.908Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</loc>
-    <lastmod>2025-07-24T15:03:44.908Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/about.html</loc>
-    <lastmod>2025-07-24T15:03:44.879Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/index.html</loc>
-    <lastmod>2025-07-24T15:03:44.879Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag.html</loc>
-    <lastmod>2025-07-24T15:03:44.906Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</loc>
-    <lastmod>2025-07-24T15:03:44.918Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/weatherScrape240808/weatherScrape.html</loc>
-    <lastmod>2025-07-24T15:03:44.918Z</lastmod>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinSlab.html</loc>
+    <lastmod>2025-07-30T19:06:13.714Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinRod.html</loc>
-    <lastmod>2025-07-24T15:03:44.890Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.714Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/weatherScrape240808/weatherScrape.html</loc>
+    <lastmod>2025-07-30T19:06:13.795Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</loc>
+    <lastmod>2025-07-30T19:06:13.795Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag.html</loc>
+    <lastmod>2025-07-30T19:06:13.784Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/index.html</loc>
+    <lastmod>2025-07-30T19:06:13.704Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/about.html</loc>
+    <lastmod>2025-07-30T19:06:13.704Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</loc>
+    <lastmod>2025-07-30T19:06:13.786Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/summerMovies/summerMovies.html</loc>
+    <lastmod>2025-07-30T19:06:13.786Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/tt20240819/englishMonarchy.html</loc>
+    <lastmod>2025-07-30T19:06:13.787Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow.html</loc>
+    <lastmod>2025-07-30T19:06:13.711Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEquationReset.html</loc>
+    <lastmod>2025-07-30T19:06:13.715Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2.html</loc>
-    <lastmod>2025-07-24T15:03:44.889Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.714Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset3.html</loc>
-    <lastmod>2025-07-24T15:03:44.890Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.714Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/olympic240805/olympicMedalData.html</loc>
-    <lastmod>2025-07-24T15:03:44.891Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.768Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqn2/heatEqn2.html</loc>
-    <lastmod>2025-07-24T15:03:44.887Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.712Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/readme.html</loc>
-    <lastmod>2025-07-24T15:03:44.918Z</lastmod>
+    <lastmod>2025-07-30T19:06:13.795Z</lastmod>
   </url>
 </urlset>

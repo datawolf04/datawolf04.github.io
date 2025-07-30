@@ -10,7 +10,274 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.7.32</generator>
-<lastBuildDate>Thu, 24 Jul 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 30 Jul 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Using the Heat Equation to model a real-world system (Part 5)</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinSlab.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<section id="modeling-a-3d-slab-with-convection" class="level2">
+<h2 class="anchored" data-anchor-id="modeling-a-3d-slab-with-convection">Modeling a 3D slab with convection</h2>
+<p>I’m going to model a simple 3D slab with convection. For now, I’m not including any power generation, and this slab is going to have thermal properties that make the visualization look well enough. Rather than including all of the code in this post, I’m going to point you to my <a href="https://github.com/datawolf04/heatModel/">Github Repository</a> where the code exists. Here I will grab bits of the new code that I found difficult to figure out and discuss the lessons I’ve learned (or sometimes, would like to learn). This is also useful, since much of the code is the same as the previous code.</p>
+<p>Our slab has the following properties.</p>
+<ul>
+<li>Length and height are both 1 (insert arbitrary length unit)</li>
+<li>Width is 2 (insert arbitrary length unit)</li>
+<li>Initial temp is 10 (arbitrary temperature units)</li>
+<li>External temp is 0 (arbitrary temperature units)</li>
+</ul>
+<p>My next post will talk about units and do some physics.</p>
+</section>
+<section id="building-a-3d-domain" class="level2">
+<h2 class="anchored" data-anchor-id="building-a-3d-domain">Building a 3D domain</h2>
+<p>The first challenge is to build a 3D domain. Fortunately, FENICSx has a function for that, and my code looks like this:</p>
+<div id="ecc1e6ee" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">L <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Length of the slab</span></span>
+<span id="cb1-2">W <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2.0</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Width of the slab </span></span>
+<span id="cb1-3">H <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Height of the slab </span></span>
+<span id="cb1-4">dl <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.05</span> <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Element size for the mesh</span></span>
+<span id="cb1-5">nx, ny, nz <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(L<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>dl), <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(W<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>dl), <span class="bu" style="color: null;
+background-color: null;
+font-style: inherit;">int</span>(H<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">/</span>dl)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Number of elements in each direction</span></span>
+<span id="cb1-6"></span>
+<span id="cb1-7"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Define the mesh and function space</span></span>
+<span id="cb1-8">bottom_back_left <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>, <span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.0</span>])  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Bottom back corner of the slab</span></span>
+<span id="cb1-9">top_front_right <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> np.array([L, W, H])  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Top front corner of the slab</span></span>
+<span id="cb1-10"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Create a 3D domain representing the slab</span></span>
+<span id="cb1-11">domain <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> mesh.create_box(</span>
+<span id="cb1-12">    MPI.COMM_WORLD,  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># MPI communicator</span></span>
+<span id="cb1-13">    [bottom_back_left,top_front_right],  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Coordinates of the corners of the rectangle</span></span>
+<span id="cb1-14">    [nx, ny, nz],  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Number of elements in each direction</span></span>
+<span id="cb1-15">    mesh.CellType.tetrahedron,  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Type of elements </span></span>
+<span id="cb1-16">    ghost_mode<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>mesh.GhostMode.shared_facet  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Ghost mode for shared facets</span></span>
+<span id="cb1-17">)</span></code></pre></div>
+</div>
+<p>I struggled to get this right for longer than I would like to admit. For some reason, when I was building the domain and generating the appropriate function spaces, my code was failing when I was building the interpolating the initial condition into the appropriate function space. I finally added the <code>ghost_mode=mesh.GhostMode.shared_facet</code> line to the above and it started working. As near as I can tell, this is why that is required:</p>
+<ul>
+<li>FENICSx, in general, is designed for computationally intensive calculations. So it takes advantage of parallelization.</li>
+<li>One common parallelization scheme is to divide the computation into bits, operate them independantly, and then pull them back together. For example, if you have a group homework assignment with 10 questions and a group of 5 people, you assign 2 problems to everyone, then staple them together at the end. Parallel computing, effectively, does this with processors.</li>
+<li>However, sometimes the problems aren’t fully independant. Suppose that one needs the answer to question 1 in order to answer questions 2, 3, and 4 in my homework assignment example above. Somehow, the answer to question 1 needs to be provided for the persons doing questions 2, 3, and 4. For parallel computing with FENICSx, this is done with the ghost mode. So by not specifying a ghost mode, I found that the default ghost mode didn’t work for the mesh/functionspace that I defined.</li>
+</ul>
+<p>The above is a very hand-wavy explanation, and is enough for me (for now anyway). So, I then created the function space as usual, and defined the parameters that are important for this problem.</p>
+<div id="fe43ccf5" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">V <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> functionspace(domain, (<span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"Lagrange"</span>, <span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>))</span>
+<span id="cb2-2">tdim <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> domain.topology.dim  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Topological dimension of the domain</span></span>
+<span id="cb2-3"></span>
+<span id="cb2-4">x <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> SpatialCoordinate(domain)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Spatial coordinates of the domain</span></span>
+<span id="cb2-5">tempExt <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">lambda</span> x: extTemp  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># External temperature function (constant in this case)</span></span>
+<span id="cb2-6">s <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> tempExt(x)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># External temperature at the boundary</span></span>
+<span id="cb2-7">f <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Constant(domain, PETSc.ScalarType(<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Source term (zero in this case)</span></span>
+<span id="cb2-8">h <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Constant(domain, PETSc.ScalarType(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0.1</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Robin boundary condition coefficient</span></span>
+<span id="cb2-9">kappa <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Constant(domain, PETSc.ScalarType(<span class="fl" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1.0</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Thermal conductivity </span></span>
+<span id="cb2-10"></span>
+<span id="cb2-11"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">#########################################</span></span>
+<span id="cb2-12"><span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Set up the initial condition</span></span>
+<span id="cb2-13"><span class="kw" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">def</span> initial_condition(x, Temp<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span>T0, a<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>):</span>
+<span id="cb2-14">    <span class="cf" style="color: #003B4F;
+background-color: null;
+font-weight: bold;
+font-style: inherit;">return</span> Temp <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> np.exp(<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">-</span>a <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">*</span> (x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">0</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">1</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span> <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">+</span> x[<span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>]<span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">**</span><span class="dv" style="color: #AD0000;
+background-color: null;
+font-style: inherit;">2</span>))  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Initial temperature T0 defined elsewhere</span></span>
+<span id="cb2-15"></span>
+<span id="cb2-16">uPrev <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> Function(V)</span>
+<span id="cb2-17">uPrev.name <span class="op" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;">=</span> <span class="st" style="color: #20794D;
+background-color: null;
+font-style: inherit;">"uPrev"</span></span>
+<span id="cb2-18">uPrev.interpolate(initial_condition)  <span class="co" style="color: #5E5E5E;
+background-color: null;
+font-style: inherit;"># Interpolate the initial condition into the function space</span></span></code></pre></div>
+</div>
+<p>I found that if I left the <code>* np.exp(-a * (x[0]**2 + x[1]**2 + x[2]**2))</code> expression out of the return statement, there was an error message stating that the arguments were the wrong shape, and the interpolation didn’t work. I tried tracking it down, but ultimately came up with this hacky solution.</p>
+</section>
+<section id="finally-a-pretty-picture" class="level2">
+<h2 class="anchored" data-anchor-id="finally-a-pretty-picture">Finally, a pretty picture</h2>
+<p>The rest of the computation proceeded as usual. I was able to make a gif of the output using <code>pyvista</code>. The time-step parameters were chosen so that there was a change, and it was visible.</p>
+<p><img src="https://datawolf04.github.io/posts/heatEqnReset/slabTemp.gif" class="img-fluid"></p>
+</section>
+<section id="next-steps" class="level2">
+<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
+<ol type="1">
+<li>Do some physics. These arbitrary length, temperature, and time units simply will not do!</li>
+<li>Put the slab in the sun.</li>
+<li>Make prettier visualizations using <code>pyvista</code> and/or <code>ParaView</code>.</li>
+</ol>
+<p>Note, ParaView is a separate program used for 3D visualizations, not a Python package. This is also part of the rationale behind building the github repository. I’ll need to create visualizations outside of a Quarto doc (like a majority of my other posts) and have to build visualizations elsewhere, then link to them.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>Heat Equation</category>
+  <category>Modeling</category>
+  <category>Bringing a nuke to a fist-fight</category>
+  <category>3D Model</category>
+  <guid>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinSlab.html</guid>
+  <pubDate>Wed, 30 Jul 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Using the Heat Equation to model a real-world system (Part 4)</title>
   <dc:creator>Steven Wolf</dc:creator>
@@ -1911,7 +2178,7 @@ font-style: inherit;">'</span>)</span>
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
 <p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
+<div id="b150aac4" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
