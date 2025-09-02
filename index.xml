@@ -9,7 +9,7 @@
 <link>https://datawolf04.github.io/</link>
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
-<generator>quarto-1.7.32</generator>
+<generator>quarto-1.7.34</generator>
 <lastBuildDate>Wed, 30 Jul 2025 00:00:00 GMT</lastBuildDate>
 <item>
   <title>Using the Heat Equation to model a real-world system (Part 5)</title>
@@ -2178,7 +2178,7 @@ font-style: inherit;">'</span>)</span>
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
 <p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="b150aac4" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
+<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
