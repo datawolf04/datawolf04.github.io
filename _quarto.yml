@@ -5,7 +5,10 @@ website:
   title: "Steven Wolf - Data World"
   navbar:
     left:
-      - about.qmd
+      - href: about.qmd
+        text: About
+      - href: https://datawolf04.github.io/crossCountryMeetSummaries/
+        text: Cross Country
     right:
       - icon: linkedin
         href: https://www.linkedin.com/in/steven-wolf-253b6625a
