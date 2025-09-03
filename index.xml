@@ -10,7 +10,612 @@
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
 <generator>quarto-1.7.34</generator>
-<lastBuildDate>Wed, 30 Jul 2025 00:00:00 GMT</lastBuildDate>
+<lastBuildDate>Wed, 03 Sep 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>A new project: Cross Country Data Viz</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/ccPage/crossCountry.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>It’s been a while since I’ve posted on this portion of my blog. I’ve been getting geared up for my sons’ upcoming Cross Country seasons. As a former NCAA athlete in this sport (not good enough for a scholarship), I get very fired up this time of year. So I’ve been scraping some results from Milesplit and visualizing the team results.</p>
+<section id="cross-country-scoring-primer" class="level2">
+<h2 class="anchored" data-anchor-id="cross-country-scoring-primer">Cross Country Scoring Primer</h2>
+<p>Cross country races are scored as follows. Each team can have up to 7 athletes for scoring purposes. The team score is found by adding up the places of the top 5 athletes from each team. Low score wins. Teams that have 5 or 6 athletes will also receive scores.</p>
+<ul>
+<li><p>The best possible Cross Country score is <img src="https://latex.codecogs.com/png.latex?1+2+3+4+5=15"> points. A shut-out is when all 7 athletes from one team finish before the first athlete from the second team. In a dual meet (where there are only two teams) this results in a 15-50 score.</p></li>
+<li><p>If two teams are tied, the tie is broken by the 6th and 7th athletes. (Fun fact, my senior year of high school, the team that won did so on this tie breaker. The 3rd place team was one point behind them. It was an incredibly tight race!)</p></li>
+</ul>
+<p>This is the team score from the <a href="https://nc.milesplit.com/meets/655522-fightertown-xc-invitational-2025/results">Fightertown Invitational</a> where my son set a new PR!</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="vwjcohfiao" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#vwjcohfiao table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#vwjcohfiao thead, #vwjcohfiao tbody, #vwjcohfiao tfoot, #vwjcohfiao tr, #vwjcohfiao td, #vwjcohfiao th {
+  border-style: none;
+}
+
+#vwjcohfiao p {
+  margin: 0;
+  padding: 0;
+}
+
+#vwjcohfiao .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #004D66;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#vwjcohfiao .gt_title {
+  color: #FFFFFF;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#vwjcohfiao .gt_subtitle {
+  color: #FFFFFF;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#vwjcohfiao .gt_heading {
+  background-color: #A9A9A9;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_col_heading {
+  color: #FFFFFF;
+  background-color: #A9A9A9;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#vwjcohfiao .gt_column_spanner_outer {
+  color: #FFFFFF;
+  background-color: #A9A9A9;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#vwjcohfiao .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#vwjcohfiao .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#vwjcohfiao .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#vwjcohfiao .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#vwjcohfiao .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #004D66;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#vwjcohfiao .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #004D66;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#vwjcohfiao .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#vwjcohfiao .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#vwjcohfiao .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#vwjcohfiao .gt_stub {
+  color: #004D66;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vwjcohfiao .gt_stub_row_group {
+  color: #004D66;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#vwjcohfiao .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#vwjcohfiao .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#vwjcohfiao .gt_summary_row {
+  color: #004D66;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vwjcohfiao .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#vwjcohfiao .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_grand_summary_row {
+  color: #004D66;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vwjcohfiao .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#vwjcohfiao .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_footnotes {
+  color: #004D66;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vwjcohfiao .gt_sourcenotes {
+  color: #004D66;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#vwjcohfiao .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#vwjcohfiao .gt_left {
+  text-align: left;
+}
+
+#vwjcohfiao .gt_center {
+  text-align: center;
+}
+
+#vwjcohfiao .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#vwjcohfiao .gt_font_normal {
+  font-weight: normal;
+}
+
+#vwjcohfiao .gt_font_bold {
+  font-weight: bold;
+}
+
+#vwjcohfiao .gt_font_italic {
+  font-style: italic;
+}
+
+#vwjcohfiao .gt_super {
+  font-size: 65%;
+}
+
+#vwjcohfiao .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#vwjcohfiao .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#vwjcohfiao .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#vwjcohfiao .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#vwjcohfiao .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#vwjcohfiao .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#vwjcohfiao .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#vwjcohfiao .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#vwjcohfiao div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="true">
+<caption>Source: nc.milesplit.com<br>
+<img src="https://datawolf04.github.io/posts/ccPage/github.png" class="img-fluid" style="height:15px;"> datawolf04 <img src="https://datawolf04.github.io/posts/ccPage/linkedin.png" class="img-fluid" style="height:15px;"> wolf-253b6625a</caption>
+<thead>
+<tr class="gt_heading header">
+<th colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border">Fightertown XC Invitational Boys Varsity</th>
+</tr>
+<tr class="gt_col_headings even">
+<th id="teams" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Teams</th>
+<th id="placements" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Athlete Placements</th>
+<th id="teamScore" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Team Score</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">Croatan</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">1, 4, 8, 23, 59, 60, 62</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">95</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">West Carteret</td>
+<td class="gt_row gt_right" headers="placements">15, 17, 21, 22, 31, 34, 39</td>
+<td class="gt_row gt_right" headers="teamScore">106</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">Lejeune</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">2, 5, 12, 33, 57, 66, 79</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">109</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">Swansboro</td>
+<td class="gt_row gt_right" headers="placements">3, 7, 9, 29, 73</td>
+<td class="gt_row gt_right" headers="teamScore">121</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">Terra Ceia Christian School</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">16, 19, 20, 44, 47, 50, 93</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">146</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">Pamlico County</td>
+<td class="gt_row gt_right" headers="placements">11, 18, 41, 49, 52, 54, 77</td>
+<td class="gt_row gt_right" headers="teamScore">171</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">White Oak</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">14, 30, 32, 45, 72, 89, 91</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">193</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">Havelock</td>
+<td class="gt_row gt_right" headers="placements">6, 35, 38, 53, 71, 85, 95</td>
+<td class="gt_row gt_right" headers="teamScore">203</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">South Lenoir</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">36, 40, 42, 48, 58, 68, 70</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">224</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">Wilson Christian Academy</td>
+<td class="gt_row gt_right" headers="placements">10, 28, 46, 63, 84, 94</td>
+<td class="gt_row gt_right" headers="teamScore">231</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">Jacksonville</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">24, 25, 51, 64, 75, 76</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">239</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">D.H. Conley</td>
+<td class="gt_row gt_right" headers="placements">27, 55, 56, 61, 67, 82, 83</td>
+<td class="gt_row gt_right" headers="teamScore">266</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">Heide Trask</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">26, 43, 74, 88, 92, 98</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">323</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">Rocky Mount High School</td>
+<td class="gt_row gt_right" headers="placements">13, 69, 78, 81, 96, 101, 104</td>
+<td class="gt_row gt_right" headers="teamScore">337</td>
+</tr>
+<tr class="odd">
+<td class="gt_row gt_left" headers="teams" style="background-color: rgba(135,206,235,0.25)">Richlands</td>
+<td class="gt_row gt_right" headers="placements" style="background-color: rgba(135,206,235,0.25)">37, 80, 97, 99, 100, 105</td>
+<td class="gt_row gt_right" headers="teamScore" style="background-color: rgba(135,206,235,0.25)">413</td>
+</tr>
+<tr class="even">
+<td class="gt_row gt_left" headers="teams">Living Water Christian School</td>
+<td class="gt_row gt_right" headers="placements">65, 86, 87, 90, 102, 103, 106</td>
+<td class="gt_row gt_right" headers="teamScore">430</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+<p>This is all well and good, and there are some string formatting things I could probably do. But this isn’t very visual.</p>
+</section>
+<section id="some-visualizations-that-ive-been-testing-out." class="level2">
+<h2 class="anchored" data-anchor-id="some-visualizations-that-ive-been-testing-out.">Some visualizations that I’ve been testing out.</h2>
+<p>It’s neat to see how the teams stack up. So the first visualization represents each athlete with a dot and each team with a color/row.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/ccPage/crossCountry_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/ccPage/crossCountry_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>Cross Country Data</category>
+  <category>R</category>
+  <category>Python</category>
+  <guid>https://datawolf04.github.io/posts/ccPage/crossCountry.html</guid>
+  <pubDate>Wed, 03 Sep 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Using the Heat Equation to model a real-world system (Part 5)</title>
   <dc:creator>Steven Wolf</dc:creator>
@@ -2178,7 +2783,7 @@ font-style: inherit;">'</span>)</span>
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
 <p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
+<div id="b150aac4" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>

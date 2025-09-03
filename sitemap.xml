@@ -2,78 +2,82 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://datawolf04.github.io/about.html</loc>
-    <lastmod>2025-09-02T15:44:22.853Z</lastmod>
+    <lastmod>2025-09-03T19:14:33.117Z</lastmod>
   </url>
   <url>
-    <loc>https://datawolf04.github.io/posts/summerMovies/summerMovies.html</loc>
-    <lastmod>2025-09-02T15:44:22.935Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqn2/heatEqn2.html</loc>
-    <lastmod>2025-09-02T15:44:22.861Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset3.html</loc>
-    <lastmod>2025-09-02T15:44:22.864Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinSlab.html</loc>
-    <lastmod>2025-09-02T15:44:22.864Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEquationReset.html</loc>
-    <lastmod>2025-09-02T15:44:22.864Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/weatherScrape240808/weatherScrape.html</loc>
-    <lastmod>2025-09-02T15:44:22.945Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</loc>
-    <lastmod>2025-09-02T15:44:22.945Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</loc>
-    <lastmod>2025-09-02T15:44:22.935Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/readme.html</loc>
-    <lastmod>2025-09-02T15:44:22.945Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag.html</loc>
-    <lastmod>2025-09-02T15:44:22.933Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/collision/puckStickCollision.html</loc>
-    <lastmod>2025-09-02T15:44:22.857Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/olympic240805/olympicMedalData.html</loc>
-    <lastmod>2025-09-02T15:44:22.917Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinRod.html</loc>
-    <lastmod>2025-09-02T15:44:22.864Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2.html</loc>
-    <lastmod>2025-09-02T15:44:22.863Z</lastmod>
-  </url>
-  <url>
-    <loc>https://datawolf04.github.io/posts/tt20240819/englishMonarchy.html</loc>
-    <lastmod>2025-09-02T15:44:22.937Z</lastmod>
+    <loc>https://datawolf04.github.io/posts/ccPage/crossCountry.html</loc>
+    <lastmod>2025-09-03T19:14:33.117Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqn2/hotBoxViz.html</loc>
-    <lastmod>2025-09-02T15:44:22.863Z</lastmod>
+    <lastmod>2025-09-03T19:14:33.127Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/tt20240819/englishMonarchy.html</loc>
+    <lastmod>2025-09-03T19:14:33.199Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2.html</loc>
+    <lastmod>2025-09-03T19:14:33.127Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinRod.html</loc>
+    <lastmod>2025-09-03T19:14:33.128Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/olympic240805/olympicMedalData.html</loc>
+    <lastmod>2025-09-03T19:14:33.181Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/collision/puckStickCollision.html</loc>
+    <lastmod>2025-09-03T19:14:33.121Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/projectileMotion/projectileMotionWithDrag.html</loc>
+    <lastmod>2025-09-03T19:14:33.195Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/readme.html</loc>
+    <lastmod>2025-09-03T19:14:33.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/tt20240813/worldFairs.html</loc>
+    <lastmod>2025-09-03T19:14:33.198Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/tt20240903/stackOverflow.html</loc>
+    <lastmod>2025-09-03T19:14:33.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/weatherScrape240808/weatherScrape.html</loc>
+    <lastmod>2025-09-03T19:14:33.207Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEquationReset.html</loc>
+    <lastmod>2025-09-03T19:14:33.128Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnRobinSlab.html</loc>
+    <lastmod>2025-09-03T19:14:33.128Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset3.html</loc>
+    <lastmod>2025-09-03T19:14:33.127Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/heatEqn2/heatEqn2.html</loc>
+    <lastmod>2025-09-03T19:14:33.125Z</lastmod>
+  </url>
+  <url>
+    <loc>https://datawolf04.github.io/posts/summerMovies/summerMovies.html</loc>
+    <lastmod>2025-09-03T19:14:33.198Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/posts/heatEqn1/modelHeatFlow.html</loc>
-    <lastmod>2025-09-02T15:44:22.861Z</lastmod>
+    <lastmod>2025-09-03T19:14:33.125Z</lastmod>
   </url>
   <url>
     <loc>https://datawolf04.github.io/index.html</loc>
-    <lastmod>2025-09-02T15:44:22.853Z</lastmod>
+    <lastmod>2025-09-03T19:14:33.117Z</lastmod>
   </url>
 </urlset>
