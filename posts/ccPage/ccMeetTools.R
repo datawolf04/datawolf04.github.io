@@ -165,7 +165,8 @@ makePlacePlot <- function(results, meetID, meetGender, meetLevel){
     theme(axis.title.y = element_blank()) +
     ggtitle(pltTitle) + xlab("Place in race") + theme_minimal() +
     theme(
-      plot.caption = element_markdown(size = rel(0.7))
+      plot.caption = element_markdown(size = rel(0.7)),
+      plot.title.position = "plot"
     )
 }
 
@@ -189,16 +190,19 @@ makeTimePlot <- function(results, meetID, meetGender, meetLevel){
     labs(
       title = pltTitle,
       subtitle = "Varsity times by team",
-      x = "",
-      y = ""
+      x = ""
     ) + 
-    theme( plot.title.position = "plot", plot.subtitle = element_text(hjust = 0.5) ) +
+    theme( 
+      plot.title.position = "plot", 
+      plot.subtitle = element_text(hjust = 0.5) 
+    ) +
     scale_x_time(labels = \(x) format(as_datetime(x, tz = "UTC"), "%M:%S"))
 
+  bw = 10
   medTime = median(results$Time)
-  maxDensity = max(density(results$Time)$y)
+  maxDensity = max(density(results$Time,bw = bw )$y)
   medTimeStr = format(as_datetime(medTime, tz = "UTC"), "%M:%OS2")
-  p2 <- ggplot(results, aes(x=Time)) + geom_density(fill = "skyblue", alpha = 0.25) +
+  p2 <- ggplot(results, aes(x=Time)) + geom_density(bw = bw, fill = "skyblue", alpha = 0.25) +
     geom_vline(xintercept=medTime, linetype = "dashed", color='blue',linewidth=0.5) +
     scale_y_continuous(labels=NULL) + theme_minimal() +
     theme( 

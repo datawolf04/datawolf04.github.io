@@ -42,17 +42,23 @@ This is the team score from the [Fightertown Invitational](https://nc.milesplit.
 scoreMeet(meetResults, meetID, "Boys", "Varsity") 
 ```
 
-This is all well and good, and there are some string formatting things I could probably do. But this isn't very visual.
+This is all well and good, and there are some string formatting things I could probably do. But this isn't very visual. And I like making visualizations.
 
 ## Some visualizations that I've been testing out.
-It's neat to see how the teams stack up. So the first visualization represents each athlete with a dot and each team with a color/row.
+It's neat to see how the teams stack up. So the first visualization represents each athlete with a dot and each team with a color/row. This visualization includes all athletes in the race, even those that didn't contribute to the team scoring. I like it because you can see where the athletes are grouped together. Indeed, many cross country coaches encourage their teams to run as a pack for scoring purposes as well as teamwork purposes.
 
 ```{r}
 #| fig-height: 5
 makePlacePlot(meetResults, meetID, "Boys", "Varsity")
 ```
 
+One limitation with the above visualization is that the values on the x-axis are simply the place in the race. In the parlance of statistics, this is called *ordinal* data. So this means that the values are ordered (2nd place is before 3rd place), but it doesn't tell us anything about the gap between the runners. It could have been 20 seconds, 2 seconds, or even 0.2 seconds. So in the figure below, I'm using the time instead of the place on the x-axis, changing how the dots are bunched together.
+
 ```{r}
 #| fig-height: 7
 makeTimePlot(meetResults, meetID, "Boys", "Varsity")
 ```
+
+One other benefit of this is that we can see the distribution of times in the race. The bottom figure is a density plot as if the dots in the top portion of the plot were binned and turned into a histogram, and then smoothed out. (For the nerdy: this is called [Kernel Density Estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation).)
+
+Neither of these visualizations are standard in the Cross Country result reporting space. But they help me "see" what went on, even though I was there. And I could see talking about improvement and other things with an athlete using these plots as a starting point.

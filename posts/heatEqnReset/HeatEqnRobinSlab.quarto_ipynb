@@ -1,0 +1,149 @@
+{
+  "cells": [
+    {
+      "cell_type": "raw",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: Using the Heat Equation to model a real-world system (Part 5)\n",
+        "description: Bringing a nuke to a fist-fight\n",
+        "author: Steven Wolf\n",
+        "date: 07/30/2025\n",
+        "number-sections: false\n",
+        "categories:\n",
+        "  - Heat Equation\n",
+        "  - Modeling\n",
+        "  - Bringing a nuke to a fist-fight\n",
+        "  - 3D Model\n",
+        "execute:\n",
+        "  messages: false\n",
+        "  warning: false\n",
+        "draft: false\n",
+        "---"
+      ],
+      "id": "87df95f7"
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "## Modeling a 3D slab with convection \n",
+        "\n",
+        "I'm going to model a simple 3D slab with convection. For now, I'm not including any power generation, and this slab is going to have thermal properties that make the visualization look well enough. Rather than including all of the code in this post, I'm going to point you to my [Github Repository](https://github.com/datawolf04/heatModel/) where the code exists. Here I will grab bits of the new code that I found difficult to figure out and discuss the lessons I've learned (or sometimes, would like to learn). This is also useful, since much of the code is the same as the previous code.\n",
+        "\n",
+        "Our slab has the following properties.\n",
+        "\n",
+        "- Length and height are both 1 (insert arbitrary length unit)\n",
+        "- Width is 2 (insert arbitrary length unit)\n",
+        "- Initial temp is 10 (arbitrary temperature units)\n",
+        "- External temp is 0 (arbitrary temperature units)\n",
+        "\n",
+        "My next post will talk about units and do some physics.\n",
+        "\n",
+        "## Building a 3D domain\n",
+        "The first challenge is to build a 3D domain. Fortunately, FENICSx has a function for that, and my code looks like this:"
+      ],
+      "id": "0587cdbf"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "L = 1.0  # Length of the slab\n",
+        "W = 2.0  # Width of the slab \n",
+        "H = 1.0  # Height of the slab \n",
+        "dl = 0.05 # Element size for the mesh\n",
+        "nx, ny, nz = int(L/dl), int(W/dl), int(H/dl)  # Number of elements in each direction\n",
+        "\n",
+        "# Define the mesh and function space\n",
+        "bottom_back_left = np.array([0.0, 0.0, 0.0])  # Bottom back corner of the slab\n",
+        "top_front_right = np.array([L, W, H])  # Top front corner of the slab\n",
+        "# Create a 3D domain representing the slab\n",
+        "domain = mesh.create_box(\n",
+        "    MPI.COMM_WORLD,  # MPI communicator\n",
+        "    [bottom_back_left,top_front_right],  # Coordinates of the corners of the rectangle\n",
+        "    [nx, ny, nz],  # Number of elements in each direction\n",
+        "    mesh.CellType.tetrahedron,  # Type of elements \n",
+        "    ghost_mode=mesh.GhostMode.shared_facet  # Ghost mode for shared facets\n",
+        ")"
+      ],
+      "id": "0823bc21",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "I struggled to get this right for longer than I would like to admit. For some reason, when I was building the domain and generating the appropriate function spaces, my code was failing when I was building the interpolating the initial condition into the appropriate function space. I finally added the `ghost_mode=mesh.GhostMode.shared_facet` line to the above and it started working. As near as I can tell, this is why that is required:\n",
+        "\n",
+        "- FENICSx, in general, is designed for computationally intensive calculations. So it takes advantage of parallelization.\n",
+        "- One common parallelization scheme is to divide the computation into bits, operate them independantly, and then pull them back together. For example, if you have a group homework assignment with 10 questions and a group of 5 people, you assign 2 problems to everyone, then staple them together at the end. Parallel computing, effectively, does this with processors.\n",
+        "- However, sometimes the problems aren't fully independant. Suppose that one needs the answer to question 1 in order to answer questions 2, 3, and 4 in my homework assignment example above. Somehow, the answer to question 1 needs to be provided for the persons doing questions 2, 3, and 4. For parallel computing with FENICSx, this is done with the ghost mode. So by not specifying a ghost mode, I found that the default ghost mode didn't work for the mesh/functionspace that I defined.\n",
+        "\n",
+        "The above is a very hand-wavy explanation, and is enough for me (for now anyway). So, I then created the function space as usual, and defined the parameters that are important for this problem. "
+      ],
+      "id": "1c174620"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "#| eval: false\n",
+        "V = functionspace(domain, (\"Lagrange\", 1))\n",
+        "tdim = domain.topology.dim  # Topological dimension of the domain\n",
+        "\n",
+        "x = SpatialCoordinate(domain)  # Spatial coordinates of the domain\n",
+        "tempExt = lambda x: extTemp  # External temperature function (constant in this case)\n",
+        "s = tempExt(x)  # External temperature at the boundary\n",
+        "f = Constant(domain, PETSc.ScalarType(0))  # Source term (zero in this case)\n",
+        "h = Constant(domain, PETSc.ScalarType(0.1))  # Robin boundary condition coefficient\n",
+        "kappa = Constant(domain, PETSc.ScalarType(1.0))  # Thermal conductivity \n",
+        "\n",
+        "#########################################\n",
+        "# Set up the initial condition\n",
+        "def initial_condition(x, Temp=T0, a=0):\n",
+        "    return Temp * np.exp(-a * (x[0]**2 + x[1]**2 + x[2]**2))  # Initial temperature T0 defined elsewhere\n",
+        "\n",
+        "uPrev = Function(V)\n",
+        "uPrev.name = \"uPrev\"\n",
+        "uPrev.interpolate(initial_condition)  # Interpolate the initial condition into the function space"
+      ],
+      "id": "4f248cc0",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "I found that if I left the `* np.exp(-a * (x[0]**2 + x[1]**2 + x[2]**2))` expression out of the return statement, there was an error message stating that the arguments were the wrong shape, and the interpolation didn't work. I tried tracking it down, but ultimately came up with this hacky solution.\n",
+        "\n",
+        "## Finally, a pretty picture\n",
+        "The rest of the computation proceeded as usual. I was able to make a gif of the output using `pyvista`. The time-step parameters were chosen so that there was a change, and it was visible.\n",
+        "\n",
+        "![](slabTemp.gif)\n",
+        "\n",
+        "\n",
+        "## Next steps\n",
+        "\n",
+        "1. Do some physics. These arbitrary length, temperature, and time units simply will not do!\n",
+        "2. Put the slab in the sun.\n",
+        "3. Make prettier visualizations using `pyvista` and/or `ParaView`.\n",
+        "\n",
+        "Note, ParaView is a separate program used for 3D visualizations, not a Python package. This is also part of the rationale behind building the github repository. I'll need to create visualizations outside of a Quarto doc (like a majority of my other posts) and have to build visualizations elsewhere, then link to them. "
+      ],
+      "id": "53947425"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}

@@ -1,0 +1,367 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "---\n",
+        "title: \"Using the Heat Equation to model a real-world system (Part 3)\"\n",
+        "description: \"Bringing a nuke to a fist-fight\"\n",
+        "author: \"Steven Wolf\"\n",
+        "date: \"07/21/2025\"\n",
+        "number-sections: false\n",
+        "categories:\n",
+        "  - Heat Equation\n",
+        "  - Modeling\n",
+        "  - Bringing a nuke to a fist-fight\n",
+        "execute: \n",
+        "  messages: false\n",
+        "  warning: false\n",
+        "jupyter: python3\n",
+        "---\n",
+        "\n",
+        "## Finally, let's use some software to do this\n",
+        "If you have been following my recent series of posts, I've been [talking about why solving the heat equation for a real problem is hard](HeatEquationReset.qmd), and then [I did some tedious Linear Algebra](HeatEqnReset2.qmd). All to solve a simple 1D heat equation problem. Now the plan is to repeat this analysis for the Dirichlet boundary condition using the [FENICSx software](https://fenicsproject.org). \n",
+        "\n",
+        "I'm not going to re-create the math, but, if you follow what I have done previously, you will see that we can define the bilinear form:\n",
+        "$$\n",
+        "a(u^k, v) = \\int_\\Omega \\left(u^k(\\vec{x})v(\\vec{x}) + \\Delta t \\nabla u^k(\\vec{x}) \\cdot \\nabla v(\\vec{x})\\right) d^3x  + \\sum_l \\int_{\\Gamma_R^l} h_l^k u^k(\\vec{x}) v(\\vec{x}) ds\n",
+        "$$\n",
+        "and the linear form:\n",
+        "$$\n",
+        "\\begin{align*}\n",
+        "L(v) = &\\int_\\Omega \\left(u^{k-1}(\\vec{x})v(\\vec{x}) + \\Delta t f^k(\\vec{x}) v(\\vec{x})\\right)d^3x \\\\\n",
+        " &+ \\sum_l \\int_{\\Gamma_R^l} h_l^k s^k_l(\\vec{x}) v(\\vec{x}) ds + \\sum_j \\int_{\\Gamma_N^j} g_j^k v(\\vec{x}) ds\n",
+        "\\end{align*}\n",
+        "$$\n",
+        "of the heat equation.\n",
+        "\n",
+        "At this point in the previous analysis, we set up a mesh and converted the hard integral problem into a Linear algebra problem. For example, we defined a function:\n",
+        "$$\n",
+        "\\varphi_m(x,y,z) = \n",
+        "\\begin{cases}\n",
+        "\\left(1-\\frac{\\left|x-x_i\\right|}{h}\\right) \\left(1-\\frac{\\left|y-y_j\\right|}{h}\\right) \\left(1-\\frac{\\left|z-z_k\\right|}{h}\\right) &\\left|x-x_i\\right|\\leq h\n",
+        "\\left|y-y_j\\right|\\leq h \\left|z-x_k\\right|\\leq h \\\\\n",
+        "0 &\\text{else}\n",
+        "\\end{cases}\n",
+        "$$\n",
+        "where\n",
+        "$$\n",
+        "\\vec{x}_m = (x_i, y_j, z_k)\n",
+        "$$\n",
+        "Then we chose:\n",
+        "$$\n",
+        "v(\\vec{x}) = \\varphi_n(\\vec{x})\n",
+        "$$\n",
+        "and\n",
+        "$$\n",
+        "u^k(\\vec{x}) = \\sum_m u^k_m \\varphi_m(\\vec{x})\n",
+        "$$\n",
+        "But each of these choices has consequences about the accuracy and stability of the computation. For example, mesh size/shape are known to be important, especially if the solution is likely to vary a great deal in a region. The beauty of FENICSx is that they do the crazy math that I did by hand last time, and they handle all the boundaries too. \n",
+        "\n",
+        "The upside of using FENICSx (or a similar framework) is that the code does the tedious parts for me. This allows me to focus on the physical aspects of the problem. *And*, all of the other kinds of systems that I would want to model are able to be described using appropriate meshes and/or geometries. The downside is that in addition to needing to know/understand all of the modeling bits that we've done already, you need to have an understanding of the weak formulation, informing you why this approach is needed and works to solve the problem. Merely wrapping my head around this has (in part) explained the gap between my [first heat equation post](../heatEqn1/modelHeatFlow.qmd) and this more recent series.\n",
+        "\n",
+        "In some sense, by solving the Dirichlet rod problem with FENICSx, I'm brining a nuke to a fist fight. Ok, so I'll \"win\". But learning how to build a nuke is only worthwhile if I am going to model more complex things. Which, if we go to the way-back machine, we'll remember that my goal was to figure out why my house was so daggone hot even though my AC was on full blast all summer. So (to continue the analogy) the nuke is warranted. This has been, and continues to be, part of a long process for me to learn \"nuclear physics\" so my model is worthwhile.\n",
+        "\n",
+        "## FENICSx Solution\n",
+        "Let's build this solution using FENICSx. Start by importing some libraries that are going to be required."
+      ],
+      "id": "b10c226a"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "import numpy as np\n",
+        "import matplotlib.pyplot as plt\n",
+        "import matplotlib.colors as mc\n",
+        "import matplotlib.cm as cm\n",
+        "## FENICSx assumes that you are going to be doing some heavy computations and will take advantage of parallel \n",
+        "## processing capabilities. The PETSC and MPI packages allow you to do this.\n",
+        "from petsc4py import PETSc\n",
+        "from mpi4py import MPI\n",
+        "## These allow you to generate meshes and do the finite element method.\n",
+        "from dolfinx import mesh, fem\n",
+        "import ufl\n",
+        "from dolfinx.fem.petsc import assemble_vector, assemble_matrix, create_vector, apply_lifting, set_bc\n",
+        "from uDiricheletExact import *"
+      ],
+      "id": "7c4cbc85",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Set up the simulation parameters. Define the mesh and function space. Under the hood, the `fem.functionspace` command is creating a polynomial basis function under the hood."
+      ],
+      "id": "05dd7c43"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "t = 0 \n",
+        "final_time = 1.0  # Final time for the simulation\n",
+        "dt = 0.01  # Time step size\n",
+        "num_steps = int((final_time - t) / dt)  \n",
+        "T0 = 10.0  # Initial temperature distribution along the rod\n",
+        "tPlot = np.linspace(0, final_time, num_steps+1)  # Time points for plotting\n",
+        "\n",
+        "# Define the mesh \n",
+        "n_elements = 32\n",
+        "# Create a 1D domain representing the rod from 0 to 1\n",
+        "domain = mesh.create_interval(\n",
+        "    MPI.COMM_WORLD,  # MPI communicator\n",
+        "    n_elements,  # Number of elements in the mesh\n",
+        "    [0.0, 1.0]  # Interval from 0 to 1 (the length of the rod)\n",
+        ")\n",
+        "\n",
+        "# Create a function space for the finite element method\n",
+        "V = fem.functionspace( \n",
+        "    domain, ('Lagrange',1) # Linear Lagrange elements (polynomials)\n",
+        ")"
+      ],
+      "id": "ab3482b5",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Set up the initial condition `u_n` and set up a \"working solution\" `uh`."
+      ],
+      "id": "7ca061e9"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "def initial_condition(x):\n",
+        "  return np.full(x.shape[1], T0, dtype=np.float64)  # Initial temperature T0\n",
+        "\n",
+        "u_n = fem.Function(V)\n",
+        "u_n.name = \"u_n\"  # Name the function for clarity\n",
+        "u_n.interpolate(initial_condition)  # Interpolate the initial condition into the function space\n",
+        "\n",
+        "# Define solution variable\n",
+        "uh = fem.Function(V)\n",
+        "uh.name = \"uh\"  # Name the function for clarity \n",
+        "uh.interpolate(initial_condition)"
+      ],
+      "id": "779f0a69",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Set up the (Dirichlet) boundary conditions for the problem:"
+      ],
+      "id": "5ef988a2"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "uD = fem.Constant(domain, PETSc.ScalarType(0))  # u(0,t) = 0 and u(1,t) = 0\n",
+        "# Create facet to cell connectivity required to determine boundary facets\n",
+        "fdim = domain.topology.dim - 1\n",
+        "# Locate the boundary facets of the mesh\n",
+        "boundary_facets = mesh.locate_entities_boundary(\n",
+        "  domain, # Domain mesh\n",
+        "  fdim,  # Dimension of the facets (1D for a rod)\n",
+        "  lambda x: np.full(x.shape[1], True, dtype=bool)  # All facets are boundary facets\n",
+        ")\n",
+        "boundary_dofs = fem.locate_dofs_topological(V, fdim, boundary_facets)\n",
+        "bc = fem.dirichletbc(uD, boundary_dofs, V)"
+      ],
+      "id": "93c0f011",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Set up the required functions for the variational problem including the source term (which is zero in this case). Then, define the $a(u,v)$ and $L(v)$ in terms of these functions, and convert to a form suitable for FENICSx."
+      ],
+      "id": "d8954227"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "u = ufl.TrialFunction(V)  # Trial function for the finite element method\n",
+        "v = ufl.TestFunction(V)  # Test function for the finite element method\n",
+        "f = fem.Constant(domain, PETSc.ScalarType(0))  # Source term (zero in this case)\n",
+        "\n",
+        "a = u * v * ufl.dx + dt * ufl.inner(ufl.grad(u), ufl.grad(v)) * ufl.dx\n",
+        "L = (u_n + dt * f) * v * ufl.dx\n",
+        "bilinear_form = fem.form(a)\n",
+        "linear_form = fem.form(L)"
+      ],
+      "id": "f6e5d70f",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Do the Linear Algebra required"
+      ],
+      "id": "80578f43"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "# Assemble the Linear Algebra structures\n",
+        "A = assemble_matrix(bilinear_form, bcs=[bc])\n",
+        "A.assemble()  # Assemble the matrix A\n",
+        "b = create_vector(linear_form)  # Create a vector for the right-hand side\n",
+        "\n",
+        "# Create a linear solver\n",
+        "solver = PETSc.KSP().create(domain.comm)\n",
+        "solver.setOperators(A)  # Set the matrix A for the solver\n",
+        "solver.setType(PETSc.KSP.Type.PREONLY)  # Use a preconditioner\n",
+        "solver.getPC().setType(PETSc.PC.Type.LU)  # Use LU preconditioner"
+      ],
+      "id": "b9a2b8f2",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "And prepare to make a plot. I'll make a 3D surface plot and the variable `Uc` is my computational solution."
+      ],
+      "id": "ac19c485"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "xMesh = domain.geometry.x[: ,0]\n",
+        "Tc, Xc = np.meshgrid(tPlot, xMesh)  # Create a mesh grid for plotting\n",
+        "Uc = np.zeros_like(Tc)\n",
+        "Uc[:, 0] = u_n.x.array  # Initial condition for plotting"
+      ],
+      "id": "8f8af6eb",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "Now, repeat the process for each time-step, filling in the `Uc` array as we go:"
+      ],
+      "id": "1c15e1e0"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "for i in range(num_steps):\n",
+        "  t += dt  # Current time\n",
+        "\n",
+        "  # Update the RHS reusing the previous solution\n",
+        "  with b.localForm() as loc_b:\n",
+        "    loc_b.set(0.0)\n",
+        "  \n",
+        "  assemble_vector(b, linear_form)\n",
+        "  apply_lifting(b, [bilinear_form], [[bc]])  # Apply boundary conditions\n",
+        "  b.ghostUpdate(addv=PETSc.InsertMode.ADD_VALUES, mode=PETSc.ScatterMode.REVERSE)  # Update ghost values\n",
+        "  set_bc(b, [bc])  # Set the boundary conditions\n",
+        "\n",
+        "  # Solve linear problem\n",
+        "  solver.solve(b, uh.x.petsc_vec)\n",
+        "  uh.x.scatter_forward()\n",
+        "\n",
+        "  # Update the solution at the current time step for plotting\n",
+        "  Uc[:, i+1] = uh.x.array\n",
+        "  \n",
+        "  # Update solution at previous time step (u_n)\n",
+        "  u_n.x.array[:] = uh.x.array"
+      ],
+      "id": "ee949e78",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "### Make a pretty picture\n",
+        "So, let's see how this computation compares to the exact solution. "
+      ],
+      "id": "98c8875d"
+    },
+    {
+      "cell_type": "code",
+      "metadata": {},
+      "source": [
+        "x_exact = np.linspace(0, 1, 100)  # Points along the rod for exact solution\n",
+        "Te, Xe = np.meshgrid(tPlot, x_exact)  # Create a mesh grid for exact solution\n",
+        "Ue = uDiricheletExact(Te, Xe, T0)  # Compute the exact solution at time t\n",
+        "\n",
+        "cnorm = mc.Normalize(vmin=0,vmax=T0)\n",
+        "cbar = cm.ScalarMappable(norm=cnorm)\n",
+        "\n",
+        "fig, ax = plt.subplots(ncols=2, subplot_kw={'projection': '3d'},figsize=(14,7) ) # Create a 3D plot\n",
+        "ax[0].plot_surface(Xc, Tc, Uc, cmap='viridis', edgecolor='none')  # Plot the FENICS solution\n",
+        "ax[0].set_title('FENICS Solution')  # Title for FENICS solution\n",
+        "ax[0].set_xlabel('Position along the rod (x)')  # X-axis label\n",
+        "ax[0].set_ylabel('Time (t)')  # Y-axis label\n",
+        "ax[0].set_zlabel('Temperature')  # Z-axis label\n",
+        "ax[1].plot_surface(Xe, Te, Ue, cmap='viridis', edgecolor='none')  # Plot the exact solution\n",
+        "ax[1].set_title('Exact Solution')  # Title for exact solution\n",
+        "ax[1].set_xlabel('Position along the rod (x)')  # X-axis label\n",
+        "ax[1].set_ylabel('Time (t)')  # Y-axis label\n",
+        "ax[1].set_zlabel('Temperature')  # Z-axis label\n",
+        "plt.tight_layout()  # Adjust layout to prevent overlap\n",
+        "plt.suptitle('Dirichlet Problem for a Unit Rod')  # Overall title for the plot\n",
+        "plt.subplots_adjust(top=0.9)  # Adjust the top margin to fit\n",
+        "ghLogo = u\"\\uf09b\"\n",
+        "liLogo = u\"\\uf08c\"\n",
+        "txt = f\"{ghLogo} datawolf04 {liLogo} steven-wolf-253b6625a\"\n",
+        "fig.subplots_adjust(bottom=0.05,right=0.85)\n",
+        "plt.figtext(0.75,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=10)\n",
+        "cbar_ax = fig.add_axes([0.9, 0.1, 0.02, 0.7])\n",
+        "fig.colorbar(cbar, cax=cbar_ax,label='Temperature [arb. units]')\n",
+        "plt.show()  # Show the plot"
+      ],
+      "id": "bb9ece18",
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "markdown",
+      "metadata": {},
+      "source": [
+        "WooHoo!\n",
+        "\n",
+        "## Conclusion\n",
+        "Ok, now that I have kicked the tires on FENICSx, I'm going to call it a day. My next step will be to replicate my Robin Condition. Then I'll go to 3D and make a model for a sweatbox. I'll need to fold back in my solar radiation work to make this happen. And I'll have to think about the physics (because I just haven't been thinking about things like space/time/temperature units since the reboot).\n",
+        "\n",
+        "I also know that I've only touched on the edges of this software suite. My plans are to figure out more complex meshes. (For example, if I want to model a house, I'll need to make walls and windows and stuff like that.) I will also need to figure out PyVista - software that they use to make nice visualizations, especially for 3D objects."
+      ],
+      "id": "04471204"
+    }
+  ],
+  "metadata": {
+    "kernelspec": {
+      "display_name": "Python 3",
+      "language": "python",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
