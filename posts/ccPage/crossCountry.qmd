@@ -1,0 +1,58 @@
+---
+title: "A new project: Cross Country Data Viz"
+description: "Visualizing Cross Country results."
+author: "Steven Wolf"
+date: "9/3/2025"
+categories:
+  - Cross Country Data 
+  - R
+  - Python
+execute: 
+  messages: false
+  warning: false
+  echo: false
+---
+
+```{r}
+library(tidyverse)
+library(gt)
+library(gtExtras)
+library(readxl)
+library(grid)
+library(gtable)
+
+source('ccMeetTools.R')
+meetResults = read_csv('fightertownInvite.csv')
+meetID = 'fightertown-xc-invitational'
+
+```
+
+It's been a while since I've posted on this portion of my blog. I've been getting geared up for my sons' upcoming Cross Country seasons. As a former NCAA athlete in this sport (not good enough for a scholarship), I get very fired up this time of year. So I've been scraping some results from Milesplit and visualizing the team results.
+
+## Cross Country Scoring Primer
+Cross country races are scored as follows. Each team can have up to 7 athletes for scoring purposes. The team score is found by adding up the places of the top 5 athletes from each team. Low score wins. Teams that have 5 or 6 athletes will also receive scores. 
+
+- The best possible Cross Country score is $1+2+3+4+5=15$ points. A shut-out is when all 7 athletes from one team finish before the first athlete from the second team. In a dual meet (where there are only two teams) this results in a 15-50 score.
+
+- If two teams are tied, the tie is broken by the 6th and 7th athletes. (Fun fact, my senior year of high school, the team that won did so on this tie breaker. The 3rd place team was one point behind them. It was an incredibly tight race!)
+
+This is the team score from the [Fightertown Invitational](https://nc.milesplit.com/meets/655522-fightertown-xc-invitational-2025/results) where my son set a new PR!
+
+```{r}
+scoreMeet(meetResults, meetID, "Boys", "Varsity") 
+```
+
+This is all well and good, and there are some string formatting things I could probably do. But this isn't very visual.
+
+## Some visualizations that I've been testing out.
+It's neat to see how the teams stack up. So the first visualization represents each athlete with a dot and each team with a color/row.
+
+```{r}
+#| fig-height: 5
+makePlacePlot(meetResults, meetID, "Boys", "Varsity")
+```
+
+```{r}
+#| fig-height: 7
+makeTimePlot(meetResults, meetID, "Boys", "Varsity")
+```
