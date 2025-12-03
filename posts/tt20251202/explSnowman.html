@@ -7,10 +7,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Steven Wolf">
-<meta name="dcterms.date" content="2024-09-05">
-<meta name="description" content="Where are Stack Overflow users working from? Let’s find out.">
+<meta name="dcterms.date" content="2025-12-02">
+<meta name="description" content="Don’t tell Punxsutawney Phil that he has competition">
 
-<title>Stack Overflow Annual Developer Survey – Steven Wolf - Data World</title>
+<title>Sechseläuten Festival and Folk Wisdom – Steven Wolf - Data World</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -22,41 +22,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -164,10 +129,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Stack Overflow Annual Developer Survey</h1>
+      <h1 class="title">Sechseläuten Festival and Folk Wisdom</h1>
                   <div>
         <div class="description">
-          Where are Stack Overflow users working from? Let’s find out.
+          Don’t tell Punxsutawney Phil that he has competition
         </div>
       </div>
                           <div class="quarto-categories">
@@ -190,7 +155,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">September 5, 2024</p>
+        <p class="date">December 2, 2025</p>
       </div>
     </div>
     
@@ -206,9 +171,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#work-type-and-education-level" id="toc-work-type-and-education-level" class="nav-link active" data-scroll-target="#work-type-and-education-level">Work type and education level</a></li>
-  <li><a href="#work-type-and-age" id="toc-work-type-and-age" class="nav-link" data-scroll-target="#work-type-and-age">Work type and age</a></li>
-  <li><a href="#work-type-and-experience-coding" id="toc-work-type-and-experience-coding" class="nav-link" data-scroll-target="#work-type-and-experience-coding">Work type and Experience coding</a></li>
+  <li><a href="#confirmation-bias" id="toc-confirmation-bias" class="nav-link active" data-scroll-target="#confirmation-bias">Confirmation bias</a>
+  <ul class="collapse">
+  <li><a href="#more-dirty-poker" id="toc-more-dirty-poker" class="nav-link" data-scroll-target="#more-dirty-poker">More dirty poker</a></li>
+  </ul></li>
+  <li><a href="#summary-plot" id="toc-summary-plot" class="nav-link" data-scroll-target="#summary-plot">Summary plot</a></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
     </div>
@@ -219,119 +187,576 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<p>This week’s dataset is derived from the 2024 Stack Overflow Annual Developer Survey. Conducted in May 2024, the survey gathered responses from over 65,000 developers.</p>
-<p>Given that one of the big trends being discussed in the world right now is working from home vs.&nbsp;going back to the office, I was wondering if there were any trends in this data as to who is working at home. Note, that this dataset did not include gender or race data. In particular, I’m considering 3 questions:</p>
+<p>I’m back doing some <a href="https://www.tidytuesday.com/">#TidyTuesday</a> visualizations. This week let’s look at exploding snowmen?!?!?!</p>
+<p>The city of Zurich thinks that groundhogs make lousy weather predictors, so they have created the Böögg - <a href="https://en.wikipedia.org/wiki/Sechsel%C3%A4uten">Zurich’s infamous exploding snowman!</a> Ok, I admit that Punxatawny Phil is likely the relative newcomer here. Since I’m American, I don’t know what a Böögg is, so I looked it up for others like me.</p>
+<blockquote class="blockquote">
+<p>The Böögg is a snowman effigy made of cotton, wool, and stuffed with fireworks, created every year for Zurich’s “Sechseläuten” spring festival. The saying goes that the quicker the Böögg’s head explodes, the finer the summer will be.</p>
+</blockquote>
+<p>This is a festival similar to Groundhog day in that a non-climactic phenomenon is used to “predict” a climactic event. So, let’s test the idea, does folk wisdom stand its ground against hard science?</p>
+<section id="confirmation-bias" class="level2">
+<h2 class="anchored" data-anchor-id="confirmation-bias">Confirmation bias</h2>
+<p>This, and other nuggets of folk wisdom, often “work” because of a phenomenon known as confirmation bias, that is people overemphasize data that support their belief and neglect data that oppose their belief. Consider the two reactions to a “fine” day:</p>
 <ol type="1">
-<li>Does education level matter?</li>
-<li>Does age matter?</li>
-<li>Does experience/expertise matter?</li>
+<li>Given a short time to Böögg head explosion. Today “proves” that the Böögg is right.</li>
+<li>Given a long time to Böögg head explosion. Given all of the crappy weather we’ve had recently, today just “proves” that the Böögg is sometimes generous and lets us have a break from the awful weather.</li>
 </ol>
-<div class="cell">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">"soSurvey.RData"</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'helperFunctions.R'</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>personalDataCats <span class="ot">=</span> <span class="fu">c</span>(<span class="st">'main_branch'</span>,<span class="st">'age'</span>,<span class="st">'remote_work'</span>,<span class="st">'ed_level'</span>,<span class="st">'years_code'</span>,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>                     <span class="st">'years_code_pro'</span>,<span class="st">'dev_type'</span>,<span class="st">'org_size'</span>,<span class="st">'country'</span>,<span class="st">'currency'</span>,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">'comp_total'</span>)</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>personData <span class="ot">&lt;-</span> stackoverflow_survey_single_response <span class="sc">|&gt;</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="fu">all_of</span>(personalDataCats)) <span class="sc">|&gt;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(remote_work))</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>cwRemote <span class="ot">=</span> qname_levels_single_response_crosswalk <span class="sc">|&gt;</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(qname<span class="sc">==</span><span class="st">'remote_work'</span>)</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>cwRemote<span class="sc">$</span>label <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Hybrid"</span>,<span class="st">"In-person"</span>,<span class="st">"Remote"</span>)</span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>remoteLevels <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"In-person"</span>,<span class="st">"Hybrid"</span>,<span class="st">"Remote"</span>)</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>personData <span class="ot">&lt;-</span> <span class="fu">left_join</span>(personData,cwRemote,<span class="at">by=</span><span class="fu">join_by</span>(remote_work <span class="sc">==</span> level)) <span class="sc">|&gt;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">remote_work =</span> <span class="fu">factor</span>(label,<span class="at">levels=</span>remoteLevels)) <span class="sc">|&gt;</span> </span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">!</span>qname <span class="sc">&amp;</span> <span class="sc">!</span>label)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</div>
-<section id="work-type-and-education-level" class="level2">
-<h2 class="anchored" data-anchor-id="work-type-and-education-level">Work type and education level</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>This graph shows the number of responses as well as the level of education that each user has. We can see that most users of Stack Overflow have at least 4-year college degree. This would seem to be in line with the general profile of someone working in a STEM field. It is somewhat difficult to glean what, if any, role there is between work location and education level.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Next, we consider the same data, but we are highlighting the counts based on work location. This plot shows that a large fraction of Stack Overflow users are working in hybrid or remote locations.</p>
-<p>In the following two plots, I’ll show the same information as above, except as percentages rather than raw counts.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Neither of these suggests that education level would predict work location for stack overflow users.</p>
+<section id="more-dirty-poker" class="level3">
+<h3 class="anchored" data-anchor-id="more-dirty-poker">More dirty poker</h3>
+<p>Note, the saying is that the quicker the Böögg’s head explodes, the <strong><em>finer</em></strong> the summer will be. Well, what makes for a fine summer (in the context of Zurich)? Is hotter finer? Surely there is a limit to that, I think that the good people of Zurich would not enjoy 40 degree weather like my friend in Sao Paolo gets routinely during the summer. Is it purely sunshine? What about rainfall? So the beauty of this statement is that you can make it mean whatever you want it to mean.</p>
 </section>
-<section id="work-type-and-age" class="level2">
-<h2 class="anchored" data-anchor-id="work-type-and-age">Work type and age</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-8-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>The above plot looks at the number of responses by age. We can see clearly that most users are between ages 25 and 44.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Here we see that the age group from 18-24 is working in-person much more than they work hybrid/remote. As this group is college-aged, and most colleges and universities are back to in-person instruction, this could suggest that students who are learning to code at university are using Stack Overflow for help (as this college professor hopes they would). As users age, they tend to find more hybrid/remote roles.</p>
 </section>
-<section id="work-type-and-experience-coding" class="level2">
-<h2 class="anchored" data-anchor-id="work-type-and-experience-coding">Work type and Experience coding</h2>
-<div class="cell">
-<div class="cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="stackOverflow_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Here we see a possible echo of the college idea that I raised above. However, I see a few other things as well.</p>
+<section id="summary-plot" class="level2">
+<h2 class="anchored" data-anchor-id="summary-plot">Summary plot</h2>
+<p>When looking at groups of numerical data, I like to do a pairs plot. Each cell of the array is one of three types of things:</p>
 <ol type="1">
-<li>There seems to be a significant shift that as people gain experience coding, they move from in-person roles to hybrid/remote roles.</li>
-<li>As you do something for a longer time, you tend to estimate more. All of the responses seem to favor numbers ending in 0 or 5, especially once you get past 10 years. So if someone has 22 years of experience, they will probably round down to 20, or up to 25, rather than stating 20 exactly.</li>
+<li>A histogram (or kernel density plot) of each measurement on the diagonal</li>
+<li>A scatterplot relating one measurement to a different measurement in the lower left triangle.</li>
+<li>The correlation between the two measurements in the upper right triangle.</li>
 </ol>
+<p>This lets me combine all of the data into one master plot.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="explSnowman_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The largest correlation between duration and the weather measurements is 0.276, indicating a weak (or non-existant) linear relationship between the two variables. One thing that I notice is that the temperature data doesn’t really vary that much. I’ll make a plot that focuses on temperatures</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="explSnowman_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I will note that the slopes are all pretty small. Indeed all of the fit lines appear to be very nearly horizontal. And nearly all of the data points lie outside of the shaded region marking the statistical uncertainty of the fit. According to this model, it would seem that burn duration has little influence on temperature – or at the very least, the fit does not to predict anything quantitatively meaningful. Based on the table below, the “slope” is not significantly different from zero with 99.9% confidence.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="puzvddlssx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#puzvddlssx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#puzvddlssx thead, #puzvddlssx tbody, #puzvddlssx tfoot, #puzvddlssx tr, #puzvddlssx td, #puzvddlssx th {
+  border-style: none;
+}
+
+#puzvddlssx p {
+  margin: 0;
+  padding: 0;
+}
+
+#puzvddlssx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#puzvddlssx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#puzvddlssx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#puzvddlssx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#puzvddlssx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#puzvddlssx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#puzvddlssx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#puzvddlssx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#puzvddlssx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#puzvddlssx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#puzvddlssx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#puzvddlssx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#puzvddlssx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#puzvddlssx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#puzvddlssx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#puzvddlssx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#puzvddlssx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#puzvddlssx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#puzvddlssx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#puzvddlssx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_left {
+  text-align: left;
+}
+
+#puzvddlssx .gt_center {
+  text-align: center;
+}
+
+#puzvddlssx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#puzvddlssx .gt_font_normal {
+  font-weight: normal;
+}
+
+#puzvddlssx .gt_font_bold {
+  font-weight: bold;
+}
+
+#puzvddlssx .gt_font_italic {
+  font-style: italic;
+}
+
+#puzvddlssx .gt_super {
+  font-size: 65%;
+}
+
+#puzvddlssx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#puzvddlssx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#puzvddlssx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#puzvddlssx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#puzvddlssx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#puzvddlssx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#puzvddlssx .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#puzvddlssx .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#puzvddlssx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="background-color: #1927DD; color: #FFFFFF">Temperature vs duration linear fit coefficients</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="est" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">Value</th>
+<th id="se" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">Error</th>
+<th id="t" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">t</th>
+<th id="p" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">P(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<th id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">(Intercept)</th>
+<td class="gt_row gt_right" headers="stub_1_1 est" style="background-color: #CDEE40; color: #0D0006">29.943</td>
+<td class="gt_row gt_right" headers="stub_1_1 se" style="background-color: #CDEE40; color: #0D0006">0.311</td>
+<td class="gt_row gt_right" headers="stub_1_1 t" style="background-color: #CDEE40; color: #0D0006">96.279</td>
+<td class="gt_row gt_right" headers="stub_1_1 p" style="background-color: #CDEE40; color: #0D0006">&lt;0.001</td>
+</tr>
+<tr class="even">
+<th id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">duration</th>
+<td class="gt_row gt_right" headers="stub_1_2 est" style="background-color: #CDEE40; color: #0D0006">0.038</td>
+<td class="gt_row gt_right" headers="stub_1_2 se" style="background-color: #CDEE40; color: #0D0006">0.015</td>
+<td class="gt_row gt_right" headers="stub_1_2 t" style="background-color: #CDEE40; color: #0D0006">2.602</td>
+<td class="gt_row gt_right" headers="stub_1_2 p" style="background-color: #CDEE40; color: #0D0006">0.010</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">tempTypeavgTemp</th>
+<td class="gt_row gt_right" headers="stub_1_3 est" style="background-color: #CDEE40; color: #0D0006">−12.760</td>
+<td class="gt_row gt_right" headers="stub_1_3 se" style="background-color: #CDEE40; color: #0D0006">0.440</td>
+<td class="gt_row gt_right" headers="stub_1_3 t" style="background-color: #CDEE40; color: #0D0006">−29.012</td>
+<td class="gt_row gt_right" headers="stub_1_3 p" style="background-color: #CDEE40; color: #0D0006">&lt;0.001</td>
+</tr>
+<tr class="even">
+<th id="stub_1_4" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">tempTypeminTemp</th>
+<td class="gt_row gt_right" headers="stub_1_4 est" style="background-color: #CDEE40; color: #0D0006">−21.810</td>
+<td class="gt_row gt_right" headers="stub_1_4 se" style="background-color: #CDEE40; color: #0D0006">0.440</td>
+<td class="gt_row gt_right" headers="stub_1_4 t" style="background-color: #CDEE40; color: #0D0006">−49.588</td>
+<td class="gt_row gt_right" headers="stub_1_4 p" style="background-color: #CDEE40; color: #0D0006">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_5" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">duration:tempTypeavgTemp</th>
+<td class="gt_row gt_right" headers="stub_1_5 est" style="background-color: #CDEE40; color: #0D0006">−0.016</td>
+<td class="gt_row gt_right" headers="stub_1_5 se" style="background-color: #CDEE40; color: #0D0006">0.021</td>
+<td class="gt_row gt_right" headers="stub_1_5 t" style="background-color: #CDEE40; color: #0D0006">−0.790</td>
+<td class="gt_row gt_right" headers="stub_1_5 p" style="background-color: #CDEE40; color: #0D0006">0.430</td>
+</tr>
+<tr class="even">
+<th id="stub_1_6" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">duration:tempTypeminTemp</th>
+<td class="gt_row gt_right" headers="stub_1_6 est" style="background-color: #CDEE40; color: #0D0006">−0.027</td>
+<td class="gt_row gt_right" headers="stub_1_6 se" style="background-color: #CDEE40; color: #0D0006">0.021</td>
+<td class="gt_row gt_right" headers="stub_1_6 t" style="background-color: #CDEE40; color: #0D0006">−1.279</td>
+<td class="gt_row gt_right" headers="stub_1_6 p" style="background-color: #CDEE40; color: #0D0006">0.202</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="5" class="gt_sourcenote" style="background-color: #8BD4F7; color: #0D0006"><strong>#TidyTuesday</strong> • Note that the slope is so small that a change in duration of 10 minutes changes the prediction of temperature by less than 0.5 degree.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>As expected by everyone, folk wisdom/old wives tales don’t withstand the scrutiny placed on them when analyzed using statistical methods. But does that make them any less fun? I’ll leave that up to you. Now, I feel an incredible urge to make snow explode.</p>
 
 
 </section>

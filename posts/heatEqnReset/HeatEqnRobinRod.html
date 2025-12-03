@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -70,14 +70,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../../">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-a1673d5ee3f94a18a47cce2766f25c64.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-0b90554db41e1e94df75aa9c52e681fd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -120,7 +121,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -271,7 +272,7 @@ window.Quarto = {
 <li><code>ufl</code> is a package with FEniCSx that translates a more convential mathematical notation into forms required by <code>dolfinx</code>. I like it when code “looks like” math/physics. (That’s why I teach students how to create cell names and named ranges when using Excel.)</li>
 </ol>
 <div id="bcb941f6" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib <span class="im">as</span> mpl</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -283,7 +284,7 @@ window.Quarto = {
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dolfinx.fem.petsc <span class="im">import</span> (LinearProblem, assemble_matrix, create_vector, </span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>                               assemble_vector, apply_lifting, set_bc)</span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dolfinx.mesh <span class="im">import</span> create_interval, locate_entities, meshtags</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ufl <span class="im">import</span> (SpatialCoordinate, inner, ds, dx, Measure, TrialFunction, TestFunction, grad)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ufl <span class="im">import</span> (SpatialCoordinate, inner, ds, dx, Measure, TrialFunction, TestFunction, grad)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="constant-parameters" class="level4">
 <h4 class="anchored" data-anchor-id="constant-parameters">Constant Parameters:</h4>
@@ -298,7 +299,7 @@ window.Quarto = {
 <li><span class="math inline">\(L = 1\)</span> rod “length”</li>
 </ul>
 <div id="4234b8e2" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="dv">0</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>t <span class="op">=</span> <span class="dv">0</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>final_time <span class="op">=</span> <span class="fl">5.0</span>  <span class="co"># Final time for the simulation</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>dt <span class="op">=</span> <span class="fl">0.1</span>  <span class="co"># Time step size</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>num_steps <span class="op">=</span> <span class="bu">int</span>((final_time <span class="op">-</span> t) <span class="op">/</span> dt)  </span>
@@ -320,7 +321,7 @@ window.Quarto = {
 <span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> tempExt(x)  <span class="co"># External temperature at the boundary</span></span>
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="dv">0</span>))  <span class="co"># Source term (zero in this case)</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="fl">0.5</span>))  <span class="co"># Robin boundary condition coefficient</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>kappa <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="fl">1.0</span>))  <span class="co"># Thermal conductivity</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>kappa <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="fl">1.0</span>))  <span class="co"># Thermal conductivity</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 </section>
@@ -339,7 +340,7 @@ window.Quarto = {
 <li><code>uWork</code> is the solution at the current time step, representing the <span class="math inline">\(u^k\)</span> in the bilinear form.</li>
 </ul>
 <div id="d6617ee6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function space for the finite element method</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a function space for the finite element method</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> functionspace( </span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    domain, (<span class="st">'Lagrange'</span>,<span class="dv">1</span>) <span class="co"># Linear Lagrange elements</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -354,7 +355,7 @@ window.Quarto = {
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>uWork <span class="op">=</span> Function(V)  <span class="co"># Function to hold the solution at the current time step</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>uWork.name <span class="op">=</span> <span class="st">"uWork"</span>  <span class="co"># Name the function for clarity </span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>uWork.interpolate(initial_condition)  <span class="co"># Initialize with the same initial condition</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>uWork.interpolate(initial_condition)  <span class="co"># Initialize with the same initial condition</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="define-the-boundary-condition" class="level3">
@@ -364,7 +365,7 @@ window.Quarto = {
 \]</span></p>
 <p>The code below starts with a python version of the above definition of where the boundary is, and then uses an automated process to convert that into a useful definition for <code>dolfinx</code>. I’m also defining the measures for integration based on these boundary definitions. Note that Fenics Tutorials usually have at least one surface that has an explicit Dirichlet boundary condition.</p>
 <div id="f3e08950" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>boundaries <span class="op">=</span> [</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>boundaries <span class="op">=</span> [</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">1</span>, <span class="kw">lambda</span> x: np.isclose(x[<span class="dv">0</span>], <span class="fl">0.0</span>)),  <span class="co"># Left boundary located at x=0</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  (<span class="dv">2</span>, <span class="kw">lambda</span> x: np.isclose(x[<span class="dv">0</span>], <span class="fl">1.0</span>))  <span class="co"># Right boundary located at x=1</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>]</span>
@@ -383,7 +384,7 @@ window.Quarto = {
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>bcs <span class="op">=</span> []  <span class="co"># No Dirichlet boundary conditions, so we leave this empty</span></span>
 <span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>dx <span class="op">=</span> Measure(<span class="st">"dx"</span>, domain<span class="op">=</span>domain)  <span class="co"># Define the measure for the volume integral</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> Measure(<span class="st">"ds"</span>, domain<span class="op">=</span>domain, subdomain_data<span class="op">=</span>facet_tag)  <span class="co"># Define the measure for the boundary integral</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>ds <span class="op">=</span> Measure(<span class="st">"ds"</span>, domain<span class="op">=</span>domain, subdomain_data<span class="op">=</span>facet_tag)  <span class="co"># Define the measure for the boundary integral</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="set-up-the-variational-formulation" class="level3">
@@ -396,38 +397,38 @@ a(u,v) = \int_\Omega uv dx + \int_\Omega \Delta t \kappa \nabla u \cdot \nabla v
 L(v) = \int_\Omega u^{k-1} v dx + \int_\Omega f v dx + \sum_l \int_{\Gamma^R_l} \Delta t h_l s_l v ds
 \]</span> Let’s define the trial function <code>u</code> and the test function <code>v</code> and set up these forms:</p>
 <div id="31071466" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> TrialFunction(V)  <span class="co"># Trial function for the finite element method</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>u <span class="op">=</span> TrialFunction(V)  <span class="co"># Trial function for the finite element method</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>v <span class="op">=</span> TestFunction(V)  <span class="co"># Test function for the finite element method</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> u <span class="op">*</span> v <span class="op">*</span> dx <span class="op">+</span> dt <span class="op">*</span> kappa <span class="op">*</span> inner(grad(u), grad(v)) <span class="op">*</span> dx  <span class="op">+</span> dt <span class="op">*</span> h <span class="op">/</span> kappa <span class="op">*</span> u <span class="op">*</span> v <span class="op">*</span> ds <span class="co"># Bilinear form for the RBC</span></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> (uPrev <span class="op">+</span> dt <span class="op">*</span> f) <span class="op">*</span> v <span class="op">*</span> dx <span class="op">+</span> dt <span class="op">*</span> h <span class="op">/</span> kappa <span class="op">*</span> s <span class="op">*</span> v <span class="op">*</span> ds  <span class="co"># Linear form for the RBC</span></span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>bilinear_form <span class="op">=</span> form(a)  <span class="co"># Bilinear form for the weak formulation</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>linear_form <span class="op">=</span> form(L)  <span class="co"># Linear form for the weak formulation</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>linear_form <span class="op">=</span> form(L)  <span class="co"># Linear form for the weak formulation</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="convert-into-a-linear-algebra-problem" class="level3">
 <h3 class="anchored" data-anchor-id="convert-into-a-linear-algebra-problem">Convert into a Linear Algebra problem</h3>
 <p>One of the reasons that we use the Finite Element method is that computers are pretty good at doing linear algebra operations quickly. So we begin by setting up the linear algebra structures.</p>
 <div id="11a8c155" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> assemble_matrix(bilinear_form, bcs<span class="op">=</span>bcs)  <span class="co"># Assemble the matrix A</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>A <span class="op">=</span> assemble_matrix(bilinear_form, bcs<span class="op">=</span>bcs)  <span class="co"># Assemble the matrix A</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>A.assemble()  <span class="co"># Finalize the assembly of the matrix A</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> create_vector(linear_form)  <span class="co"># Create a vector for the right-hand side</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>b <span class="op">=</span> create_vector(linear_form)  <span class="co"># Create a vector for the right-hand side</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now let’s set up a framework to solve the linear system. Note, the 3rd and 4th lines below are talking about a “Preconditioner”. I spent some time figuring out what that was all about. It does a LU decomposition, which is a form of Gaussian Elimination (ish). Basically, its all about speeding things up knowing that this is a sparse matrix system (remember, only neighboring elements contribute due to the localization of the basis functions).</p>
 <div id="85def988" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> PETSc.KSP().create(domain.comm)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>solver <span class="op">=</span> PETSc.KSP().create(domain.comm)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>solver.setOperators(A)  <span class="co"># Set the matrix A for the solver</span></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>solver.setType(PETSc.KSP.Type.PREONLY)  <span class="co"># Use a preconditioner</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>solver.getPC().setType(PETSc.PC.Type.LU)  <span class="co"># Use LU preconditioner</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>solver.getPC().setType(PETSc.PC.Type.LU)  <span class="co"># Use LU preconditioner</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="begin-a-surface-plot" class="level3">
 <h3 class="anchored" data-anchor-id="begin-a-surface-plot">Begin a surface plot:</h3>
 <p>I’m going to use a matplotlib surface plot to display my result rather than pyvista. I was playing around on StackExchange and came across a post that complained about why a pyvista version of a plot looked so ugly when matplotlib could do it so easily. The answer was basically, that the poster used pyvista correctly, it just contained data that was on vastly different scales. The answerer said something to the effect of, “You have to tell PyVista to lie to you.” My question (at least for now) is, “How does PyVista know my units are meaningful?” Since my units are not (yet) meaningful, I’ll stick with matplotlib. Plus, I always try to learn only one thing at a time.</p>
 <div id="0304cb51" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>xMesh <span class="op">=</span> domain.geometry.x[: ,<span class="dv">0</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>xMesh <span class="op">=</span> domain.geometry.x[: ,<span class="dv">0</span>]</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>Tc, Xc <span class="op">=</span> np.meshgrid(tPlot, xMesh)  <span class="co"># Create a mesh grid for plotting</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Uc <span class="op">=</span> np.zeros_like(Tc)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Uc[:, <span class="dv">0</span>] <span class="op">=</span> uWork.x.array  <span class="co"># Initial condition for plotting</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>Uc[:, <span class="dv">0</span>] <span class="op">=</span> uWork.x.array  <span class="co"># Initial condition for plotting</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="advance-in-time" class="level3">
@@ -436,7 +437,7 @@ L(v) = \int_\Omega u^{k-1} v dx + \int_\Omega f v dx + \sum_l \int_{\Gamma^R_l} 
 A x = b
 \]</span> at each time step, so the linear form needs to be assembled into the vector <code>b</code>.</p>
 <div id="6dce22be" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_steps):</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(num_steps):</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    t <span class="op">+=</span> dt  <span class="co"># Current time</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update the RHS reusing the previous solution</span></span>
@@ -457,14 +458,14 @@ A x = b
 <span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    Uc[:, i<span class="op">+</span><span class="dv">1</span>] <span class="op">=</span> uWork.x.array</span>
 <span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Update solution at previous time step (uPrev)</span></span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    uPrev.x.array[:] <span class="op">=</span> uWork.x.array</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    uPrev.x.array[:] <span class="op">=</span> uWork.x.array</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </section>
 <section id="make-a-pretty-picture" class="level3">
 <h3 class="anchored" data-anchor-id="make-a-pretty-picture">Make a pretty picture</h3>
 <p>Make the plot the normal matplotlib way.</p>
 <div id="fa443bff" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(subplot_kw<span class="op">=</span>{<span class="st">'projection'</span>: <span class="st">'3d'</span>},figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">7</span>) ) <span class="co"># Create a 3D plot</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(subplot_kw<span class="op">=</span>{<span class="st">'projection'</span>: <span class="st">'3d'</span>},figsize<span class="op">=</span>(<span class="dv">8</span>,<span class="dv">7</span>) ) <span class="co"># Create a 3D plot</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ax.plot_surface(Xc, Tc, Uc, cmap<span class="op">=</span><span class="st">'viridis'</span>, edgecolor<span class="op">=</span><span class="st">'none'</span>)  <span class="co"># Plot the FENICS solution</span></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="vs">rf'</span><span class="dv">$</span><span class="er">\</span><span class="vs">kappa = </span><span class="dv">$</span><span class="sc">{</span>kappa<span class="sc">.</span>value<span class="sc">:.2f}</span><span class="vs">'</span>)</span>
 <span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">'Position along the rod (x)'</span>)  <span class="co"># X-axis label</span></span>
@@ -473,7 +474,7 @@ A x = b
 <span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>plt.tight_layout()  <span class="co"># Adjust layout to prevent overlap</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>plt.suptitle(<span class="st">'Robin Problem for a Unit Rod'</span>)  <span class="co"># Overall title for the plot</span></span>
 <span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>plt.subplots_adjust(top<span class="op">=</span><span class="fl">0.9</span>)  <span class="co"># Adjust the top margin to fit</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.show()  <span class="co"># Show the plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>plt.show()  <span class="co"># Show the plot</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -575,13 +576,14 @@ A x = b
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.34">
+<meta name="generator" content="quarto-1.8.26">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -70,14 +70,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../../">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-c8ad9e5dbd60b7b70b38521ab19b7da4.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-587c61ba64f3a5504c4d52d930310e48.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-a1673d5ee3f94a18a47cce2766f25c64.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-0b90554db41e1e94df75aa9c52e681fd.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -224,14 +225,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <p>This week’s #TidyTuesday is all about World’s Fairs, and I have always wanted to figure out how to make a visualization with a map. So this is the week that I try that out. In addition to the data from Wikipedia in the given dataset, I have also downloaded <a href="https://www.kaggle.com/datasets/hserdaraltan/countries-by-continent">S. Altan’s Kaggle Dataset: Countries by Continent</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rworldmap)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(paletteer)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(RColorBrewer)</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">'worldsFairs.Rdata'</span>)</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'helperFunctions.R'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">source</span>(<span class="st">'helperFunctions.R'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="plan-and-data-cleaning" class="level2">
 <h2 class="anchored" data-anchor-id="plan-and-data-cleaning">Plan and data cleaning</h2>
@@ -239,7 +240,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="continental-breakdown-of-worlds-fair" class="level3">
 <h3 class="anchored" data-anchor-id="continental-breakdown-of-worlds-fair">Continental breakdown of World’s fair</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fairData <span class="ot">=</span> <span class="fu">left_join</span>(worlds_fairs,countryContinent, <span class="at">by=</span><span class="st">'country'</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fairData <span class="ot">=</span> <span class="fu">left_join</span>(worlds_fairs,countryContinent, <span class="at">by=</span><span class="st">'country'</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace missing continents by hand</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>missing <span class="ot">=</span> <span class="fu">c</span>(<span class="st">"Europe"</span>,<span class="st">"Oceania"</span>,<span class="st">"Europe"</span>,<span class="st">"Europe"</span>,<span class="st">"Asia"</span>)</span>
@@ -253,7 +254,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
 <span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(.x,<span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'start_month'</span>,<span class="st">'start_year'</span>,<span class="st">'end_month'</span>,<span class="st">'end_year'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'start_month'</span>,<span class="st">'start_year'</span>,<span class="st">'end_month'</span>,<span class="st">'end_year'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -773,7 +774,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="country-breakdown-of-worlds-fair" class="level3">
 <h3 class="anchored" data-anchor-id="country-breakdown-of-worlds-fair">Country breakdown of world’s fair</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fairDataByCountry <span class="ot">=</span> fairData <span class="sc">|&gt;</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fairDataByCountry <span class="ot">=</span> fairData <span class="sc">|&gt;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">duration =</span> <span class="fu">calcFLMV</span>(start_month, start_year, end_month, end_year) </span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(country) <span class="sc">|&gt;</span> </span>
@@ -781,7 +782,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">N =</span> <span class="fu">n</span>(),</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">across</span>(<span class="fu">where</span>(is.numeric), <span class="sc">~</span> <span class="fu">mean</span>(.x,<span class="at">na.rm=</span><span class="cn">TRUE</span>))</span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'start_month'</span>,<span class="st">'start_year'</span>,<span class="st">'end_month'</span>,<span class="st">'end_year'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span><span class="fu">c</span>(<span class="st">'start_month'</span>,<span class="st">'start_year'</span>,<span class="st">'end_month'</span>,<span class="st">'end_year'</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -1442,20 +1443,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="putting-this-on-a-map" class="level2">
 <h2 class="anchored" data-anchor-id="putting-this-on-a-map">Putting this on a map</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>worldFairMap <span class="ot">&lt;-</span> <span class="fu">joinCountryData2Map</span>(fairDataByCountry, <span class="at">joinCode =</span> <span class="st">'NAME'</span>,</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">nameJoinColumn =</span> <span class="st">"country"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>worldFairMap <span class="ot">&lt;-</span> <span class="fu">joinCountryData2Map</span>(fairDataByCountry, <span class="at">joinCode =</span> <span class="st">'NAME'</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">nameJoinColumn =</span> <span class="st">"country"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>21 codes from your data successfully matched countries in the map
 3 codes from your data failed to match with a country code in the map
 222 codes from the map weren't represented in your data</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.1</span>,<span class="dv">2</span>,<span class="fl">0.1</span>),<span class="at">xaxs=</span><span class="st">"i"</span>,<span class="at">yaxs=</span><span class="st">"i"</span>,<span class="at">cex.main=</span><span class="dv">2</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="fl">0.1</span>,<span class="dv">2</span>,<span class="fl">0.1</span>),<span class="at">xaxs=</span><span class="st">"i"</span>,<span class="at">yaxs=</span><span class="st">"i"</span>,<span class="at">cex.main=</span><span class="dv">2</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>attendMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">addLegend=</span><span class="cn">FALSE</span>,</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                           <span class="at">nameColumnToPlot =</span> <span class="st">'attending_countries'</span>,</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                           <span class="at">catMethod =</span> <span class="st">"pretty"</span>,</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                           <span class="at">colourPalette =</span> <span class="fu">brewer.pal</span>(<span class="dv">10</span>,<span class="st">"Purples"</span>),</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                           <span class="at">oceanCol=</span><span class="st">'lightblue'</span>,<span class="at">missingCountryCol =</span> <span class="st">'white'</span>,</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">mapTitle=</span><span class="st">"Country attendance"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                           <span class="at">mapTitle=</span><span class="st">"Country attendance"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 10 were used due to pretty() classification</code></pre>
 </div>
@@ -1467,7 +1468,7 @@ Returning the palette you asked for with that many colors</code></pre>
 <pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 10
 required, using interpolation to calculate colours</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(attendMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(attendMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1475,11 +1476,11 @@ required, using interpolation to calculate colours</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>costMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'cost'</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>costMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'cost'</span>,</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">catMethod =</span> <span class="st">"pretty"</span>, <span class="at">addLegend=</span><span class="cn">FALSE</span>,</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">colourPalette =</span> <span class="fu">brewer.pal</span>(<span class="dv">10</span>,<span class="st">"Greens"</span>),</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">oceanCol=</span><span class="st">'lightblue'</span>,<span class="at">missingCountryCol =</span> <span class="st">'white'</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Cost in Millions"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Cost in Millions"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 9 were used due to pretty() classification</code></pre>
 </div>
@@ -1487,7 +1488,7 @@ required, using interpolation to calculate colours</code></pre>
 <pre><code>Warning in brewer.pal(10, "Greens"): n too large, allowed maximum for palette Greens is 9
 Returning the palette you asked for with that many colors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(costMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(costMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1495,11 +1496,11 @@ Returning the palette you asked for with that many colors</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>areaMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'area'</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>areaMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'area'</span>,</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">catMethod =</span> <span class="st">"pretty"</span>, <span class="at">addLegend=</span><span class="cn">FALSE</span>,</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">colourPalette =</span> <span class="fu">brewer.pal</span>(<span class="dv">10</span>,<span class="st">"PuBuGn"</span>),</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">oceanCol=</span><span class="st">'lightblue'</span>,<span class="at">missingCountryCol =</span> <span class="st">'white'</span>,</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Size of fairgrounds"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Size of fairgrounds"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 6 were used due to pretty() classification</code></pre>
 </div>
@@ -1511,7 +1512,7 @@ Returning the palette you asked for with that many colors</code></pre>
 <pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 6
 required, using interpolation to calculate colours</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(areaMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(areaMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1519,11 +1520,11 @@ required, using interpolation to calculate colours</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>visitMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'visitors'</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>visitMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'visitors'</span>,</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">catMethod =</span> <span class="st">"pretty"</span>, <span class="at">addLegend=</span><span class="cn">FALSE</span>,</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">colourPalette =</span> <span class="fu">brewer.pal</span>(<span class="dv">10</span>,<span class="st">"OrRd"</span>),</span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">oceanCol=</span><span class="st">'lightblue'</span>,<span class="at">missingCountryCol =</span> <span class="st">'white'</span>,</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Fair Visitors by the Million"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Fair Visitors by the Million"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 8 were used due to pretty() classification</code></pre>
 </div>
@@ -1535,7 +1536,7 @@ Returning the palette you asked for with that many colors</code></pre>
 <pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 8
 required, using interpolation to calculate colours</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(visitMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(visitMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1543,11 +1544,11 @@ required, using interpolation to calculate colours</code></pre>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>timeMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'duration'</span>,</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>timeMap <span class="ot">=</span> <span class="fu">mapCountryData</span>(worldFairMap, <span class="at">nameColumnToPlot =</span> <span class="st">'duration'</span>,</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>               <span class="at">catMethod =</span> <span class="st">"pretty"</span>, <span class="at">addLegend=</span><span class="cn">FALSE</span>,</span>
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">colourPalette =</span> <span class="fu">brewer.pal</span>(<span class="dv">10</span>,<span class="st">"OrRd"</span>),</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">oceanCol=</span><span class="st">'lightblue'</span>,<span class="at">missingCountryCol =</span> <span class="st">'white'</span>,</span>
-<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Length of the World's Fair"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>               <span class="at">mapTitle=</span><span class="st">"Length of the World's Fair"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 9 were used due to pretty() classification</code></pre>
 </div>
@@ -1555,7 +1556,7 @@ required, using interpolation to calculate colours</code></pre>
 <pre><code>Warning in brewer.pal(10, "OrRd"): n too large, allowed maximum for palette OrRd is 9
 Returning the palette you asked for with that many colors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(timeMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">do.call</span>(addMapLegend, <span class="fu">c</span>(timeMap, <span class="at">legendWidth=</span><span class="fl">0.5</span>, <span class="at">legendMar=</span><span class="dv">5</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -1620,13 +1621,14 @@ Returning the palette you asked for with that many colors</code></pre>
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

@@ -9,8 +9,598 @@
 <link>https://datawolf04.github.io/</link>
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
-<generator>quarto-1.7.34</generator>
-<lastBuildDate>Wed, 03 Sep 2025 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.8.26</generator>
+<lastBuildDate>Tue, 02 Dec 2025 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Sechseläuten Festival and Folk Wisdom</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/tt20251202/explSnowman.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I’m back doing some <a href="https://www.tidytuesday.com/">#TidyTuesday</a> visualizations. This week let’s look at exploding snowmen?!?!?!</p>
+<p>The city of Zurich thinks that groundhogs make lousy weather predictors, so they have created the Böögg - <a href="https://en.wikipedia.org/wiki/Sechsel%C3%A4uten">Zurich’s infamous exploding snowman!</a> Ok, I admit that Punxatawny Phil is likely the relative newcomer here. Since I’m American, I don’t know what a Böögg is, so I looked it up for others like me.</p>
+<blockquote class="blockquote">
+<p>The Böögg is a snowman effigy made of cotton, wool, and stuffed with fireworks, created every year for Zurich’s “Sechseläuten” spring festival. The saying goes that the quicker the Böögg’s head explodes, the finer the summer will be.</p>
+</blockquote>
+<p>This is a festival similar to Groundhog day in that a non-climactic phenomenon is used to “predict” a climactic event. So, let’s test the idea, does folk wisdom stand its ground against hard science?</p>
+<section id="confirmation-bias" class="level2">
+<h2 class="anchored" data-anchor-id="confirmation-bias">Confirmation bias</h2>
+<p>This, and other nuggets of folk wisdom, often “work” because of a phenomenon known as confirmation bias, that is people overemphasize data that support their belief and neglect data that oppose their belief. Consider the two reactions to a “fine” day:</p>
+<ol type="1">
+<li>Given a short time to Böögg head explosion. Today “proves” that the Böögg is right.</li>
+<li>Given a long time to Böögg head explosion. Given all of the crappy weather we’ve had recently, today just “proves” that the Böögg is sometimes generous and lets us have a break from the awful weather.</li>
+</ol>
+<section id="more-dirty-poker" class="level3">
+<h3 class="anchored" data-anchor-id="more-dirty-poker">More dirty poker</h3>
+<p>Note, the saying is that the quicker the Böögg’s head explodes, the <strong><em>finer</em></strong> the summer will be. Well, what makes for a fine summer (in the context of Zurich)? Is hotter finer? Surely there is a limit to that, I think that the good people of Zurich would not enjoy 40 degree weather like my friend in Sao Paolo gets routinely during the summer. Is it purely sunshine? What about rainfall? So the beauty of this statement is that you can make it mean whatever you want it to mean.</p>
+</section>
+</section>
+<section id="summary-plot" class="level2">
+<h2 class="anchored" data-anchor-id="summary-plot">Summary plot</h2>
+<p>When looking at groups of numerical data, I like to do a pairs plot. Each cell of the array is one of three types of things:</p>
+<ol type="1">
+<li>A histogram (or kernel density plot) of each measurement on the diagonal</li>
+<li>A scatterplot relating one measurement to a different measurement in the lower left triangle.</li>
+<li>The correlation between the two measurements in the upper right triangle.</li>
+</ol>
+<p>This lets me combine all of the data into one master plot.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20251202/explSnowman_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The largest correlation between duration and the weather measurements is 0.276, indicating a weak (or non-existant) linear relationship between the two variables. One thing that I notice is that the temperature data doesn’t really vary that much. I’ll make a plot that focuses on temperatures</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20251202/explSnowman_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>I will note that the slopes are all pretty small. Indeed all of the fit lines appear to be very nearly horizontal. And nearly all of the data points lie outside of the shaded region marking the statistical uncertainty of the fit. According to this model, it would seem that burn duration has little influence on temperature – or at the very least, the fit does not to predict anything quantitatively meaningful. Based on the table below, the “slope” is not significantly different from zero with 99.9% confidence.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="puzvddlssx" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#puzvddlssx table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#puzvddlssx thead, #puzvddlssx tbody, #puzvddlssx tfoot, #puzvddlssx tr, #puzvddlssx td, #puzvddlssx th {
+  border-style: none;
+}
+
+#puzvddlssx p {
+  margin: 0;
+  padding: 0;
+}
+
+#puzvddlssx .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#puzvddlssx .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#puzvddlssx .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#puzvddlssx .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#puzvddlssx .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#puzvddlssx .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#puzvddlssx .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#puzvddlssx .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#puzvddlssx .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#puzvddlssx .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#puzvddlssx .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#puzvddlssx .gt_from_md > :first-child {
+  margin-top: 0;
+}
+
+#puzvddlssx .gt_from_md > :last-child {
+  margin-bottom: 0;
+}
+
+#puzvddlssx .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#puzvddlssx .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#puzvddlssx .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#puzvddlssx .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#puzvddlssx .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#puzvddlssx .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#puzvddlssx .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#puzvddlssx .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#puzvddlssx .gt_left {
+  text-align: left;
+}
+
+#puzvddlssx .gt_center {
+  text-align: center;
+}
+
+#puzvddlssx .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#puzvddlssx .gt_font_normal {
+  font-weight: normal;
+}
+
+#puzvddlssx .gt_font_bold {
+  font-weight: bold;
+}
+
+#puzvddlssx .gt_font_italic {
+  font-style: italic;
+}
+
+#puzvddlssx .gt_super {
+  font-size: 65%;
+}
+
+#puzvddlssx .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#puzvddlssx .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#puzvddlssx .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#puzvddlssx .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#puzvddlssx .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#puzvddlssx .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#puzvddlssx .gt_indent_5 {
+  text-indent: 25px;
+}
+
+#puzvddlssx .katex-display {
+  display: inline-flex !important;
+  margin-bottom: 0.75em !important;
+}
+
+#puzvddlssx div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+  height: 0px !important;
+}
+</style>
+
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
+<thead>
+<tr class="gt_heading header">
+<td colspan="5" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="background-color: #1927DD; color: #FFFFFF">Temperature vs duration linear fit coefficients</td>
+</tr>
+<tr class="gt_col_headings even">
+<th id="a::stub" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col"></th>
+<th id="est" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">Value</th>
+<th id="se" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">Error</th>
+<th id="t" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">t</th>
+<th id="p" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" style="background-color: #1927DD; color: #FFFFFF" scope="col">P(&gt;|t|)</th>
+</tr>
+</thead>
+<tbody class="gt_table_body">
+<tr class="odd">
+<th id="stub_1_1" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">(Intercept)</th>
+<td class="gt_row gt_right" headers="stub_1_1 est" style="background-color: #CDEE40; color: #0D0006">29.943</td>
+<td class="gt_row gt_right" headers="stub_1_1 se" style="background-color: #CDEE40; color: #0D0006">0.311</td>
+<td class="gt_row gt_right" headers="stub_1_1 t" style="background-color: #CDEE40; color: #0D0006">96.279</td>
+<td class="gt_row gt_right" headers="stub_1_1 p" style="background-color: #CDEE40; color: #0D0006">&lt;0.001</td>
+</tr>
+<tr class="even">
+<th id="stub_1_2" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">duration</th>
+<td class="gt_row gt_right" headers="stub_1_2 est" style="background-color: #CDEE40; color: #0D0006">0.038</td>
+<td class="gt_row gt_right" headers="stub_1_2 se" style="background-color: #CDEE40; color: #0D0006">0.015</td>
+<td class="gt_row gt_right" headers="stub_1_2 t" style="background-color: #CDEE40; color: #0D0006">2.602</td>
+<td class="gt_row gt_right" headers="stub_1_2 p" style="background-color: #CDEE40; color: #0D0006">0.010</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_3" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">tempTypeavgTemp</th>
+<td class="gt_row gt_right" headers="stub_1_3 est" style="background-color: #CDEE40; color: #0D0006">−12.760</td>
+<td class="gt_row gt_right" headers="stub_1_3 se" style="background-color: #CDEE40; color: #0D0006">0.440</td>
+<td class="gt_row gt_right" headers="stub_1_3 t" style="background-color: #CDEE40; color: #0D0006">−29.012</td>
+<td class="gt_row gt_right" headers="stub_1_3 p" style="background-color: #CDEE40; color: #0D0006">&lt;0.001</td>
+</tr>
+<tr class="even">
+<th id="stub_1_4" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">tempTypeminTemp</th>
+<td class="gt_row gt_right" headers="stub_1_4 est" style="background-color: #CDEE40; color: #0D0006">−21.810</td>
+<td class="gt_row gt_right" headers="stub_1_4 se" style="background-color: #CDEE40; color: #0D0006">0.440</td>
+<td class="gt_row gt_right" headers="stub_1_4 t" style="background-color: #CDEE40; color: #0D0006">−49.588</td>
+<td class="gt_row gt_right" headers="stub_1_4 p" style="background-color: #CDEE40; color: #0D0006">&lt;0.001</td>
+</tr>
+<tr class="odd">
+<th id="stub_1_5" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">duration:tempTypeavgTemp</th>
+<td class="gt_row gt_right" headers="stub_1_5 est" style="background-color: #CDEE40; color: #0D0006">−0.016</td>
+<td class="gt_row gt_right" headers="stub_1_5 se" style="background-color: #CDEE40; color: #0D0006">0.021</td>
+<td class="gt_row gt_right" headers="stub_1_5 t" style="background-color: #CDEE40; color: #0D0006">−0.790</td>
+<td class="gt_row gt_right" headers="stub_1_5 p" style="background-color: #CDEE40; color: #0D0006">0.430</td>
+</tr>
+<tr class="even">
+<th id="stub_1_6" class="gt_row gt_left gt_stub" data-quarto-table-cell-role="th" scope="row" style="background-color: #CDEE40; color: #0D0006">duration:tempTypeminTemp</th>
+<td class="gt_row gt_right" headers="stub_1_6 est" style="background-color: #CDEE40; color: #0D0006">−0.027</td>
+<td class="gt_row gt_right" headers="stub_1_6 se" style="background-color: #CDEE40; color: #0D0006">0.021</td>
+<td class="gt_row gt_right" headers="stub_1_6 t" style="background-color: #CDEE40; color: #0D0006">−1.279</td>
+<td class="gt_row gt_right" headers="stub_1_6 p" style="background-color: #CDEE40; color: #0D0006">0.202</td>
+</tr>
+</tbody><tfoot class="gt_sourcenotes">
+<tr class="odd">
+<td colspan="5" class="gt_sourcenote" style="background-color: #8BD4F7; color: #0D0006"><strong>#TidyTuesday</strong> • Note that the slope is so small that a change in duration of 10 minutes changes the prediction of temperature by less than 0.5 degree.</td>
+</tr>
+</tfoot>
+
+</table>
+
+</div>
+</div>
+</div>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>As expected by everyone, folk wisdom/old wives tales don’t withstand the scrutiny placed on them when analyzed using statistical methods. But does that make them any less fun? I’ll leave that up to you. Now, I feel an incredible urge to make snow explode.</p>
+
+
+</section>
+
+ ]]></description>
+  <category>TidyTuesday</category>
+  <category>R</category>
+  <guid>https://datawolf04.github.io/posts/tt20251202/explSnowman.html</guid>
+  <pubDate>Tue, 02 Dec 2025 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>A new project: Cross Country Data Viz</title>
   <dc:creator>Steven Wolf</dc:creator>
@@ -482,12 +1072,12 @@
 }
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="true">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="true">
 <caption>Source: nc.milesplit.com<br>
 <img src="https://datawolf04.github.io/posts/ccPage/github.png" class="img-fluid" style="height:15px;"> datawolf04 <img src="https://datawolf04.github.io/posts/ccPage/linkedin.png" class="img-fluid" style="height:15px;"> wolf-253b6625a</caption>
 <thead>
 <tr class="gt_heading header">
-<th colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border">Fightertown XC Invitational Boys Varsity</th>
+<td colspan="3" class="gt_heading gt_title gt_font_normal gt_bottom_border">Fightertown XC Invitational Boys Varsity</td>
 </tr>
 <tr class="gt_col_headings even">
 <th id="teams" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">Teams</th>
@@ -645,7 +1235,7 @@
 <h2 class="anchored" data-anchor-id="building-a-3d-domain">Building a 3D domain</h2>
 <p>The first challenge is to build a 3D domain. Fortunately, FENICSx has a function for that, and my code looks like this:</p>
 <div id="ecc1e6ee" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">L <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1">L <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
 background-color: null;
@@ -733,7 +1323,7 @@ background-color: null;
 font-style: inherit;">=</span>mesh.GhostMode.shared_facet  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Ghost mode for shared facets</span></span>
-<span id="cb1-17">)</span></code></pre></div>
+<span id="cb1-17">)</span></code></pre></div></div>
 </div>
 <p>I struggled to get this right for longer than I would like to admit. For some reason, when I was building the domain and generating the appropriate function spaces, my code was failing when I was building the interpolating the initial condition into the appropriate function space. I finally added the <code>ghost_mode=mesh.GhostMode.shared_facet</code> line to the above and it started working. As near as I can tell, this is why that is required:</p>
 <ul>
@@ -743,7 +1333,7 @@ font-style: inherit;"># Ghost mode for shared facets</span></span>
 </ul>
 <p>The above is a very hand-wavy explanation, and is enough for me (for now anyway). So, I then created the function space as usual, and defined the parameters that are important for this problem.</p>
 <div id="fe43ccf5" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">V <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">V <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> functionspace(domain, (<span class="st" style="color: #20794D;
 background-color: null;
@@ -857,7 +1447,7 @@ background-color: null;
 font-style: inherit;">"uPrev"</span></span>
 <span id="cb2-18">uPrev.interpolate(initial_condition)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Interpolate the initial condition into the function space</span></span></code></pre></div>
+font-style: inherit;"># Interpolate the initial condition into the function space</span></span></code></pre></div></div>
 </div>
 <p>I found that if I left the <code>* np.exp(-a * (x[0]**2 + x[1]**2 + x[2]**2))</code> expression out of the return statement, there was an error message stating that the arguments were the wrong shape, and the interpolation didn’t work. I tried tracking it down, but ultimately came up with this hacky solution.</p>
 </section>
@@ -909,7 +1499,7 @@ font-style: inherit;"># Interpolate the initial condition into the function spac
 <li><code>ufl</code> is a package with FEniCSx that translates a more convential mathematical notation into forms required by <code>dolfinx</code>. I like it when code “looks like” math/physics. (That’s why I teach students how to create cell names and named ranges when using Excel.)</li>
 </ol>
 <div id="bcb941f6" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -961,7 +1551,7 @@ font-style: inherit;">import</span> create_interval, locate_entities, meshtags</
 background-color: null;
 font-style: inherit;">from</span> ufl <span class="im" style="color: #00769E;
 background-color: null;
-font-style: inherit;">import</span> (SpatialCoordinate, inner, ds, dx, Measure, TrialFunction, TestFunction, grad)</span></code></pre></div>
+font-style: inherit;">import</span> (SpatialCoordinate, inner, ds, dx, Measure, TrialFunction, TestFunction, grad)</span></code></pre></div></div>
 </div>
 <section id="constant-parameters" class="level4">
 <h4 class="anchored" data-anchor-id="constant-parameters">Constant Parameters:</h4>
@@ -976,7 +1566,7 @@ font-style: inherit;">import</span> (SpatialCoordinate, inner, ds, dx, Measure, 
 <li><img src="https://latex.codecogs.com/png.latex?L%20=%201"> rod “length”</li>
 </ul>
 <div id="4234b8e2" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">t <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">t <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1097,7 +1687,7 @@ font-style: inherit;">=</span> Constant(domain, PETSc.ScalarType(<span class="fl
 background-color: null;
 font-style: inherit;">1.0</span>))  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Thermal conductivity</span></span></code></pre></div>
+font-style: inherit;"># Thermal conductivity</span></span></code></pre></div></div>
 </div>
 </section>
 </section>
@@ -1110,7 +1700,7 @@ font-style: inherit;"># Thermal conductivity</span></span></code></pre></div>
 <li><code>uWork</code> is the solution at the current time step, representing the <img src="https://latex.codecogs.com/png.latex?u%5Ek"> in the bilinear form.</li>
 </ul>
 <div id="d6617ee6" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Create a function space for the finite element method</span></span>
 <span id="cb3-2">V <span class="op" style="color: #5E5E5E;
@@ -1171,7 +1761,7 @@ background-color: null;
 font-style: inherit;"># Name the function for clarity </span></span>
 <span id="cb3-16">uWork.interpolate(initial_condition)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Initialize with the same initial condition</span></span></code></pre></div>
+font-style: inherit;"># Initialize with the same initial condition</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="define-the-boundary-condition" class="level3">
@@ -1179,7 +1769,7 @@ font-style: inherit;"># Initialize with the same initial condition</span></span>
 <p>We are using the Robin boundary condition, suitable for describing convection. <img src="https://latex.codecogs.com/png.latex?%0A-%5Ckappa%20%5Cleft(%5Chat%7Bn%7D%5Ccdot%5Cnabla%5Cright)%20u%5Ek%20=%20h%5Ek(u%5Ek%20-%20s%5Ek)%20%5Cquad%20%5Cforall%20x%5Cin%5C%7B0,1%5C%7D%0A"></p>
 <p>The code below starts with a python version of the above definition of where the boundary is, and then uses an automated process to convert that into a useful definition for <code>dolfinx</code>. I’m also defining the measures for integration based on these boundary definitions. Note that Fenics Tutorials usually have at least one surface that has an explicit Dirichlet boundary condition.</p>
 <div id="f3e08950" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">boundaries <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">boundaries <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [</span>
 <span id="cb4-2">  (<span class="dv" style="color: #AD0000;
@@ -1272,14 +1862,14 @@ font-style: inherit;">=</span>domain, subdomain_data<span class="op" style="colo
 background-color: null;
 font-style: inherit;">=</span>facet_tag)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Define the measure for the boundary integral</span></span></code></pre></div>
+font-style: inherit;"># Define the measure for the boundary integral</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="set-up-the-variational-formulation" class="level3">
 <h3 class="anchored" data-anchor-id="set-up-the-variational-formulation">Set up the variational formulation</h3>
 <p>As stated in previous posts, the variational formulation (note: <img src="https://latex.codecogs.com/png.latex?u%5Ek%20%5Crightarrow%20u">) for this problem is: <img src="https://latex.codecogs.com/png.latex?%0Aa(u,v)%20=%20L(v)%0A"> where the bilinear form is: <img src="https://latex.codecogs.com/png.latex?%0Aa(u,v)%20=%20%5Cint_%5COmega%20uv%20dx%20+%20%5Cint_%5COmega%20%5CDelta%20t%20%5Ckappa%20%5Cnabla%20u%20%5Ccdot%20%5Cnabla%20v%20dx%20+%20%5Csum_l%20%5Cint_%7B%5CGamma%5ER_l%7D%20%5Cfrac%7B%5CDelta%20t%7D%7B%5Ckappa%7D%20%20u%20v%20ds%0A"> and the linear form (for the Robin condition only) is: <img src="https://latex.codecogs.com/png.latex?%0AL(v)%20=%20%5Cint_%5COmega%20u%5E%7Bk-1%7D%20v%20dx%20+%20%5Cint_%5COmega%20f%20v%20dx%20+%20%5Csum_l%20%5Cint_%7B%5CGamma%5ER_l%7D%20%5CDelta%20t%20h_l%20s_l%20v%20ds%0A"> Let’s define the trial function <code>u</code> and the test function <code>v</code> and set up these forms:</p>
 <div id="31071466" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">u <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> TrialFunction(V)  <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -1352,14 +1942,14 @@ font-style: inherit;"># Bilinear form for the weak formulation</span></span>
 background-color: null;
 font-style: inherit;">=</span> form(L)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Linear form for the weak formulation</span></span></code></pre></div>
+font-style: inherit;"># Linear form for the weak formulation</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="convert-into-a-linear-algebra-problem" class="level3">
 <h3 class="anchored" data-anchor-id="convert-into-a-linear-algebra-problem">Convert into a Linear Algebra problem</h3>
 <p>One of the reasons that we use the Finite Element method is that computers are pretty good at doing linear algebra operations quickly. So we begin by setting up the linear algebra structures.</p>
 <div id="11a8c155" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">A <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">A <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> assemble_matrix(bilinear_form, bcs<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -1373,11 +1963,11 @@ font-style: inherit;"># Finalize the assembly of the matrix A</span></span>
 background-color: null;
 font-style: inherit;">=</span> create_vector(linear_form)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Create a vector for the right-hand side</span></span></code></pre></div>
+font-style: inherit;"># Create a vector for the right-hand side</span></span></code></pre></div></div>
 </div>
 <p>Now let’s set up a framework to solve the linear system. Note, the 3rd and 4th lines below are talking about a “Preconditioner”. I spent some time figuring out what that was all about. It does a LU decomposition, which is a form of Gaussian Elimination (ish). Basically, its all about speeding things up knowing that this is a sparse matrix system (remember, only neighboring elements contribute due to the localization of the basis functions).</p>
 <div id="85def988" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">solver <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">solver <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> PETSc.KSP().create(domain.comm)</span>
 <span id="cb7-2">solver.setOperators(A)  <span class="co" style="color: #5E5E5E;
@@ -1388,14 +1978,14 @@ background-color: null;
 font-style: inherit;"># Use a preconditioner</span></span>
 <span id="cb7-4">solver.getPC().setType(PETSc.PC.Type.LU)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Use LU preconditioner</span></span></code></pre></div>
+font-style: inherit;"># Use LU preconditioner</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="begin-a-surface-plot" class="level3">
 <h3 class="anchored" data-anchor-id="begin-a-surface-plot">Begin a surface plot:</h3>
 <p>I’m going to use a matplotlib surface plot to display my result rather than pyvista. I was playing around on StackExchange and came across a post that complained about why a pyvista version of a plot looked so ugly when matplotlib could do it so easily. The answer was basically, that the poster used pyvista correctly, it just contained data that was on vastly different scales. The answerer said something to the effect of, “You have to tell PyVista to lie to you.” My question (at least for now) is, “How does PyVista know my units are meaningful?” Since my units are not (yet) meaningful, I’ll stick with matplotlib. Plus, I always try to learn only one thing at a time.</p>
 <div id="0304cb51" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">xMesh <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">xMesh <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> domain.geometry.x[: ,<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1414,14 +2004,14 @@ font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> uWork.x.array  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Initial condition for plotting</span></span></code></pre></div>
+font-style: inherit;"># Initial condition for plotting</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="advance-in-time" class="level3">
 <h3 class="anchored" data-anchor-id="advance-in-time">Advance in time</h3>
 <p>Now we need to advance in time, solving the linear system at each time-step. Note that the solver assumes that you are solving the equation: <img src="https://latex.codecogs.com/png.latex?%0AA%20x%20=%20b%0A"> at each time step, so the linear form needs to be assembled into the vector <code>b</code>.</p>
 <div id="6dce22be" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
@@ -1491,14 +2081,14 @@ background-color: null;
 font-style: inherit;"># Update solution at previous time step (uPrev)</span></span>
 <span id="cb9-22">    uPrev.x.array[:] <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> uWork.x.array</span></code></pre></div>
+font-style: inherit;">=</span> uWork.x.array</span></code></pre></div></div>
 </div>
 </section>
 <section id="make-a-pretty-picture" class="level3">
 <h3 class="anchored" data-anchor-id="make-a-pretty-picture">Make a pretty picture</h3>
 <p>Make the plot the normal matplotlib way.</p>
 <div id="fa443bff" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">fig, ax <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">fig, ax <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.subplots(subplot_kw<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -1577,7 +2167,7 @@ background-color: null;
 font-style: inherit;"># Adjust the top margin to fit</span></span>
 <span id="cb10-10">plt.show()  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Show the plot</span></span></code></pre></div>
+font-style: inherit;"># Show the plot</span></span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -1656,7 +2246,7 @@ font-style: inherit;"># Show the plot</span></span></code></pre></div>
 <h2 class="anchored" data-anchor-id="fenicsx-solution">FENICSx Solution</h2>
 <p>Let’s build this solution using FENICSx. Start by importing some libraries that are going to be required.</p>
 <div id="5e2f964d" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -1714,11 +2304,11 @@ font-style: inherit;">from</span> uDiricheletExact <span class="im" style="color
 background-color: null;
 font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">*</span></span></code></pre></div>
+font-style: inherit;">*</span></span></code></pre></div></div>
 </div>
 <p>Set up the simulation parameters. Define the mesh and function space. Under the hood, the <code>fem.functionspace</code> command is creating a polynomial basis function under the hood.</p>
 <div id="ac682360" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">t <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">t <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1807,11 +2397,11 @@ background-color: null;
 font-style: inherit;">1</span>) <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Linear Lagrange elements (polynomials)</span></span>
-<span id="cb2-20">)</span></code></pre></div>
+<span id="cb2-20">)</span></code></pre></div></div>
 </div>
 <p>Set up the initial condition <code>u_n</code> and set up a “working solution” <code>uh</code>.</p>
 <div id="7cc96f3d" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> initial_condition(x):</span>
@@ -1853,11 +2443,11 @@ background-color: null;
 font-style: inherit;">"uh"</span>  <span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Name the function for clarity </span></span>
-<span id="cb3-11">uh.interpolate(initial_condition)</span></code></pre></div>
+<span id="cb3-11">uh.interpolate(initial_condition)</span></code></pre></div></div>
 </div>
 <p>Set up the (Dirichlet) boundary conditions for the problem:</p>
 <div id="00ebdd98" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">uD <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">uD <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> fem.Constant(domain, PETSc.ScalarType(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -1906,11 +2496,11 @@ background-color: null;
 font-style: inherit;">=</span> fem.locate_dofs_topological(V, fdim, boundary_facets)</span>
 <span id="cb4-11">bc <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> fem.dirichletbc(uD, boundary_dofs, V)</span></code></pre></div>
+font-style: inherit;">=</span> fem.dirichletbc(uD, boundary_dofs, V)</span></code></pre></div></div>
 </div>
 <p>Set up the required functions for the variational problem including the source term (which is zero in this case). Then, define the <img src="https://latex.codecogs.com/png.latex?a(u,v)"> and <img src="https://latex.codecogs.com/png.latex?L(v)"> in terms of these functions, and convert to a form suitable for FENICSx.</p>
 <div id="e4c7e20c" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">u <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> ufl.TrialFunction(V)  <span class="co" style="color: #5E5E5E;
 background-color: null;
@@ -1957,11 +2547,11 @@ background-color: null;
 font-style: inherit;">=</span> fem.form(a)</span>
 <span id="cb5-8">linear_form <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> fem.form(L)</span></code></pre></div>
+font-style: inherit;">=</span> fem.form(L)</span></code></pre></div></div>
 </div>
 <p>Do the Linear Algebra required</p>
 <div id="c83ffa77" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Assemble the Linear Algebra structures</span></span>
 <span id="cb6-2">A <span class="op" style="color: #5E5E5E;
@@ -1992,11 +2582,11 @@ background-color: null;
 font-style: inherit;"># Use a preconditioner</span></span>
 <span id="cb6-10">solver.getPC().setType(PETSc.PC.Type.LU)  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Use LU preconditioner</span></span></code></pre></div>
+font-style: inherit;"># Use LU preconditioner</span></span></code></pre></div></div>
 </div>
 <p>And prepare to make a plot. I’ll make a 3D surface plot and the variable <code>Uc</code> is my computational solution.</p>
 <div id="3f3e99b3" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">xMesh <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">xMesh <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> domain.geometry.x[: ,<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -2015,11 +2605,11 @@ font-style: inherit;">0</span>] <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> u_n.x.array  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Initial condition for plotting</span></span></code></pre></div>
+font-style: inherit;"># Initial condition for plotting</span></span></code></pre></div></div>
 </div>
 <p>Now, repeat the process for each time-step, filling in the <code>Uc</code> array as we go:</p>
 <div id="7600fd4e" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> i <span class="kw" style="color: #003B4F;
@@ -2086,13 +2676,13 @@ background-color: null;
 font-style: inherit;"># Update solution at previous time step (u_n)</span></span>
 <span id="cb8-21">  u_n.x.array[:] <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> uh.x.array</span></code></pre></div>
+font-style: inherit;">=</span> uh.x.array</span></code></pre></div></div>
 </div>
 <section id="make-a-pretty-picture" class="level3">
 <h3 class="anchored" data-anchor-id="make-a-pretty-picture">Make a pretty picture</h3>
 <p>So, let’s see how this computation compares to the exact solution.</p>
 <div id="26ec2f0b" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">x_exact <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">x_exact <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> np.linspace(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -2326,7 +2916,7 @@ background-color: null;
 font-style: inherit;">'Temperature [arb. units]'</span>)</span>
 <span id="cb9-29">plt.show()  <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Show the plot</span></span></code></pre></div>
+font-style: inherit;"># Show the plot</span></span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -2411,7 +3001,7 @@ font-style: inherit;"># Show the plot</span></span></code></pre></div>
 <h2 class="anchored" data-anchor-id="lets-make-code">Let’s make code!</h2>
 <p>Let’s make some computational choices and code this up. First, I’ll begin by setting up the initial condition.</p>
 <div id="4e3667d2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -2449,11 +3039,11 @@ font-style: inherit;">1</span>,N)</span>
 background-color: null;
 font-style: inherit;">=</span> initTemp <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">*</span> np.ones(N)</span></code></pre></div>
+font-style: inherit;">*</span> np.ones(N)</span></code></pre></div></div>
 </div>
 <p>Next, I’ll define the matrices on the LHS and RHS of the equation above, as well as a few parameters.</p>
 <div id="8d871a16" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">b <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">b <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -2652,17 +3242,17 @@ font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">2</span>]</span></code></pre></div>
+font-style: inherit;">2</span>]</span></code></pre></div></div>
 </div>
 <p>Python can find the new u-matrix in terms of the old u matrix in one line:</p>
 <div id="1d8c1a00" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">newU <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">newU <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> np.linalg.solve(K,G)</span></code></pre></div>
+font-style: inherit;">=</span> np.linalg.solve(K,G)</span></code></pre></div></div>
 </div>
 <p>So let’s build our solution:</p>
 <div id="d1337f8a" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">nSteps <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">nSteps <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="bu" style="color: null;
 background-color: null;
@@ -2709,11 +3299,11 @@ background-color: null;
 font-style: inherit;">=</span> newU    </span>
 <span id="cb4-10">  oldU <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> newU</span></code></pre></div>
+font-style: inherit;">=</span> newU</span></code></pre></div></div>
 </div>
 <p>And let’s make a nice 3D plot of the solution:</p>
 <div id="d095c859" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
 background-color: null;
@@ -2772,7 +3362,7 @@ background-color: null;
 font-style: inherit;">$</span><span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>)</span>
-<span id="cb5-10">plt.show()</span></code></pre></div>
+<span id="cb5-10">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -2798,7 +3388,7 @@ font-style: inherit;">'</span>)</span>
 </div>
 <p>Let’s compare this to the Dirichlet solution from the previous post. Note, there is a minor difference from the previous post. I have re-indexed the sum starting at 0 since python zero-indexes the functions there, and it’s just a little cleaner. <img src="https://latex.codecogs.com/png.latex?%0Au(x,t)%20=%20%5Csum_%7Bn=0%7D%5E%7B%5Cinfty%7D%20%5Cfrac%7B4T_0%7D%7B(2n+1)%5Cpi%7D%5Csin%5Cleft((2n-+)%5Cpi%20x%5Cright)%20e%5E%7B-(2n+1)%5E2%5Cpi%5E2t%7D%0A"> First, let’s note that the only free parameter here is the initial temperature <img src="https://latex.codecogs.com/png.latex?T_0">. There is no equivalent to the “inverse heat transfer coefficient” <img src="https://latex.codecogs.com/png.latex?b"> that I defined for the Robin problem.</p>
 <div id="65728f0d" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> uDirichelet(t,x,T0):</span>
@@ -2965,7 +3555,7 @@ background-color: null;
 font-style: inherit;">$</span><span class="vs" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'</span>)</span>
-<span id="cb6-20">plt.show()</span></code></pre></div>
+<span id="cb6-20">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -2976,7 +3566,7 @@ font-style: inherit;">'</span>)</span>
 </div>
 <p>This is similar to the Robin plot for a very small <img src="https://latex.codecogs.com/png.latex?b"> value.</p>
 <div id="56ad215b" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">uRobin(<span class="dv" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1">uRobin(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -2986,7 +3576,7 @@ font-style: inherit;">5</span>,<span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.002</span>,<span class="fl" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div>
+font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -3095,7 +3685,7 @@ font-style: inherit;">0.005</span>).plotTemp()</span></code></pre></div>
 <h4 class="anchored" data-anchor-id="case-2-lambda-0-implies-lambda-k2">Case 2: <img src="https://latex.codecogs.com/png.latex?%5Clambda%20%3E%200%20%5Cimplies%20%5Clambda%20=%20k%5E2"></h4>
 <p>If <img src="https://latex.codecogs.com/png.latex?%5Clambda=k%5E2"> (for some <img src="https://latex.codecogs.com/png.latex?k%3E0">) then we can say: <img src="https://latex.codecogs.com/png.latex?%0AX''(x)%20=%20-k%5E2%20X(x)%20%5Cquad%20T'(t)%20=%20-k%5E2%20T(t)%20%5Cimplies%20X(x)%20=%20a%5Csin(kx)+b%5Ccos(kx)%20%5Cquad%20T(t)%20=%20ce%5E%7B-k%5E2t%7D%0A"> where <img src="https://latex.codecogs.com/png.latex?a,b,c"> are arbitrary constants. Let’s apply the boundary condition at <img src="https://latex.codecogs.com/png.latex?x=0">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A0%20&amp;=%20X(0)%20+%20X'(0)%20%5C%5C%0A&amp;=%20(a%20%5Csin%200%20+%20b%20%5Ccos%200)%20+%20k(a%5Ccos%200%20-%20b%5Csin%200)%20%5C%5C%0A&amp;=%20b+ka%20%5Cimplies%20b=-ka%20%5Cimplies%20X(x)%20=%20a%5Cleft(%5Csin(kx)%20-%20k%20%5Ccos(kx)%5Cright)%0A%5Cend%7Balign*%7D%0A"> Now apply at <img src="https://latex.codecogs.com/png.latex?x=1">: <img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0A0%20&amp;=%20X(1)%20-%20X'(1)%20%5C%5C%0A&amp;=%20a%5Cleft(%5Csin%20k%20-%20k%20%5Ccos%20k%5Cright)%20-%20ka%5Cleft(%5Ccos%20k%20+%20k%5Csin%20k%20%5Cright)%20%5C%5C%0A&amp;=%20a%5Csin%20k%20%5Cleft(1-k%5E2%5Cright)%20-%202ak%5Ccos%20k%20%5Cimplies%20%5Ctan%20k%20=%20%5Cfrac%7B2k%7D%7B1-k%5E2%7D%0A%5Cend%7Balign*%7D%0A"> This is good news/bad news. The good news is that <img src="https://latex.codecogs.com/png.latex?a"> is a free parameter, so we care about these solutions. If you graph <img src="https://latex.codecogs.com/png.latex?%0A%5Ctan%20k%20=%20%5Cfrac%7B2k%7D%7B1-k%5E2%7D%0A"> you will see that there are infinitely many <img src="https://latex.codecogs.com/png.latex?k"> values that solve this problem. However, there is no analytic solution.</p>
 <div id="54272029" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -3444,7 +4034,7 @@ font-style: inherit;">5</span>,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>))</span>
 <span id="cb1-31">ax.legend()</span>
-<span id="cb1-32">plt.show()</span></code></pre></div>
+<span id="cb1-32">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -3535,7 +4125,7 @@ font-style: inherit;">5</span>))</span>
 <h1>The code</h1>
 <p>I put all of this together in the code <a href="collisionViz/puckStickCollision.py">linked here</a> and reproduced below. In order for it to work, you’ll need to have manim installed on your computer.</p>
 <div id="f8c3f64b" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">##################################################################</span></span>
 <span id="cb1-2"><span class="co" style="color: #5E5E5E;
@@ -4467,7 +5057,7 @@ background-color: null;
 font-style: inherit;"># To render video run the following in a terminal:</span></span>
 <span id="cb1-202"><span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># manim -pql puckStickCollision.py puckStickCollision</span></span></code></pre></div>
+font-style: inherit;"># manim -pql puckStickCollision.py puckStickCollision</span></span></code></pre></div></div>
 </div>
 
 
@@ -4539,7 +5129,7 @@ font-style: inherit;"># manim -pql puckStickCollision.py puckStickCollision</spa
 <h3 class="anchored" data-anchor-id="ideal-projectile-motion-thinking-about-code">Ideal Projectile Motion: Thinking about code</h3>
 <p>At this point, we have fully specified the problem. Any motion is fully specified given the cliff height <img src="https://latex.codecogs.com/png.latex?H">, launch speed <img src="https://latex.codecogs.com/png.latex?v_i">, and launch angle <img src="https://latex.codecogs.com/png.latex?%5Ctheta">. We are done. Computationally, we want to be able to calculate all the important things, and define all of the important functions. I have chosen to use a python <em>class</em> to do so. The nice thing about using classes is that you can specify all of the variables for the system, but not have them cluttering the working environment.</p>
 <div id="592037b2" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -4793,7 +5383,7 @@ font-style: inherit;">0</span>,<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span><span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">self</span>.g]</span></code></pre></div>
+font-style: inherit;">self</span>.g]</span></code></pre></div></div>
 </div>
 </section>
 </section>
@@ -4827,7 +5417,7 @@ font-style: inherit;">self</span>.g]</span></code></pre></div>
 <p>We can take the time derivative of this function (I’ll use a dot to signify differentiation with respect to time) and express it in terms of the velocity and acceleration <img src="https://latex.codecogs.com/png.latex?%0A%5Cdot%7Bu%7D(t)%20=%20%5Cleft%5B%5Cdot%7Bx%7D(t),%20%5Cdot%7By%7D(t),%20%5Cdot%7Bv%7D_x(t),%20%5Cdot%7Bv%7D_y(t)%20%5Cright%5D%20=%20%5Cleft%5Bv_x(t),%20v_y(t),%20a_x(t),%20a_y(t)%5Cright%5D%0A"></p>
 <p><code>dragEOM</code> is this function <img src="https://latex.codecogs.com/png.latex?%5Cdot%7Bu%7D(t)"> applied to our projectile system.</p>
 <div id="dab1ccc2" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">class</span> dragEOM:</span>
@@ -5045,14 +5635,14 @@ font-style: inherit;">1</span>]</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="va" style="color: #111111;
 background-color: null;
-font-style: inherit;">True</span></span></code></pre></div>
+font-style: inherit;">True</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="getting-the-motion" class="level4">
 <h4 class="anchored" data-anchor-id="getting-the-motion">Getting the motion</h4>
 <p>Now that this is done, we can get the motion for this system using the following class:</p>
 <div id="314a8716" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> scipy.integrate <span class="im" style="color: #00769E;
 background-color: null;
@@ -5224,7 +5814,7 @@ font-style: inherit;">self</span>.ay <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> udot[<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">3</span>]</span></code></pre></div>
+font-style: inherit;">3</span>]</span></code></pre></div></div>
 </div>
 </section>
 </section>
@@ -5240,7 +5830,7 @@ font-style: inherit;">3</span>]</span></code></pre></div>
 <li><img src="https://latex.codecogs.com/png.latex?c%20=%200.003"> kg/m</li>
 </ul>
 <div id="06055768" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -5282,11 +5872,11 @@ font-style: inherit;">1</span></span>
 background-color: null;
 font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0.003</span></span></code></pre></div>
+font-style: inherit;">0.003</span></span></code></pre></div></div>
 </div>
 <p>I will visualize this motion in two ways. First, I’ll plot each quantity of the motion (position, velocity, acceleration) vs.&nbsp;time.</p>
 <div id="4af973ab" class="cell" width="75%" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">plotCannonCurves(vi,theta,H,m,c)</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">plotCannonCurves(vi,theta,H,m,c)</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -5297,7 +5887,7 @@ font-style: inherit;">0.003</span></span></code></pre></div>
 </div>
 <p>Now I will plot the trajectory (y-coordinate vs x-coordinate). Note that I have added boxes to this plot indicating the cliff location and the water level to help guide the eye. The plot has also been set up with an equal aspect ratio so that the horizontal and vertical distances are the same. The green curve should more closely match the golf ball tracer than the red parabolic path does.</p>
 <div id="689f5507" class="cell" width="75%" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">makeTrajectoryPlot(vi,theta,H,m,c)</span></code></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">makeTrajectoryPlot(vi,theta,H,m,c)</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -5317,7 +5907,7 @@ font-style: inherit;">0.003</span></span></code></pre></div>
 <div id="d143cb0b" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> matplotlib.colors <span class="im" style="color: #00769E;
 background-color: null;
@@ -5580,14 +6170,14 @@ font-style: inherit;">=</span> deltaT[nv<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">//</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">2</span>, :, :].transpose()</span></code></pre></div>
+font-style: inherit;">2</span>, :, :].transpose()</span></code></pre></div></div>
 </details>
 </div>
 <p>Now, let’s examine the model agreement for the range:</p>
 <div id="18bb3c7b" class="cell" width="90%" data-execution_count="8">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">fig1, ax1 <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">fig1, ax1 <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -5825,7 +6415,7 @@ font-style: inherit;">10</span>)</span>
 <span id="cb8-24">plt.savefig(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'rangeCalcFracDiff.png'</span>)</span>
-<span id="cb8-25">plt.show()</span></code></pre></div>
+<span id="cb8-25">plt.show()</span></code></pre></div></div>
 </details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -5839,7 +6429,7 @@ font-style: inherit;">'rangeCalcFracDiff.png'</span>)</span>
 <div id="749b5f6d" class="cell" width="90%" data-execution_count="9">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">fig1, ax1 <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">fig1, ax1 <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -6065,7 +6655,7 @@ font-style: inherit;">10</span>)</span>
 <span id="cb9-24">plt.savefig(<span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'tofCalcFracDiff.png'</span>)</span>
-<span id="cb9-25">plt.show()</span></code></pre></div>
+<span id="cb9-25">plt.show()</span></code></pre></div></div>
 </details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -6082,7 +6672,7 @@ font-style: inherit;">'tofCalcFracDiff.png'</span>)</span>
 <div id="195841e5" class="cell" width="75%" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">vi <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1">vi <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="dv" style="color: #AD0000;
 background-color: null;
@@ -6396,7 +6986,7 @@ background-color: null;
 font-style: inherit;">=</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">9</span>)</span>
-<span id="cb10-39">plt.show()</span></code></pre></div>
+<span id="cb10-39">plt.show()</span></code></pre></div></div>
 </details>
 <div class="cell-output cell-output-display">
 <div class="quarto-figure quarto-figure-center">
@@ -6460,7 +7050,7 @@ font-style: inherit;">9</span>)</span>
 <div id="37bacb16" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -6494,14 +7084,14 @@ font-style: inherit;">from</span> hotBoxToy <span class="im" style="color: #0076
 background-color: null;
 font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">*</span></span></code></pre></div>
+font-style: inherit;">*</span></span></code></pre></div></div>
 </details>
 </div>
 <p>Parameters are input in the code below, and the simulation runs based on the fit parameters from the previous analysis</p>
 <div id="1b952e2d" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Heat parameters</span></span>
 <span id="cb2-2">thermalDiffusivity <span class="op" style="color: #5E5E5E;
@@ -6680,7 +7270,7 @@ font-style: inherit;">*</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">10</span>, <span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">100</span>)    </span></code></pre></div>
+font-style: inherit;">100</span>)    </span></code></pre></div></div>
 </details>
 </div>
 </section>
@@ -6692,7 +7282,7 @@ font-style: inherit;">100</span>)    </span></code></pre></div>
 <div id="9137a7ee" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">timeIdx <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">timeIdx <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> [<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -7065,7 +7655,7 @@ background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">'Temperature [deg C]'</span>)</span>
-<span id="cb3-54">plt.show()</span></code></pre></div>
+<span id="cb3-54">plt.show()</span></code></pre></div></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -7085,7 +7675,7 @@ font-style: inherit;">'Temperature [deg C]'</span>)</span>
 <h3 class="anchored" data-anchor-id="amimation-generation-code">Amimation generation code</h3>
 <p>Figuring out how to do the animation was an interesting task, especially since most of the examples in the documentation animate things like a position vs.&nbsp;time graph, showing where the object appears later in the motion, and dealing with 3d plots is different in matplotlib. The key to using this method for animating a figure is to name all of the features of the graph that are changing, and creating a function to update each of these features.</p>
 <div id="438231f4" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> matplotlib.animation <span class="im" style="color: #00769E;
 background-color: null;
@@ -7646,7 +8236,7 @@ background-color: null;
 font-style: inherit;"># Builds the animation</span></span>
 <span id="cb4-84">makeAni(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'hotboxLong.gif'</span>,longCalc,L,W,H,Deltax)</span></code></pre></div>
+font-style: inherit;">'hotboxLong.gif'</span>,longCalc,L,W,H,Deltax)</span></code></pre></div></div>
 </div>
 
 
@@ -7697,7 +8287,7 @@ font-style: inherit;">'hotboxLong.gif'</span>,longCalc,L,W,H,Deltax)</span></cod
 <div id="c4d3a6e4" class="cell" data-execution_count="1">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -7847,7 +8437,7 @@ font-style: inherit;">1</span>)</span>
 <span id="cb1-28"></span>
 <span id="cb1-29">u0 <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> np.empty((xmax,ymax,zmax))</span></code></pre></div>
+font-style: inherit;">=</span> np.empty((xmax,ymax,zmax))</span></code></pre></div></div>
 </details>
 </div>
 </section>
@@ -7870,7 +8460,7 @@ font-style: inherit;">=</span> np.empty((xmax,ymax,zmax))</span></code></pre></d
 <div id="3ad9f868" class="cell" data-execution_count="2">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> powerGen(umat, t, intensity, A):</span>
@@ -7892,7 +8482,7 @@ font-style: inherit;">1</span>].fill(powerDensity)</span>
 <span id="cb2-7">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> powerGen</span></code></pre></div>
+font-style: inherit;">return</span> powerGen</span></code></pre></div></div>
 </details>
 </div>
 </section>
@@ -7906,7 +8496,7 @@ font-style: inherit;">return</span> powerGen</span></code></pre></div>
 <div id="3fb74174" class="cell" data-execution_count="3">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> bdryConv(umat, t, Tair, B):</span>
@@ -8008,7 +8598,7 @@ font-style: inherit;">-</span> uSurf)</span>
 <span id="cb3-21">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> duConvdt  </span></code></pre></div>
+font-style: inherit;">return</span> duConvdt  </span></code></pre></div></div>
 </details>
 </div>
 </section>
@@ -8064,7 +8654,7 @@ font-style: inherit;">return</span> duConvdt  </span></code></pre></div>
 <div id="440d9469" class="cell" data-execution_count="4">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> lap3DFE(umat,dx):</span>
@@ -10721,7 +11311,7 @@ font-style: inherit;">2</span>)</span>
 <span id="cb4-46">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> lap</span></code></pre></div>
+font-style: inherit;">return</span> lap</span></code></pre></div></div>
 </details>
 </div>
 </section>
@@ -10729,7 +11319,7 @@ font-style: inherit;">return</span> lap</span></code></pre></div>
 <section id="final-heat-equation-function" class="level3">
 <h3 class="anchored" data-anchor-id="final-heat-equation-function">Final Heat equation function</h3>
 <div id="43fa1619" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> dudt(t,u, alpha, intensity, dx, Tair, A, B):</span>
@@ -10745,11 +11335,11 @@ font-style: inherit;">+</span> bdryConv(u, t, Tair, B)</span>
 <span id="cb5-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> dudt</span></code></pre></div>
+font-style: inherit;">return</span> dudt</span></code></pre></div></div>
 </div>
 <p>I will have to flatten things as <code>solve_ivp</code> only solves a vector system of differential equations rather than the higher dimenionality matrix system that I’ve created.</p>
 <div id="8fbb38c7" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> dudtFlat(t,uflat, alpha, intensity, dx, Tair, A, B):</span>
@@ -10759,7 +11349,7 @@ font-style: inherit;">=</span> uflat.reshape(xmax,ymax,zmax)</span>
 <span id="cb6-3">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> dudt(t,u, alpha, intensity, dx, Tair, A, B).flatten()</span></code></pre></div>
+font-style: inherit;">return</span> dudt(t,u, alpha, intensity, dx, Tair, A, B).flatten()</span></code></pre></div></div>
 </div>
 </section>
 </section>
@@ -10774,7 +11364,7 @@ font-style: inherit;">return</span> dudt(t,u, alpha, intensity, dx, Tair, A, B).
 <h3 class="anchored" data-anchor-id="calculation-1">Calculation 1:</h3>
 <p>For parameters <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?B"> (described above) find the difference between the average box temperature after an hour and 47 deg C, assuming an air temperature of 22 deg C.</p>
 <div id="4529b9e5" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> matplotlib.pyplot <span class="im" style="color: #00769E;
 background-color: null;
@@ -10852,14 +11442,14 @@ font-style: inherit;">-</span> hotCarTemp</span>
 <span id="cb7-19">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> tempDiff</span></code></pre></div>
+font-style: inherit;">return</span> tempDiff</span></code></pre></div></div>
 </div>
 </section>
 <section id="calculation-2" class="level3">
 <h3 class="anchored" data-anchor-id="calculation-2">Calculation 2:</h3>
 <p>For parameters <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?B"> (described above) find the difference between the average box temperature after 10 minutes and 37 deg C, assuming an air temperature of 27 deg C.</p>
 <div id="e16cd78d" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> calc2(A,B):</span>
@@ -10930,14 +11520,14 @@ font-style: inherit;">-</span> hotCarTemp</span>
 <span id="cb8-16">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> tempDiff</span></code></pre></div>
+font-style: inherit;">return</span> tempDiff</span></code></pre></div></div>
 </div>
 </section>
 <section id="optimization" class="level3">
 <h3 class="anchored" data-anchor-id="optimization">Optimization</h3>
 <p>Now I will find the parameters <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?B"> that correctly model the statements given in the opening section of this post.</p>
 <div id="3473f7df" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">from</span> scipy.optimize <span class="im" style="color: #00769E;
 background-color: null;
@@ -11055,14 +11645,14 @@ font-style: inherit;">{</span>diff2<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:.3f}</span><span class="ss" style="color: #20794D;
 background-color: null;
-font-style: inherit;"> deg C for calculation 2'</span>)</span></code></pre></div>
+font-style: inherit;"> deg C for calculation 2'</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The temperature differences are 0.000 deg C for calculation 1 and 0.030 deg C for calculation 2</code></pre>
 </div>
 </div>
 <p>Since we can interpret the parameters <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?B"> through the properties of materials, as described above, we find:</p>
 <div id="ffce321b" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="bu" style="color: null;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><span class="bu" style="color: null;
 background-color: null;
 font-style: inherit;">print</span>(<span class="ss" style="color: #20794D;
 background-color: null;
@@ -11128,7 +11718,7 @@ font-style: inherit;">{</span>Delta<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:.5f}</span><span class="ss" style="color: #20794D;
 background-color: null;
-font-style: inherit;"> m.'</span>)</span></code></pre></div>
+font-style: inherit;"> m.'</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>A = 1.117617e-03 m^2K/Ws and B= 6.666691e-03 1/s
 δ = 0.00030 m and Δ = 0.00005 m.</code></pre>
@@ -11141,7 +11731,7 @@ font-style: inherit;"> m.'</span>)</span></code></pre></div>
 <div id="76bb8454" class="cell" data-execution_count="11">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> plot1(A,B):</span>
@@ -11357,7 +11947,7 @@ font-style: inherit;">'Temperature (C)'</span>)</span>
 background-color: null;
 font-style: inherit;">=</span> res.x</span>
 <span id="cb13-44">plot1(A,B)</span>
-<span id="cb13-45">plot2(A,B)</span></code></pre></div>
+<span id="cb13-45">plot2(A,B)</span></code></pre></div></div>
 </details>
 <div class="cell-output cell-output-display">
 <div>
@@ -11378,7 +11968,7 @@ font-style: inherit;">=</span> res.x</span>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cfrac%7Bdu%7D%7Bdt%7D%20=%20%5Calpha%5Cnabla%5E2u%20+%20AI_s%20+%20B(T_%7B%5Ctext%7Bair%7D%7D-u)%20%5Clongrightarrow%200%20=%200%20+%20%5Cfrac%7BA_%7B%5Ctext%7Btop%7D%7D%7D%7BA_%7B%5Ctext%7Bbox%7D%7D%7D%20AI_s%20+%20B(T_%7B%5Ctext%7Bair%7D%7D-u_0)%0A"> Solving for the equilibrium temperature, we find: <img src="https://latex.codecogs.com/png.latex?%0A%5Cimplies%20u_0%20=%20T_%7B%5Ctext%7Bair%7D%7D%20+%20%5Cleft(%5Cfrac%7BA_%7B%5Ctext%7Btop%7D%7D%7D%7BA_%7B%5Ctext%7Bbox%7D%7D%7D%5Cright)%20%5Cfrac%7BAI_s%7D%7BB%7D%0A"></p>
 <p>Given the system that I’m modeling, and values for <img src="https://latex.codecogs.com/png.latex?A"> and <img src="https://latex.codecogs.com/png.latex?B"> that I have found, we can calculate the difference between air temperature and the steady-state box temperature.</p>
 <div id="db6d0da1" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">topArea <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1">topArea <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> L<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -11421,14 +12011,14 @@ font-style: inherit;">{</span>solarBoost<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">:.2f}</span><span class="ss" style="color: #20794D;
 background-color: null;
-font-style: inherit;"> deg C warmer than the air temperature.'</span>)</span></code></pre></div>
+font-style: inherit;"> deg C warmer than the air temperature.'</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>The temperature after a long time should approach a value that is 37.25 deg C warmer than the air temperature.</code></pre>
 </div>
 </div>
 <p>Let’s verify this calculation by simulating this system for 10 hours.</p>
 <div id="024a3b56" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> simSystem(A,B):</span>
@@ -11509,11 +12099,11 @@ font-style: inherit;">return</span> oneHourCalc</span>
 <span id="cb16-11"></span>
 <span id="cb16-12">longCalc <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> simSystem(A,B)    </span></code></pre></div>
+font-style: inherit;">=</span> simSystem(A,B)    </span></code></pre></div></div>
 </div>
 <p>And then I will plot the average temperature as a function of time, as well as the average temperature at a range of heights.</p>
 <div id="0ed9b785" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> plotTemperature(uflat):</span>
@@ -11705,7 +12295,7 @@ background-color: null;
 font-style: inherit;">0.75</span>))</span>
 <span id="cb17-26">    plt.show()</span>
 <span id="cb17-27">    </span>
-<span id="cb17-28">plotTemperature(longCalc.y)</span></code></pre></div>
+<span id="cb17-28">plotTemperature(longCalc.y)</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -11772,7 +12362,7 @@ font-style: inherit;">0.75</span>))</span>
 <h3 class="anchored" data-anchor-id="box-dimensions">Box dimensions</h3>
 <p>I will model this as a box with length <img src="https://latex.codecogs.com/png.latex?L">, width <img src="https://latex.codecogs.com/png.latex?W">, and height <img src="https://latex.codecogs.com/png.latex?H">. I’ll orient my coordinate system so that the origin is in a lower corner and points <img src="https://latex.codecogs.com/png.latex?(x,y,z)"> in the region of interest are bounded by the following: <img src="https://latex.codecogs.com/png.latex?0%5Cleq%20x%5Cleq%20L">, <img src="https://latex.codecogs.com/png.latex?0%5Cleq%20y%20%5Cleq%20W">, and <img src="https://latex.codecogs.com/png.latex?0%5Cleq%20z%20%5Cleq%20H">.</p>
 <div id="d58290dd" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> numpy <span class="im" style="color: #00769E;
 background-color: null;
@@ -11824,14 +12414,14 @@ font-style: inherit;">10</span><span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">*</span>oneDay <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># Let this run for several days</span></span></code></pre></div>
+font-style: inherit;"># Let this run for several days</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="thermal-properties-of-the-box" class="level3">
 <h3 class="anchored" data-anchor-id="thermal-properties-of-the-box">Thermal properties of the box</h3>
 <p>I will assume that the box is uniform. That means no windows or ventilation. So <img src="https://latex.codecogs.com/png.latex?h"> and <img src="https://latex.codecogs.com/png.latex?k"> are constant and uniform on the boundary. According to Wikipedia, the thermal diffusivity of air is <img src="https://latex.codecogs.com/png.latex?1.9%5Ctimes%2010%5E%7B-7%7D"> m<img src="https://latex.codecogs.com/png.latex?%5E2">/s. According to <a href="https://doi.org/10.1016/0360-1323(96)00014-5">this article by Jayamaha <em>et.al.</em></a>, the heat transfer coefficient for walls varies from 6 to 10 <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctext%7BW%7D%7D%7B%5Ctext%7Bm%7D%5E2%20%5Ctext%7BK%7D%7D">. Looking at the <a href="https://www.greenspec.co.uk/building-design/insulation-materials-thermal-properties/">greenspec.co.uk website</a> it would seem that the thermal conductivity of most building materials is on the order of 0.02-0.04 <img src="https://latex.codecogs.com/png.latex?%5Cfrac%7B%5Ctext%7BW%7D%7D%7B%5Ctext%7Bm%20K%7D%7D">.</p>
 <div id="01b94115" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Heat parameters</span></span>
 <span id="cb2-2">alpha <span class="op" style="color: #5E5E5E;
@@ -11854,7 +12444,7 @@ font-style: inherit;">=</span> <span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.04</span> <span class="co" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;"># From Greenspec</span></span></code></pre></div>
+font-style: inherit;"># From Greenspec</span></span></code></pre></div></div>
 </div>
 </section>
 <section id="modeling-exterior-temperature" class="level3">
@@ -11863,7 +12453,7 @@ font-style: inherit;"># From Greenspec</span></span></code></pre></div>
 <p><img src="https://latex.codecogs.com/png.latex?%0Av%5E%7B%5Ctext%7Bair%7D%7D(t)%20=%20T_0%20-%20%5CDelta%20T%20%5Ccos%5Cleft(%5COmega%20t%5Cright)%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?T_0"> is the average temperature of the day, and <img src="https://latex.codecogs.com/png.latex?%5CDelta%20T"> represents the range of temperature. On the ground, I’ll assume the temperature is constant at <img src="https://latex.codecogs.com/png.latex?T_G">. So <img src="https://latex.codecogs.com/png.latex?t=0"> is sunrise. Making these parameters functions is overkill for now, but will be helpful as I get more complicated.</p>
 <div id="604bede8" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Temperature parameters</span></span>
 <span id="cb3-2">T0 <span class="op" style="color: #5E5E5E;
@@ -11916,7 +12506,7 @@ font-style: inherit;">def</span> vground(TG, t):</span>
 <span id="cb3-12">  <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> TG</span></code></pre></div>
+font-style: inherit;">return</span> TG</span></code></pre></div></div>
 </div>
 </section>
 </section>
@@ -11929,7 +12519,7 @@ font-style: inherit;">return</span> TG</span></code></pre></div>
 <p><img src="https://latex.codecogs.com/png.latex?%0A%5Cbegin%7Balign*%7D%0Ax_i%20&amp;=%20i%20%5CDelta%20x%20%5C%5C%0Ay_j%20&amp;=%20j%20%5CDelta%20y%20%5C%5C%0Az_k%20&amp;=%20k%20%5CDelta%20z%20%5C%5C%0At_l%20&amp;=%20l%20%5CDelta%20t%20%5C%5C%0A%5Cend%7Balign*%7D%0A"></p>
 <p>where <img src="https://latex.codecogs.com/png.latex?%5CDelta%20x,%20%5CDelta%20y,%20%5CDelta%20z,"> and <img src="https://latex.codecogs.com/png.latex?%5CDelta%20t"> are computational choices. Indeed, this freedom will allow me to choose <img src="https://latex.codecogs.com/png.latex?%5CDelta%20x%20=%20%5CDelta%20y%20=%20%5CDelta%20z">. I will choose <img src="https://latex.codecogs.com/png.latex?%5CDelta%20x%20=%205"> cm and <img src="https://latex.codecogs.com/png.latex?%5CDelta%20t%20=%2015"> minutes. I’ll also define the max indices for this system, and also set up values for the grid. I will also set up the <img src="https://latex.codecogs.com/png.latex?u%5El_%7Bijk%7D"> grid, and fill it with a constant value. Actually, I will do this for two different initial temperatures. If my code is working correctly, the initial temperature of the box should not matter if we let the simulation run for long enough. Think about it this way: Imagine that you have two identical coolers, one filled with ice and the other empty. Now, let the coolers sit for a year in your yard. After that year, the coolers will no longer have a different temperature.</p>
 <div id="2df29995" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Computational parameters (time step and mesh size)</span></span>
 <span id="cb4-2">Deltat <span class="op" style="color: #5E5E5E;
@@ -12059,7 +12649,7 @@ background-color: null;
 font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">2</span></span>
-<span id="cb4-25">uAlt.fill(uAlt_init)</span></code></pre></div>
+<span id="cb4-25">uAlt.fill(uAlt_init)</span></code></pre></div></div>
 </div>
 <section id="applying-the-finite-difference-method-to-the-boundary-condition" class="level3">
 <h3 class="anchored" data-anchor-id="applying-the-finite-difference-method-to-the-boundary-condition">Applying the Finite difference method to the boundary condition</h3>
@@ -12069,7 +12659,7 @@ font-style: inherit;">2</span></span>
 <p>Plugging in some numbers, I’ll assume that the proportionality constant <img src="https://latex.codecogs.com/png.latex?%5Cbeta"> for heat exchange with the ground is 10 times larger than the same constant for heat exchange with the air.</p>
 <p>Let’s put this into code and apply the boundary condition to the initial array:</p>
 <div id="0f127a0f" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">beta <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1">beta <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> h<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -12224,7 +12814,7 @@ font-style: inherit;">0</span>)</span>
 background-color: null;
 font-style: inherit;">=</span> applyBC(uAlt,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span>)</span></code></pre></div>
+font-style: inherit;">0</span>)</span></code></pre></div></div>
 </div>
 </section>
 <section id="applying-the-finite-difference-method-to-the-heat-equation-dotu-alphanabla2u" class="level3">
@@ -12236,7 +12826,7 @@ font-style: inherit;">0</span>)</span></code></pre></div>
 <p>so we finally obtain: <img src="https://latex.codecogs.com/png.latex?%0Au%5E%7Bl+1%7D_%7Bijk%7D%20=%20u%5El_%7Bijk%7D%20+%20%5Cgamma%20%5Cleft(u%5El_%7Bi+1%20jk%7D%20+%20u%5El_%7Bi-1%20jk%7D%20+%20u%5El_%7Bij+1k%7D%20+%0A%20%20%20%20%20%20u%5El_%7Bij-1k%7D%20+%20u%5El_%7Bijk+1%7D%20+%20u%5El_%7Bijk-1%7D%20-%206%20u%5El_%7Bijk%7D%20%5Cright)%0A"></p>
 <p>Now I will convert this to code:</p>
 <div id="5a8d57a8" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">gamma <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1">gamma <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> alpha<span class="op" style="color: #5E5E5E;
 background-color: null;
@@ -12385,7 +12975,7 @@ font-style: inherit;">1</span>)</span>
 <span id="cb6-14">    <span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
-font-style: inherit;">return</span> umat</span></code></pre></div>
+font-style: inherit;">return</span> umat</span></code></pre></div></div>
 </div>
 </section>
 <section id="visualizing-the-temperature" class="level3">
@@ -12394,7 +12984,7 @@ font-style: inherit;">return</span> umat</span></code></pre></div>
 <div id="02075b91" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><span class="kw" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">def</span> plotheatmaps(umat,l,i,j,k):</span>
@@ -12662,17 +13252,17 @@ font-style: inherit;">=</span> cax, orientation<span class="op" style="color: #5
 background-color: null;
 font-style: inherit;">=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'horizontal'</span>)</span></code></pre></div>
+font-style: inherit;">'horizontal'</span>)</span></code></pre></div></div>
 </details>
 </div>
 <p>So the initial condition has the following heatmap:</p>
 <div id="f7630514" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">plotheatmaps(u,<span class="dv" style="color: #AD0000;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1">plotheatmaps(u,<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0</span>,xmid,ymid,zmid)</span>
 <span id="cb8-2">plotheatmaps(uAlt,<span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">0</span>,xmid,ymid,zmid)</span></code></pre></div>
+font-style: inherit;">0</span>,xmid,ymid,zmid)</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -12694,12 +13284,12 @@ font-style: inherit;">0</span>,xmid,ymid,zmid)</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="sec-results">Results</h2>
 <p>Finally, we will compute the time evolution of the temperature for the two scenarios.</p>
 <div id="3fafa784" class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">u <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1">u <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> calcHeatEqn(u)</span>
 <span id="cb9-2">uAlt <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> calcHeatEqn(uAlt)</span></code></pre></div>
+font-style: inherit;">=</span> calcHeatEqn(uAlt)</span></code></pre></div></div>
 </div>
 <section id="different-initial-condition-comparison" class="level3">
 <h3 class="anchored" data-anchor-id="different-initial-condition-comparison">Different initial condition comparison</h3>
@@ -12707,7 +13297,7 @@ font-style: inherit;">=</span> calcHeatEqn(uAlt)</span></code></pre></div>
 <div id="6f430d76" class="cell" data-execution_count="10">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">## Calculate averages at every time step</span></span>
 <span id="cb10-2">airTemp <span class="op" style="color: #5E5E5E;
@@ -12883,12 +13473,12 @@ background-color: null;
 font-style: inherit;">=</span> np.mean(ul[:,:,:,k])</span>
 <span id="cb10-45">        btdzErr[d,k] <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">=</span> np.std(ul[:,:,:,k])</span></code></pre></div>
+font-style: inherit;">=</span> np.std(ul[:,:,:,k])</span></code></pre></div></div>
 </details>
 </div>
 <p>As noted previously, after a long enough time, I expect two identical boxes to exhibit the same behavior regardless of their initial conditions–much in the way that the long-term behavior of a Damped-Driven Oscillator is independent of the initial conditions. Let’s check that out here:</p>
 <div id="8e44cdba" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">fig, (ax0, ax1) <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1">fig, (ax0, ax1) <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> plt.subplots(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -12996,7 +13586,7 @@ font-style: inherit;">'Time (days)'</span>)</span>
 background-color: null;
 font-style: inherit;">'Temperature (deg C)'</span>)</span>
 <span id="cb11-12">ax1.legend()</span>
-<span id="cb11-13">plt.show()</span></code></pre></div>
+<span id="cb11-13">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -13011,7 +13601,7 @@ font-style: inherit;">'Temperature (deg C)'</span>)</span>
 <h3 class="anchored" data-anchor-id="compare-interior-temperature-to-exterior-temp">Compare interior temperature to exterior temp</h3>
 <p>I’m going to plot the external (air) temperature and compare it to the average temperature in the box, as well as consider the average temperature in horizontal slices as the change in time.</p>
 <div id="a655e492" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>(<span class="fl" style="color: #AD0000;
 background-color: null;
@@ -13121,7 +13711,7 @@ background-color: null;
 font-style: inherit;">1.04</span>,<span class="fl" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">0.5</span>))</span>
-<span id="cb12-13">plt.show()</span></code></pre></div>
+<span id="cb12-13">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -13132,7 +13722,7 @@ font-style: inherit;">0.5</span>))</span>
 </div>
 <p>Just to see that this is stabilizing, and to get an idea of how fast this stabilizes, I’m going to find a daily average temperature as above.</p>
 <div id="4afd67ba" class="cell" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1">plt.figure(figsize<span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -13206,7 +13796,7 @@ background-color: null;
 font-style: inherit;">=</span>labString) </span>
 <span id="cb13-9">    </span>
 <span id="cb13-10">plt.legend()</span>
-<span id="cb13-11">plt.show()</span></code></pre></div>
+<span id="cb13-11">plt.show()</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -13220,7 +13810,7 @@ font-style: inherit;">=</span>labString) </span>
 <h3 class="anchored" data-anchor-id="heatmaps">Heatmaps</h3>
 <p>Let’s view the middle cross sections every few hours on the last day:</p>
 <div id="abf64b23" class="cell" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="cf" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><span class="cf" style="color: #003B4F;
 background-color: null;
 font-weight: bold;
 font-style: inherit;">for</span> s <span class="kw" style="color: #003B4F;
@@ -13235,7 +13825,7 @@ background-color: null;
 font-style: inherit;">/</span><span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">12</span>)):</span>
-<span id="cb14-2">  plotheatmaps(u,s,xmid,ymid,zmid)</span></code></pre></div>
+<span id="cb14-2">  plotheatmaps(u,s,xmid,ymid,zmid)</span></code></pre></div></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -13370,7 +13960,7 @@ font-style: inherit;">12</span>)):</span>
 <li>Does experience/expertise matter?</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">load</span>(<span class="st" style="color: #20794D;
 background-color: null;
@@ -13507,7 +14097,7 @@ font-style: inherit;">!</span>qname <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&amp;</span> <span class="sc" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">!</span>label)</span></code></pre></div>
+font-style: inherit;">!</span>label)</span></code></pre></div></div>
 </div>
 <section id="work-type-and-education-level" class="level2">
 <h2 class="anchored" data-anchor-id="work-type-and-education-level">Work type and education level</h2>
@@ -13637,7 +14227,7 @@ font-style: inherit;">!</span>label)</span></code></pre></div>
 <li>The dataset refers to the <strong>king</strong> rather than a gender neutral term. I will replace it with <strong>sovereign</strong>.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">names</span>(monarchDat) <span class="ot" style="color: #003B4F;
 background-color: null;
@@ -13676,7 +14266,7 @@ font-style: inherit;">names</span>(monarchDat)</span>
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">rbind</span>(monarchDat,charles)</span></code></pre></div>
+font-style: inherit;">rbind</span>(monarchDat,charles)</span></code></pre></div></div>
 </div>
 <p>I have retained the term consort as I don’t have a better one. I’m shuddering a bit though because we have a 5 and a 3 year old in this dataset:</p>
 <div class="cell">
@@ -14235,7 +14825,7 @@ $ max_age              &lt;dbl&gt; NA, 50, 24, NA, NA, 19, NA, NA, NA, NA, NA, N
 }
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <colgroup>
 <col style="width: 16%">
 <col style="width: 16%">
@@ -14246,7 +14836,7 @@ $ max_age              &lt;dbl&gt; NA, 50, 24, NA, NA, 19, NA, NA, NA, NA, NA, N
 </colgroup>
 <thead>
 <tr class="gt_heading header">
-<th colspan="6" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF"><p>Hall of Shame</p></th>
+<td colspan="6" class="gt_heading gt_title gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF"><p>Hall of Shame</p></td>
 </tr>
 <tr class="gt_col_headings gt_spanner_row even">
 <th colspan="2" id="Perpetraitor" class="gt_center gt_columns_top_border gt_column_spanner_outer" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="colgroup"><span class="gt_column_spanner">Perpetraitor</span></th>
@@ -14343,7 +14933,7 @@ $ max_age              &lt;dbl&gt; NA, 50, 24, NA, NA, 19, NA, NA, NA, NA, NA, N
 
 <p>This week’s #TidyTuesday is all about World’s Fairs, and I have always wanted to figure out how to make a visualization with a map. So this is the week that I try that out. In addition to the data from Wikipedia in the given dataset, I have also downloaded <a href="https://www.kaggle.com/datasets/hserdaraltan/countries-by-continent">S. Altan’s Kaggle Dataset: Countries by Continent</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">library</span>(tidyverse)</span>
 <span id="cb1-2"><span class="fu" style="color: #4758AB;
@@ -14368,7 +14958,7 @@ font-style: inherit;">'worldsFairs.Rdata'</span>)</span>
 background-color: null;
 font-style: inherit;">source</span>(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'helperFunctions.R'</span>)</span></code></pre></div>
+font-style: inherit;">'helperFunctions.R'</span>)</span></code></pre></div></div>
 </div>
 <section id="plan-and-data-cleaning" class="level2">
 <h2 class="anchored" data-anchor-id="plan-and-data-cleaning">Plan and data cleaning</h2>
@@ -14376,7 +14966,7 @@ font-style: inherit;">'helperFunctions.R'</span>)</span></code></pre></div>
 <section id="continental-breakdown-of-worlds-fair" class="level3">
 <h3 class="anchored" data-anchor-id="continental-breakdown-of-worlds-fair">Continental breakdown of World’s fair</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">fairData <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">fairData <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -14472,7 +15062,7 @@ font-style: inherit;">'start_year'</span>,<span class="st" style="color: #20794D
 background-color: null;
 font-style: inherit;">'end_month'</span>,<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'end_year'</span>))</span></code></pre></div>
+font-style: inherit;">'end_year'</span>))</span></code></pre></div></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -14992,7 +15582,7 @@ font-style: inherit;">'end_year'</span>))</span></code></pre></div>
 <section id="country-breakdown-of-worlds-fair" class="level3">
 <h3 class="anchored" data-anchor-id="country-breakdown-of-worlds-fair">Country breakdown of world’s fair</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">fairDataByCountry <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">fairDataByCountry <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> fairData <span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -15050,7 +15640,7 @@ font-style: inherit;">'start_year'</span>,<span class="st" style="color: #20794D
 background-color: null;
 font-style: inherit;">'end_month'</span>,<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'end_year'</span>))</span></code></pre></div>
+font-style: inherit;">'end_year'</span>))</span></code></pre></div></div>
 </div>
 <div class="cell">
 <div class="cell-output-display">
@@ -15711,7 +16301,7 @@ font-style: inherit;">'end_year'</span>))</span></code></pre></div>
 <section id="putting-this-on-a-map" class="level2">
 <h2 class="anchored" data-anchor-id="putting-this-on-a-map">Putting this on a map</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">worldFairMap <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1">worldFairMap <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -15724,13 +16314,13 @@ font-style: inherit;">'NAME'</span>,</span>
 background-color: null;
 font-style: inherit;">nameJoinColumn =</span> <span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"country"</span>)</span></code></pre></div>
+font-style: inherit;">"country"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>21 codes from your data successfully matched countries in the map
 3 codes from your data failed to match with a country code in the map
 222 codes from the map weren't represented in your data</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">par</span>(<span class="at" style="color: #657422;
 background-color: null;
@@ -15798,7 +16388,7 @@ font-style: inherit;">'white'</span>,</span>
 background-color: null;
 font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Country attendance"</span>)</span></code></pre></div>
+font-style: inherit;">"Country attendance"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 10 were used due to pretty() classification</code></pre>
 </div>
@@ -15810,7 +16400,7 @@ Returning the palette you asked for with that many colors</code></pre>
 <pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 10
 required, using interpolation to calculate colours</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -15822,7 +16412,7 @@ font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -15830,7 +16420,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">costMap <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1">costMap <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -15870,7 +16460,7 @@ font-style: inherit;">'white'</span>,</span>
 background-color: null;
 font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Cost in Millions"</span>)</span></code></pre></div>
+font-style: inherit;">"Cost in Millions"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 9 were used due to pretty() classification</code></pre>
 </div>
@@ -15878,7 +16468,7 @@ font-style: inherit;">"Cost in Millions"</span>)</span></code></pre></div>
 <pre><code>Warning in brewer.pal(10, "Greens"): n too large, allowed maximum for palette Greens is 9
 Returning the palette you asked for with that many colors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -15890,7 +16480,7 @@ font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -15898,7 +16488,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1">areaMap <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1">areaMap <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -15938,7 +16528,7 @@ font-style: inherit;">'white'</span>,</span>
 background-color: null;
 font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Size of fairgrounds"</span>)</span></code></pre></div>
+font-style: inherit;">"Size of fairgrounds"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 6 were used due to pretty() classification</code></pre>
 </div>
@@ -15950,7 +16540,7 @@ Returning the palette you asked for with that many colors</code></pre>
 <pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 6
 required, using interpolation to calculate colours</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -15962,7 +16552,7 @@ font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -15970,7 +16560,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1">visitMap <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1">visitMap <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -16010,7 +16600,7 @@ font-style: inherit;">'white'</span>,</span>
 background-color: null;
 font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Fair Visitors by the Million"</span>)</span></code></pre></div>
+font-style: inherit;">"Fair Visitors by the Million"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 8 were used due to pretty() classification</code></pre>
 </div>
@@ -16022,7 +16612,7 @@ Returning the palette you asked for with that many colors</code></pre>
 <pre><code>Warning in rwmGetColours(colourPalette, numColours): 9 colours specified and 8
 required, using interpolation to calculate colours</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -16034,7 +16624,7 @@ font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -16042,7 +16632,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 </figure>
 </div>
 </div>
-<div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1">timeMap <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1">timeMap <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -16082,7 +16672,7 @@ font-style: inherit;">'white'</span>,</span>
 background-color: null;
 font-style: inherit;">mapTitle=</span><span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">"Length of the World's Fair"</span>)</span></code></pre></div>
+font-style: inherit;">"Length of the World's Fair"</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>You asked for 7 categories, 9 were used due to pretty() classification</code></pre>
 </div>
@@ -16090,7 +16680,7 @@ font-style: inherit;">"Length of the World's Fair"</span>)</span></code></pre></
 <pre><code>Warning in brewer.pal(10, "OrRd"): n too large, allowed maximum for palette OrRd is 9
 Returning the palette you asked for with that many colors</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">do.call</span>(addMapLegend, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -16102,7 +16692,7 @@ font-style: inherit;">0.5</span>, <span class="at" style="color: #657422;
 background-color: null;
 font-style: inherit;">legendMar=</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>))</span></code></pre></div>
+font-style: inherit;">5</span>))</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -16135,7 +16725,7 @@ font-style: inherit;">5</span>))</span></code></pre></div>
 <p>My friend, <a href="https://benleese.com">Ben Leese</a>, was telling me about his most recent project. He has a passion for going through old naturalist’s notebooks and pulling out data from the depths of that analog mess and bringing it into the digital world. He was talking to me about how weather could impact different bird behaviors. But he only had binary weather data (Yes, it rained/No, it didn’t rain). Furthermore, it was from Raleigh, NC rather than Zebulon, NC. While these places are close on the map, weather is even more local than politics. So I said that I’d try to find some better weather data for him.</p>
 <p>I found this <a href="https://zperzan.github.io/projects/scrape-weather-underground/">helpful python script</a> for scraping the weather data from <a href="https://www.wunderground.com">Weather Underground</a>, which I will adapt to my purpose.</p>
 <div id="8418626f" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><span class="im" style="color: #00769E;
 background-color: null;
 font-style: inherit;">import</span> time</span>
 <span id="cb1-2"><span class="im" style="color: #00769E;
@@ -16175,11 +16765,11 @@ font-style: inherit;">from</span> scrape_wunderground <span class="im" style="co
 background-color: null;
 font-style: inherit;">import</span> <span class="op" style="color: #5E5E5E;
 background-color: null;
-font-style: inherit;">*</span></span></code></pre></div>
+font-style: inherit;">*</span></span></code></pre></div></div>
 </div>
 <p>I will scrape weather from the <a href="https://www.wunderground.com/dashboard/pws/KNCZEBUL74?cm_ven=localwx_pwsdash">BreakingWind station</a> with code <code>KNCZEBUL74</code> on 8/1/2024, as I am pretty sure this is the closest station to the desired location.</p>
 <div id="7aec2dff" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">station_id <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1">station_id <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -16201,7 +16791,7 @@ font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"#3B3A3EFF"</span>,</span>
 <span id="cb2-8">  )</span>
-<span id="cb2-9">)</span></code></pre></div>
+<span id="cb2-9">)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div id="ojfftgapgl" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>
@@ -16251,18 +16841,18 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
  
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <tbody>
 <tr class="gt_col_headings odd">
-<td id="timestamps" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">timestamps</td>
-<td id="Temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temperature</td>
-<td id="Dew Point" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Dew Point</td>
-<td id="Humidity" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Humidity</td>
-<td id="Wind Speed" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Speed</td>
-<td id="Wind Gust" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Gust</td>
-<td id="Pressure" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Pressure</td>
-<td id="Precip. Rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Rate</td>
-<td id="Precip. Accum." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Accum.</td>
+<th id="timestamps" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">timestamps</th>
+<th id="Temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temperature</th>
+<th id="Dew Point" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Dew Point</th>
+<th id="Humidity" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Humidity</th>
+<th id="Wind Speed" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Speed</th>
+<th id="Wind Gust" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Gust</th>
+<th id="Pressure" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Pressure</th>
+<th id="Precip. Rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Rate</th>
+<th id="Precip. Accum." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Accum.</th>
 </tr>
 </tbody>
 <tbody class="gt_table_body">
@@ -16495,7 +17085,7 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
 </div>
 <p>And it works! That being said, I’ll have to find a different weather station because this one seems somewhat new. There is only partial data for 5/29/2024.</p>
 <div id="228036c4" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">date_id <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1">date_id <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -16511,7 +17101,7 @@ font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"#3B3A3EFF"</span>,</span>
 <span id="cb3-6">  )</span>
-<span id="cb3-7">)</span></code></pre></div>
+<span id="cb3-7">)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div id="nwbjaithrb" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>
@@ -16561,18 +17151,18 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
  
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <tbody>
 <tr class="gt_col_headings odd">
-<td id="timestamps" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">timestamps</td>
-<td id="Temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temperature</td>
-<td id="Dew Point" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Dew Point</td>
-<td id="Humidity" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Humidity</td>
-<td id="Wind Speed" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Speed</td>
-<td id="Wind Gust" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Gust</td>
-<td id="Pressure" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Pressure</td>
-<td id="Precip. Rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Rate</td>
-<td id="Precip. Accum." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Accum.</td>
+<th id="timestamps" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" scope="col">timestamps</th>
+<th id="Temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temperature</th>
+<th id="Dew Point" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Dew Point</th>
+<th id="Humidity" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Humidity</th>
+<th id="Wind Speed" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Speed</th>
+<th id="Wind Gust" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Gust</th>
+<th id="Pressure" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Pressure</th>
+<th id="Precip. Rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Rate</th>
+<th id="Precip. Accum." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Accum.</th>
 </tr>
 </tbody>
 <tbody class="gt_table_body">
@@ -16783,7 +17373,7 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
 </div>
 <p>And 5/28/2024 has no data.</p>
 <div id="c2489a03" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">date_id <span class="op" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1">date_id <span class="op" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
@@ -16799,7 +17389,7 @@ font-style: inherit;">=</span> <span class="st" style="color: #20794D;
 background-color: null;
 font-style: inherit;">"#3B3A3EFF"</span>,</span>
 <span id="cb4-6">  )</span>
-<span id="cb4-7">)</span></code></pre></div>
+<span id="cb4-7">)</span></code></pre></div></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div id="ghtfzfvkho" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>
@@ -16849,18 +17439,18 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
  
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <tbody>
 <tr class="gt_col_headings odd">
-<td id="timestamps" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">timestamps</td>
-<td id="Temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temperature</td>
-<td id="Dew Point" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Dew Point</td>
-<td id="Humidity" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Humidity</td>
-<td id="Wind Speed" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Speed</td>
-<td id="Wind Gust" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Gust</td>
-<td id="Pressure" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Pressure</td>
-<td id="Precip. Rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Rate</td>
-<td id="Precip. Accum." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Accum.</td>
+<th id="timestamps" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">timestamps</th>
+<th id="Temperature" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Temperature</th>
+<th id="Dew Point" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Dew Point</th>
+<th id="Humidity" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Humidity</th>
+<th id="Wind Speed" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Speed</th>
+<th id="Wind Gust" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Wind Gust</th>
+<th id="Pressure" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Pressure</th>
+<th id="Precip. Rate" class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Rate</th>
+<th id="Precip. Accum." class="gt_col_heading gt_columns_bottom_border gt_right" data-quarto-table-cell-role="th" scope="col">Precip. Accum.</th>
 </tr>
 </tbody>
 <tbody class="gt_table_body">
@@ -16895,7 +17485,7 @@ font-style: inherit;">"#3B3A3EFF"</span>,</span>
 <p>This week we’re exploring Olympics data!</p>
 <p>The data this week comes from the <a href="https://www.kaggle.com/datasets/heesoo37/120-years-of-olympic-history-athletes-and-results/">RGriffin Kaggle dataset: 120 years of Olympic history: athletes and results</a>, basic bio data on athletes and medal results from Athens 1896 to Rio 2016.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">library</span>(tidyverse)</span>
 <span id="cb1-2"><span class="fu" style="color: #4758AB;
@@ -16928,13 +17518,13 @@ font-style: inherit;">library</span>(gt)</span>
 background-color: null;
 font-style: inherit;">load</span>(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'olympicMedalResults.RData'</span>)</span></code></pre></div>
+font-style: inherit;">'olympicMedalResults.RData'</span>)</span></code></pre></div></div>
 </div>
 <section id="data-in-this-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="data-in-this-dataset">Data in this dataset:</h2>
 <p>First, I am planning on analyzing the summer and winter olympics separately. Furthermore, it occurs to me that the year in this dataset should be treated as a <code>factor</code> variable, rather than a numeric variable. This will help if (for example) the olympics were skipped or postponed, and it will definitely help when the winter games were shifted by 2 years so that the intervals between games are uniform.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">countryParticipation <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1">countryParticipation <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> olympics <span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -16947,7 +17537,7 @@ font-style: inherit;">|&gt;</span></span>
 background-color: null;
 font-style: inherit;">arrange</span>(<span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">desc</span>(n)) </span></code></pre></div>
+font-style: inherit;">desc</span>(n)) </span></code></pre></div></div>
 </div>
 <p>My plan is to plot out participation, medal count, and gold medal count by <del>country</del> NOC region. The reason for this due to the fact that there are an obnoxious number of “teams” (1184) already in this dataset. Also, I don’t think that we want to track the results of “Osborne Swimming Club, Manchester” or “Phalainis ton Thorichtou ‘Psara’-3” on the same level as Spain, China, Brazil, USA, etc. As it stands, there are plenty of countries to keep track of! As it is, there are 230 national olympic committeees. For fun, let’s look at the least frequent participants.</p>
 <div class="cell">
@@ -17402,17 +17992,17 @@ font-style: inherit;">desc</span>(n)) </span></code></pre></div>
 }
 </style>
 
-<table class="gt_table caption-top table table-sm table-striped small" data-quarto-postprocess="true" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+<table class="gt_table caption-top table table-sm table-striped small" data-quarto-bootstrap="false">
 <colgroup>
 <col style="width: 50%">
 <col style="width: 50%">
 </colgroup>
 <thead>
 <tr class="gt_heading header">
-<th colspan="2" class="gt_heading gt_title gt_font_normal" style="background-color: #3B7C70; color: #FFFFFF">Olympic participant breakdown</th>
+<td colspan="2" class="gt_heading gt_title gt_font_normal" style="background-color: #3B7C70; color: #FFFFFF">Olympic participant breakdown</td>
 </tr>
 <tr class="gt_heading even">
-<th colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF">10 lowest participating countries</th>
+<td colspan="2" class="gt_heading gt_subtitle gt_font_normal gt_bottom_border" style="background-color: #3B7C70; color: #FFFFFF">10 lowest participating countries</td>
 </tr>
 <tr class="gt_col_headings header">
 <th id="Country code" class="gt_col_heading gt_columns_bottom_border gt_left" data-quarto-table-cell-role="th" style="background-color: #3B3A3E; color: #FFFFFF" scope="col">Country code</th>
@@ -17475,7 +18065,7 @@ font-style: inherit;">desc</span>(n)) </span></code></pre></div>
 <h3 class="anchored" data-anchor-id="aside-ummm">Aside: Ummm…</h3>
 <p>What is NFL and who is the lone participant from there?</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">olympics <span class="sc" style="color: #5E5E5E;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1">olympics <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -17487,7 +18077,7 @@ font-style: inherit;">"NFL"</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">|&gt;</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">glimpse</span>()</span></code></pre></div>
+font-style: inherit;">glimpse</span>()</span></code></pre></div></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Rows: 1
 Columns: 15
@@ -17521,7 +18111,7 @@ $ medal  &lt;chr&gt; NA</code></pre>
 <h2 class="anchored" data-anchor-id="back-to-the-show">Back to the show</h2>
 <p>I think that I should create a function that sorts the participation data (and later, the medalist data) by country and year. Also, since 230 lines would make the graph look like messy spaghetti, I think it would be best to limit the results to the top 10 countries by the metric being plotted (participation, number medalists, number gold medalists).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">countByCountryYearSzn <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">countByCountryYearSzn <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="cf" style="color: #003B4F;
 background-color: null;
@@ -17647,11 +18237,11 @@ font-style: inherit;">$</span>noc)</span>
 <span id="cb5-25">  <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">return</span>(out)</span>
-<span id="cb5-26">}</span></code></pre></div>
+<span id="cb5-26">}</span></code></pre></div></div>
 </div>
 <p>Now, let’s make a graph of olympic participation:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">part <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1">part <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -17659,12 +18249,12 @@ font-style: inherit;">countByCountryYearSzn</span>(olympics,<span class="at" sty
 background-color: null;
 font-style: inherit;">top=</span><span class="cn" style="color: #8f5902;
 background-color: null;
-font-style: inherit;">TRUE</span>)</span></code></pre></div>
+font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'season', 'noc'. You can override using the
 `.groups` argument.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(part, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -17773,7 +18363,7 @@ background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb8-16">  <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></code></pre></div>
+font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -17784,7 +18374,7 @@ font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></c
 </div>
 <p>The medal breakdown</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">olyMedal <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1">olyMedal <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> olympics <span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -17804,12 +18394,12 @@ font-style: inherit;">countByCountryYearSzn</span>(olyMedal,<span class="at" sty
 background-color: null;
 font-style: inherit;">top=</span><span class="cn" style="color: #8f5902;
 background-color: null;
-font-style: inherit;">TRUE</span>)</span></code></pre></div>
+font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'season', 'noc'. You can override using the
 `.groups` argument.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(medalists, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -17918,7 +18508,7 @@ background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb11-16">  <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></code></pre></div>
+font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -17930,7 +18520,7 @@ font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></c
 <p>I will note that <code>URS</code> is the Soviet Union, and <code>RUS</code> is Russia. Clearly that country’s 20th century history means that it is not treated as continuous by the Olympic Federation. It reminds me of when I was a kid watching <em>Where in the World is Carmen Sandiego</em> and all of a sudden there were new countries on the European maps. &lt;/nostalgia trip&gt;</p>
 <p>But you can totally see the rivalry fueled by the Cold War when you look at the “slope” of the summer olympic medal accumulation graph and compare the Soviets (and later, the Russians) to the Americans.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">olyGold <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1">olyGold <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> olympics <span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -17950,12 +18540,12 @@ font-style: inherit;">countByCountryYearSzn</span>(olyGold,<span class="at" styl
 background-color: null;
 font-style: inherit;">top=</span><span class="cn" style="color: #8f5902;
 background-color: null;
-font-style: inherit;">TRUE</span>)</span></code></pre></div>
+font-style: inherit;">TRUE</span>)</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>`summarise()` has grouped output by 'season', 'noc'. You can override using the
 `.groups` argument.</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(goldMetals, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -18064,7 +18654,7 @@ background-color: null;
 font-style: inherit;">+</span></span>
 <span id="cb14-16">  <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></code></pre></div>
+font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -18096,7 +18686,7 @@ font-style: inherit;">scale_color_paletteer_d</span>(col_pal_dis_long)</span></c
 <p>This week we’re exploring “summer” movies: movies with <em>summer</em> in their title!</p>
 <p>The data this week comes from the <a href="https://developer.imdb.com/non-commercial-datasets/">Internet Movie Database</a>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">library</span>(tidyverse)</span>
 <span id="cb1-2"><span class="fu" style="color: #4758AB;
@@ -18125,13 +18715,13 @@ font-style: inherit;">library</span>(paletteer)</span>
 background-color: null;
 font-style: inherit;">load</span>(<span class="st" style="color: #20794D;
 background-color: null;
-font-style: inherit;">'summerMovie.RData'</span>)</span></code></pre></div>
+font-style: inherit;">'summerMovie.RData'</span>)</span></code></pre></div></div>
 </div>
 <section id="popularity-of-movie-by-year" class="level2">
 <h2 class="anchored" data-anchor-id="popularity-of-movie-by-year">Popularity of movie by year</h2>
 <p>In some sense how well-known or popular a movie is should depend on the year. I’m guessing that very old movies may not have as many votes in the IMDB system. This could also bias the ratings</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(summer_movies, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -18169,7 +18759,7 @@ font-style: inherit;">caption =</span> caption_text</span>
 background-color: null;
 font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">theme_simple</span>()</span></code></pre></div>
+font-style: inherit;">theme_simple</span>()</span></code></pre></div></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>Warning: Removed 1 row containing missing values or values outside the scale range
 (`geom_point()`).</code></pre>
@@ -18184,7 +18774,7 @@ font-style: inherit;">theme_simple</span>()</span></code></pre></div>
 </div>
 <p>I can definitely see that there is a volume bias towards newer movies. Let’s explore if this shows up in the ratings.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(summer_movies, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -18276,7 +18866,7 @@ font-style: inherit;">caption =</span> caption_text</span>
 background-color: null;
 font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">theme_simple</span>()</span></code></pre></div>
+font-style: inherit;">theme_simple</span>()</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -18293,7 +18883,7 @@ font-style: inherit;">theme_simple</span>()</span></code></pre></div>
 <p><img src="https://raw.githubusercontent.com/poncest/tidytuesday/main/2024/Week_31/2024_31.png" class="img-fluid"></p>
 <p>Rather than plotting mean values for each genre, I thought I’d make a box plot instead of plotting the average rating. So I will tidy up the data. Furthermore, since I’m creating a box plot, I’m going to remove genres with fewer than <img src="https://latex.codecogs.com/png.latex?N=5"> ratings.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">globalMedian <span class="ot" style="color: #003B4F;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1">globalMedian <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">=</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -18402,11 +18992,11 @@ font-style: inherit;">filter</span>(count<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">&gt;=</span><span class="dv" style="color: #AD0000;
 background-color: null;
-font-style: inherit;">5</span>)</span></code></pre></div>
+font-style: inherit;">5</span>)</span></code></pre></div></div>
 </div>
 <p>And finally, the plot.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">ggplot</span>(data4plot, <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -18507,7 +19097,7 @@ font-style: inherit;">'off'</span>) <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">+</span> <span class="fu" style="color: #4758AB;
 background-color: null;
-font-style: inherit;">theme_catY</span>()</span></code></pre></div>
+font-style: inherit;">theme_catY</span>()</span></code></pre></div></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
