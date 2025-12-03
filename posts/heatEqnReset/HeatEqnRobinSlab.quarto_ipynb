@@ -21,7 +21,7 @@
         "draft: false\n",
         "---"
       ],
-      "id": "87df95f7"
+      "id": "37d28302"
     },
     {
       "cell_type": "markdown",
@@ -43,7 +43,7 @@
         "## Building a 3D domain\n",
         "The first challenge is to build a 3D domain. Fortunately, FENICSx has a function for that, and my code looks like this:"
       ],
-      "id": "0587cdbf"
+      "id": "d9edbf49"
     },
     {
       "cell_type": "code",
@@ -68,7 +68,7 @@
         "    ghost_mode=mesh.GhostMode.shared_facet  # Ghost mode for shared facets\n",
         ")"
       ],
-      "id": "0823bc21",
+      "id": "e5b5d751",
       "execution_count": null,
       "outputs": []
     },
@@ -84,7 +84,7 @@
         "\n",
         "The above is a very hand-wavy explanation, and is enough for me (for now anyway). So, I then created the function space as usual, and defined the parameters that are important for this problem. "
       ],
-      "id": "1c174620"
+      "id": "fb2ff4ea"
     },
     {
       "cell_type": "code",
@@ -110,7 +110,7 @@
         "uPrev.name = \"uPrev\"\n",
         "uPrev.interpolate(initial_condition)  # Interpolate the initial condition into the function space"
       ],
-      "id": "4f248cc0",
+      "id": "c401e646",
       "execution_count": null,
       "outputs": []
     },
@@ -134,14 +134,15 @@
         "\n",
         "Note, ParaView is a separate program used for 3D visualizations, not a Python package. This is also part of the rationale behind building the github repository. I'll need to create visualizations outside of a Quarto doc (like a majority of my other posts) and have to build visualizations elsewhere, then link to them. "
       ],
-      "id": "53947425"
+      "id": "7643148a"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/.local/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,

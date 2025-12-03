@@ -23,15 +23,15 @@ twoColorPal = colors()[c(644,30)]
 
 showtext_opts(dpi = 225, regular.wt = 300, bold.wt = 800)
 
-font_add("fa6-brands", 
-         "/usr/share/fonts/fontawesome-free-6.6.0-desktop/otfs/Font Awesome 6 Brands-Regular-400.otf")
+font_add("fa7-brands", 
+         "/usr/share/fonts/fontawesome-free-7.0.1-desktop/otfs/Font Awesome 7 Brands-Regular-400.otf")
 showtext_auto(enable = TRUE)
 
 theme_set(theme_classic(base_size = 14, base_family = 'sans'))
 
 ttText <- str_glue("**#TidyTuesday** &bull; Sources: Stack Overflow and Havisha Khurana")
-gh <- str_glue("<span style='font-family: \"fa6-brands\"'>&#xf09b;</span>")
-li <- str_glue("<span style='font-family:\"fa6-brands\"'>&#xf08c;</span>")
+gh <- str_glue("<span style='font-family: \"fa7-brands\"'>&#xf09b;</span>")
+li <- str_glue("<span style='font-family:\"fa7-brands\"'>&#xf08c;</span>")
 caption_text <- str_glue("{ttText} <br> {gh} datawolf04 {li} wolf-253b6625a")
 
 theme_mine = function(...){

@@ -243,7 +243,7 @@
         "## Let's make code!\n",
         "Let's make some computational choices and code this up. First, I'll begin by setting up the initial condition."
       ],
-      "id": "5e74aff8"
+      "id": "e9b78e43"
     },
     {
       "cell_type": "code",
@@ -257,7 +257,7 @@
         "xi = np.linspace(0,1,N)\n",
         "u0 = initTemp * np.ones(N)"
       ],
-      "id": "bdadc240",
+      "id": "3717d675",
       "execution_count": null,
       "outputs": []
     },
@@ -267,7 +267,7 @@
       "source": [
         "Next, I'll define the matrices on the LHS and RHS of the equation above, as well as a few parameters."
       ],
-      "id": "3dc53be6"
+      "id": "7804c56a"
     },
     {
       "cell_type": "code",
@@ -298,7 +298,7 @@
         "Gsq[0, 0:2] = [2,1]\n",
         "Gsq[N-1, N-2:] = [1,2]"
       ],
-      "id": "a07fdfd6",
+      "id": "cff685c9",
       "execution_count": null,
       "outputs": []
     },
@@ -308,7 +308,7 @@
       "source": [
         "Python can find the new u-matrix in terms of the old u matrix in one line:"
       ],
-      "id": "9e50e206"
+      "id": "32779033"
     },
     {
       "cell_type": "code",
@@ -317,7 +317,7 @@
         "#| eval: false\n",
         "newU = np.linalg.solve(K,G)"
       ],
-      "id": "71059692",
+      "id": "e861fb19",
       "execution_count": null,
       "outputs": []
     },
@@ -327,7 +327,7 @@
       "source": [
         "So let's build our solution:"
       ],
-      "id": "532bce19"
+      "id": "15be726f"
     },
     {
       "cell_type": "code",
@@ -344,7 +344,7 @@
         "  U[:, k] = newU    \n",
         "  oldU = newU"
       ],
-      "id": "a296c0e3",
+      "id": "36201c12",
       "execution_count": null,
       "outputs": []
     },
@@ -354,7 +354,7 @@
       "source": [
         "And let's make a nice 3D plot of the solution:"
       ],
-      "id": "976338eb"
+      "id": "e969dfbf"
     },
     {
       "cell_type": "code",
@@ -371,7 +371,7 @@
         "ax.set_zlabel(r'$u$')\n",
         "plt.show()"
       ],
-      "id": "aeaef523",
+      "id": "278904db",
       "execution_count": null,
       "outputs": []
     },
@@ -384,7 +384,7 @@
         "\n",
         "Note, that we have a property that can change the dynamics of this system, namely $b$, which is related to the (inverse of the) heat transfer coefficient. For the previous plot $b=1$. Compare to these, where $b=5$ and $b=0.5$:"
       ],
-      "id": "e1368983"
+      "id": "3840e4c3"
     },
     {
       "cell_type": "code",
@@ -398,7 +398,7 @@
         "uRobin(10,101,5,0.002,5).plotTemp()\n",
         "uRobin(10,101,5,0.002,0.5).plotTemp()"
       ],
-      "id": "d27f32f8",
+      "id": "5ddcdcf3",
       "execution_count": null,
       "outputs": []
     },
@@ -412,7 +412,7 @@
         "$$\n",
         "First, let's note that the only free parameter here is the initial temperature $T_0$. There is no equivalent to the \"inverse heat transfer coefficient\" $b$ that I defined for the Robin problem."
       ],
-      "id": "59d6e4b1"
+      "id": "a0f254e6"
     },
     {
       "cell_type": "code",
@@ -439,7 +439,7 @@
         "ax.set_zlabel(r'$u$')\n",
         "plt.show()"
       ],
-      "id": "7f912ad9",
+      "id": "3afa6e38",
       "execution_count": null,
       "outputs": []
     },
@@ -449,7 +449,7 @@
       "source": [
         "This is similar to the Robin plot for a very small $b$ value."
       ],
-      "id": "7ccb9c1f"
+      "id": "8548c44e"
     },
     {
       "cell_type": "code",
@@ -457,7 +457,7 @@
       "source": [
         "uRobin(10,101,5,0.002,0.005).plotTemp()"
       ],
-      "id": "29d03bd9",
+      "id": "8a81cc65",
       "execution_count": null,
       "outputs": []
     },
@@ -479,14 +479,15 @@
         "\n",
         "In my next post, I plan to solve the 1D problems I've solved here using the [FENICS code](https://fenicsproject.org/). And this will let me generalize this to 3D as well as model a more realistic system."
       ],
-      "id": "57540a08"
+      "id": "bcb58efd"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/.local/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,

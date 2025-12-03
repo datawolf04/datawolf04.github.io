@@ -148,14 +148,15 @@
         "\\end{align*}\n",
         "$$\n"
       ],
-      "id": "268bbd1a"
+      "id": "a3ed4245"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/.local/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,

@@ -43,7 +43,7 @@
         "## Previous work\n",
         "As before, I'll model the system as a simple box, however, this time it will be car-sized, and I'll use thermal properties that are common for metals like aluminum, rather than parameters used for building materials.\n"
       ],
-      "id": "d187b99b"
+      "id": "c6bc43b7"
     },
     {
       "cell_type": "code",
@@ -81,7 +81,7 @@
         "\n",
         "u0 = np.empty((xmax,ymax,zmax))"
       ],
-      "id": "13ca92b9",
+      "id": "e05abb9a",
       "execution_count": null,
       "outputs": []
     },
@@ -130,7 +130,7 @@
         "\n",
         "where $\\delta_{\\text{eff}}$ is an effective depth that the sunlight penetrates. "
       ],
-      "id": "fb0cd91b"
+      "id": "d9c2ac3f"
     },
     {
       "cell_type": "code",
@@ -146,7 +146,7 @@
         "\n",
         "    return powerGen"
       ],
-      "id": "e23cec33",
+      "id": "7c530190",
       "execution_count": null,
       "outputs": []
     },
@@ -170,7 +170,7 @@
         "\n",
         "where $\\Delta_{\\text{eff}}$ is an effective thickness of the convection surface."
       ],
-      "id": "350967e0"
+      "id": "b98e3779"
     },
     {
       "cell_type": "code",
@@ -200,7 +200,7 @@
         "    duConvdt = B*(bdryTemp - uSurf)\n",
         "    return duConvdt  "
       ],
-      "id": "253042de",
+      "id": "08448b63",
       "execution_count": null,
       "outputs": []
     },
@@ -376,7 +376,7 @@
         "\n",
         "These are all coded into the function below."
       ],
-      "id": "5436fb42"
+      "id": "180b7937"
     },
     {
       "cell_type": "code",
@@ -431,7 +431,7 @@
         "\n",
         "    return lap"
       ],
-      "id": "dd5a9571",
+      "id": "73565607",
       "execution_count": null,
       "outputs": []
     },
@@ -441,7 +441,7 @@
       "source": [
         "### Final Heat equation function"
       ],
-      "id": "c1b1a833"
+      "id": "5603f112"
     },
     {
       "cell_type": "code",
@@ -451,7 +451,7 @@
         "    dudt = alpha*lap3DFE(u,dx) + powerGen(u, t, intensity, A) + bdryConv(u, t, Tair, B)\n",
         "    return dudt"
       ],
-      "id": "0551d35e",
+      "id": "3756803c",
       "execution_count": null,
       "outputs": []
     },
@@ -461,7 +461,7 @@
       "source": [
         "I will have to flatten things as `solve_ivp` only solves a vector system of differential equations rather than the higher dimenionality matrix system that I've created."
       ],
-      "id": "2c5730e3"
+      "id": "caa59044"
     },
     {
       "cell_type": "code",
@@ -471,7 +471,7 @@
         "    u = uflat.reshape(xmax,ymax,zmax)\n",
         "    return dudt(t,u, alpha, intensity, dx, Tair, A, B).flatten()"
       ],
-      "id": "4f912a90",
+      "id": "fffa79cc",
       "execution_count": null,
       "outputs": []
     },
@@ -488,7 +488,7 @@
         "### Calculation 1:\n",
         "For parameters $A$ and $B$ (described above) find the difference between the average box temperature after an hour and 47 deg C, assuming an air temperature of 22 deg C."
       ],
-      "id": "65ab9d98"
+      "id": "ba1e7c89"
     },
     {
       "cell_type": "code",
@@ -514,7 +514,7 @@
         "\n",
         "    return tempDiff"
       ],
-      "id": "92b77e48",
+      "id": "8b58720c",
       "execution_count": null,
       "outputs": []
     },
@@ -525,7 +525,7 @@
         "### Calculation 2:\n",
         "For parameters $A$ and $B$ (described above) find the difference between the average box temperature after 10 minutes and 37 deg C, assuming an air temperature of 27 deg C."
       ],
-      "id": "3a5f0b1e"
+      "id": "c8283aca"
     },
     {
       "cell_type": "code",
@@ -548,7 +548,7 @@
         "\n",
         "    return tempDiff"
       ],
-      "id": "ecc7605a",
+      "id": "77676fb4",
       "execution_count": null,
       "outputs": []
     },
@@ -559,7 +559,7 @@
         "### Optimization\n",
         "Now I will find the parameters $A$ and $B$ that correctly model the statements given in the opening section of this post."
       ],
-      "id": "09b15af0"
+      "id": "35e45467"
     },
     {
       "cell_type": "code",
@@ -589,7 +589,7 @@
         "\n",
         "print(f'The temperature differences are {diff1:.3f} deg C for calculation 1 and {diff2:.3f} deg C for calculation 2')"
       ],
-      "id": "3db5e192",
+      "id": "533856d4",
       "execution_count": null,
       "outputs": []
     },
@@ -599,7 +599,7 @@
       "source": [
         "Since we can interpret the parameters $A$ and $B$ through the properties of materials, as described above, we find:"
       ],
-      "id": "d70c704c"
+      "id": "8d1100f1"
     },
     {
       "cell_type": "code",
@@ -611,7 +611,7 @@
         "Delta = heatTransferCoef/(specificHeat*wallDensity*res.x[1])\n",
         "print(f'δ = {D:.5f} m and Δ = {Delta:.5f} m.')"
       ],
-      "id": "c9c96552",
+      "id": "ab9232c4",
       "execution_count": null,
       "outputs": []
     },
@@ -622,7 +622,7 @@
         "### Plot the time evolution of the temperature\n",
         "Finally, I'll plot the time evolution of the average temperature for these systems."
       ],
-      "id": "cc4b8a8d"
+      "id": "a7b3d093"
     },
     {
       "cell_type": "code",
@@ -676,7 +676,7 @@
         "plot1(A,B)\n",
         "plot2(A,B)"
       ],
-      "id": "7f3a3122",
+      "id": "3ee0f3a1",
       "execution_count": null,
       "outputs": []
     },
@@ -696,7 +696,7 @@
         "\n",
         "Given the system that I'm modeling, and values for $A$ and $B$ that I have found, we can calculate the difference between air temperature and the steady-state box temperature. "
       ],
-      "id": "2f9cad9d"
+      "id": "b7aa3d88"
     },
     {
       "cell_type": "code",
@@ -707,7 +707,7 @@
         "solarBoost = A * solarIntensity/B * topArea/boxArea\n",
         "print(f'The temperature after a long time should approach a value that is {solarBoost:.2f} deg C warmer than the air temperature.')"
       ],
-      "id": "87a7a7bf",
+      "id": "0ccacb93",
       "execution_count": null,
       "outputs": []
     },
@@ -717,7 +717,7 @@
       "source": [
         "Let's verify this calculation by simulating this system for 10 hours."
       ],
-      "id": "fc46833d"
+      "id": "e34ac7d0"
     },
     {
       "cell_type": "code",
@@ -736,7 +736,7 @@
         "\n",
         "longCalc = simSystem(A,B)    "
       ],
-      "id": "ce5632f0",
+      "id": "dff03574",
       "execution_count": null,
       "outputs": []
     },
@@ -746,7 +746,7 @@
       "source": [
         "And then I will plot the average temperature as a function of time, as well as the average temperature at a range of heights."
       ],
-      "id": "23c97ec7"
+      "id": "a0c3e2a4"
     },
     {
       "cell_type": "code",
@@ -781,7 +781,7 @@
         "    \n",
         "plotTemperature(longCalc.y)"
       ],
-      "id": "d8fc494b",
+      "id": "2d4eda32",
       "execution_count": null,
       "outputs": []
     },
@@ -798,14 +798,15 @@
         "\n",
         "I also need to develop code which allows for the sun to change it's position. And I'll deal with other issues such as seasonal changes/the varying length of day/night. As well as deal with latitude. I've been fiddling with the math on the back of napkins, and that should work nicely with some pretty pictures. Then we can compare hot boxes in higher latitudes to those with lower latitudes."
       ],
-      "id": "6fe9ec9b"
+      "id": "bbb44d0d"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/.local/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,

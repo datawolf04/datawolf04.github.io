@@ -1,0 +1,248 @@
+---
+title: "Sechseläuten Festival and Folk Wisdom"
+description: "Don't tell Punxsutawney Phil that he has competition"
+author: "Steven Wolf"
+date: "12/2/2025"
+categories:
+  - TidyTuesday
+  - R 
+execute: 
+  messages: false
+  warning: false
+---
+
+```{r}
+#| echo: False
+
+library(tidyverse)
+library(ggtext)
+library(showtext)
+library(janitor)
+library(ggdist)
+library(ggrepel)
+library(scales)
+library(gt)
+library(paletteer)
+library(grid)
+library(GGally)
+library(gtsummary)
+
+col_pal_dis_short = "MetBrewer::Kandinsky"
+col_pal_dis_long = "PrettyCols::Autumn"
+col_pal_cont = "ggthemes::Blue-Teal"
+oneCol = paletteer_d(col_pal_dis_short)[1]
+silver = "#e1e1e1"
+ltSilver = "#efefef"
+gold = "#eecf70"
+ltGold = "#f7e8b9"
+grn = "#a0e9a7"
+ltGrn = "#c4f5c8"
+twoColorPal = colors()[c(644,30)]
+myColors = c("#f4c976","#76a0f4")
+
+showtext_opts(dpi = 225, regular.wt = 300, bold.wt = 800)
+
+theme_set(theme_classic(base_size = 14, base_family = 'sans'))
+
+font_add("fa7-brands", 
+         "/usr/share/fonts/fontawesome-free-7.0.1-desktop/otfs/Font Awesome 7 Brands-Regular-400.otf")
+showtext_auto(enable = TRUE)
+
+gh <- str_glue("<span style='font-family: \"fa7-brands\"'>&#xf09b;</span>")
+li <- str_glue("<span style='font-family:\"fa7-brands\"'>&#xf08c;</span>")
+ttText <- str_glue("**#TidyTuesday** &bull; Source: {gh} econmaett")
+caption_text <- str_glue("{ttText} <br> {gh} datawolf04 {li} wolf-253b6625a")
+ttStart <- str_glue("<b>#TidyTuesday</b>")
+
+theme_mine = function(...){
+  theme_minimal() %+replace%
+    
+    theme(
+      legend.title = element_markdown(size = rel(0.8), hjust = 0.5),
+      legend.text = element_text(size = rel(0.7)), 
+      legend.background = element_rect(fill='grey85',color=NA),
+      
+      plot.title.position = 'plot',
+      plot.caption.position = 'plot',
+      plot.background = element_rect(fill='grey95'),
+      
+      strip.background = element_rect(
+        fill=paletteer_d(col_pal_dis_short)[4]),
+      strip.text = element_text(color = "white", size = rel(0.5)),
+      
+      plot.margin = margin(t = 20, r = 20, b = 20, l = 20),
+      plot.title = element_text(size = rel(1.5),
+                                margin = margin(0,0,10,0),hjust=0.5),
+      plot.subtitle = element_text(size = rel(1.25),
+                                margin = margin(0,0,10,0),hjust=0.5),
+      axis.title.x = element_text(margin = margin(10, 0, 0, 0), size = rel(0.8)),
+      axis.title.y = element_text(margin = margin(0, 10, 0, 0), size = rel(0.8),angle=90),
+      axis.text = element_text(size=rel(0.8)),
+      plot.caption = element_markdown(
+        size        = rel(.7),
+        family      = "sans",
+        color       = "grey25",
+        lineheight  = 0.6,
+        hjust       = 1,
+        halign      = 0,
+        margin      = margin(t = 10, b = 5)
+      )
+    ) 
+}
+
+
+tableColors = paletteer_d("fishualize::Acanthurus_sohal")
+darkText = tableColors[5]
+lightText = "white"
+darkBg = tableColors[4]
+medBg = tableColors[3]
+lightBg = tableColors[2]
+brightBg = tableColors[1]
+
+my_table_formatting = function(df){
+  df |>
+    tab_style(
+      style = list(
+        cell_fill(color = darkBg),
+        cell_text(color = lightText)
+      ),
+      locations=cells_title()
+    ) |>
+    tab_style(
+      style = list(
+        cell_fill(color = lightBg),
+        cell_text(color = darkText)
+      ), 
+      locations = list(
+        cells_stub(),
+        cells_body()
+      )
+    ) |> 
+    tab_style(
+      style = list(
+          cell_fill(color = medBg),
+          cell_text(color = darkText)
+      ),        
+      locations=list(
+        cells_source_notes(),
+        cells_footnotes()
+      )
+    ) |>
+    tab_style(
+      style = list(
+        cell_fill(color = darkBg),
+        cell_text(color = lightText)
+      ),
+      locations = list(
+        cells_column_labels(),
+        cells_column_spanners()
+      )
+    ) 
+  }
+```
+
+I'm back doing some [#TidyTuesday](https://www.tidytuesday.com/) visualizations. This week let's look at exploding snowmen?!?!?!
+
+The city of Zurich thinks that groundhogs make lousy weather predictors, so they have created the Böögg - [Zurich's infamous exploding snowman!](https://en.wikipedia.org/wiki/Sechsel%C3%A4uten) Ok, I admit that Punxatawny Phil is likely the relative newcomer here. Since I'm American, I don't know what a Böögg is, so I looked it up for others like me.
+
+> The Böögg is a snowman effigy made of cotton, wool, and stuffed with fireworks, created every year for Zurich's "Sechseläuten" spring festival. The saying goes that the quicker the Böögg's head explodes, the finer the summer will be.
+
+This is a festival similar to Groundhog day in that a non-climactic phenomenon is used to "predict" a climactic event. So, let's test the idea, does folk wisdom stand its ground against hard science?
+
+## Confirmation bias
+
+This, and other nuggets of folk wisdom, often "work" because of a phenomenon known as confirmation bias, that is people overemphasize data that support their belief and neglect data that oppose their belief. Consider the two reactions to a "fine" day:
+
+1. Given a short time to Böögg head explosion. Today "proves" that the Böögg is right.
+2. Given a long time to Böögg head explosion. Given all of the crappy weather we've had recently, today just "proves" that the Böögg is sometimes generous and lets us have a break from the awful weather.
+
+### More dirty poker
+
+Note, the saying is that the quicker the Böögg's head explodes, the ***finer*** the summer will be. Well, what makes for a fine summer (in the context of Zurich)? Is hotter finer? Surely there is a limit to that, I think that the good people of Zurich would not enjoy 40 degree weather like my friend in Sao Paolo gets routinely during the summer. Is it purely sunshine? What about rainfall? So the beauty of this statement is that you can make it mean whatever you want it to mean.
+
+## Summary plot
+When looking at groups of numerical data, I like to do a pairs plot. Each cell of the array is one of three types of things:
+
+1. A histogram (or kernel density plot) of each measurement on the diagonal
+2. A scatterplot relating one measurement to a different measurement in the lower left triangle.
+3. The correlation between the two measurements in the upper right triangle.
+
+This lets me combine all of the data into one master plot.
+
+```{r}
+#| echo: false
+load("explSnow.RData")
+
+expSnowTitles <- c('Duration', 'Avg Temp', 'Min Temp', 'Max Temp',
+  'Tot Sunlight', 'Pct sunlight', 'Precip')
+
+ggpairs(explSnow, columns=2:8, columnLabels = expSnowTitles,
+  lower = list(continuous = wrap("points", color = oneCol)),
+  diag = list(continuous = wrap("densityDiag", fill = oneCol, alpha=0.5)),
+  upper = list(continuous = wrap("cor", size = 4))) +
+  theme_mine() + ggtitle("Sechseläuten Festival pairs plot") +
+  labs(caption=caption_text) 
+
+ggsave("sslPairs.png")
+```
+
+The largest correlation between duration and the weather measurements is 0.276, indicating a weak (or non-existant) linear relationship between the two variables.  One thing that I notice is that the temperature data doesn't really vary that much. I'll make a plot that focuses on temperatures
+
+```{r}
+#| echo: false
+tempData <- explSnow |> pivot_longer(
+  cols = starts_with('tre200'),
+  names_to = 'tempType',
+  values_to = 'temp'
+) |> select(year, duration, tempType, temp) |> mutate(
+  tempType = factor(tempType)
+) |> mutate(
+  tempType = fct_recode(tempType,
+    'minTemp' = 'tre200mn',
+    'avgTemp' = 'tre200m0',
+    'maxTemp' = 'tre200mx')
+) |> mutate(
+  tempType = fct_relevel(tempType, 'maxTemp','avgTemp','minTemp')
+)
+
+ggplot(tempData, aes(x=duration,y=temp, color=tempType)) +
+  geom_point() + geom_smooth(method='lm') + ylim(0,40) +
+  theme_mine() + labs(
+    caption = caption_text,
+    x = 'Burn Duration (min)',
+    y = "Temperature (deg C)",
+    title = "Summer Temperature vs. Burn duration",
+    color = "Type"
+  )
+
+ggsave("temperatureFit.png")
+```
+
+I will note that the slopes are all pretty small. Indeed all of the fit lines appear to be very nearly horizontal. And nearly all of the data points lie outside of the shaded region marking the statistical uncertainty of the fit. According to this model, it would seem that burn duration has little influence on temperature -- or at the very least, the fit does not to predict anything quantitatively meaningful. Based on the table below, the "slope" is not significantly different from zero with 99.9% confidence.
+
+```{r}
+#| echo: false
+tempMod = lm(temp ~ duration * tempType, data=tempData)
+
+modCoef <- summary(tempMod)$coefficients |> data.frame() 
+names(modCoef) <- c('est','se','t','p')
+coefNames = row.names(modCoef)
+modCoef <- tibble(coefNames, modCoef) 
+
+modCoef |>  gt(rowname_col = "coefNames") |> 
+  tab_header(
+    title = "Temperature vs duration linear fit coefficients"
+  ) |> 
+  tab_source_note(
+    source_note = html(str_glue('{ttStart} &bull; Note that the slope is so small that a change in duration of 10 minutes changes the prediction of temperature by less than 0.5 degree.'))
+  ) |>
+  my_table_formatting() |> fmt_number(columns = everything(), decimals=3) |>
+  sub_small_vals(columns = p, threshold = 0.001) |> 
+  cols_label(
+    est = "Value", se = "Error",  p = "P(>|t|)"
+  )
+```
+
+## Conclusion
+
+As expected by everyone, folk wisdom/old wives tales don't withstand the scrutiny placed on them when analyzed using statistical methods. But does that make them any less fun? I'll leave that up to you. Now, I feel an incredible urge to make snow explode.

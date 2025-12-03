@@ -20,7 +20,7 @@
         "draft: false\n",
         "---"
       ],
-      "id": "6d11622c"
+      "id": "ddc01c3d"
     },
     {
       "cell_type": "markdown",
@@ -39,7 +39,7 @@
         "3. `dolfinx` is the package that I'm using to set up the Finite Element Method (part of FEniCSx)\n",
         "4. `ufl` is a package with FEniCSx that translates a more convential mathematical notation into forms required by `dolfinx`. I like it when code \"looks like\" math/physics. (That's why I teach students how to create cell names and named ranges when using Excel.)"
       ],
-      "id": "7460b38e"
+      "id": "d3a125e9"
     },
     {
       "cell_type": "code",
@@ -59,7 +59,7 @@
         "from dolfinx.mesh import create_interval, locate_entities, meshtags\n",
         "from ufl import (SpatialCoordinate, inner, ds, dx, Measure, TrialFunction, TestFunction, grad)"
       ],
-      "id": "df232ce8",
+      "id": "1a4a7a14",
       "execution_count": null,
       "outputs": []
     },
@@ -78,7 +78,7 @@
         "- $dt = 0.1$ Time step size.\n",
         "- $L = 1$ rod \"length\""
       ],
-      "id": "c3e11798"
+      "id": "9ae629e6"
     },
     {
       "cell_type": "code",
@@ -108,7 +108,7 @@
         "h = Constant(domain, PETSc.ScalarType(0.5))  # Robin boundary condition coefficient\n",
         "kappa = Constant(domain, PETSc.ScalarType(1.0))  # Thermal conductivity"
       ],
-      "id": "036e3f60",
+      "id": "52e52a6f",
       "execution_count": null,
       "outputs": []
     },
@@ -131,7 +131,7 @@
         "- `uPrev` is the solution at the previous time step, representing the $u^{k-1}$ in the linear form.\n",
         "- `uWork` is the solution at the current time step, representing the $u^k$ in the bilinear form."
       ],
-      "id": "98c19d2d"
+      "id": "6e6bc5de"
     },
     {
       "cell_type": "code",
@@ -154,7 +154,7 @@
         "uWork.name = \"uWork\"  # Name the function for clarity \n",
         "uWork.interpolate(initial_condition)  # Initialize with the same initial condition"
       ],
-      "id": "89a1ebf0",
+      "id": "6a9682f8",
       "execution_count": null,
       "outputs": []
     },
@@ -170,7 +170,7 @@
         "\n",
         "The code below starts with a python version of the above definition of where the boundary is, and then uses an automated process to convert that into a useful definition for `dolfinx`. I'm also defining the measures for integration based on these boundary definitions. Note that Fenics Tutorials usually have at least one surface that has an explicit Dirichlet boundary condition."
       ],
-      "id": "bc786720"
+      "id": "ed6b73a8"
     },
     {
       "cell_type": "code",
@@ -197,7 +197,7 @@
         "dx = Measure(\"dx\", domain=domain)  # Define the measure for the volume integral\n",
         "ds = Measure(\"ds\", domain=domain, subdomain_data=facet_tag)  # Define the measure for the boundary integral"
       ],
-      "id": "07bdc233",
+      "id": "af9761df",
       "execution_count": null,
       "outputs": []
     },
@@ -220,7 +220,7 @@
         "$$\n",
         "Let's define the trial function `u` and the test function `v` and set up these forms:"
       ],
-      "id": "965cebe8"
+      "id": "53ec7e28"
     },
     {
       "cell_type": "code",
@@ -233,7 +233,7 @@
         "bilinear_form = form(a)  # Bilinear form for the weak formulation\n",
         "linear_form = form(L)  # Linear form for the weak formulation"
       ],
-      "id": "7d9244e5",
+      "id": "53e1926f",
       "execution_count": null,
       "outputs": []
     },
@@ -244,7 +244,7 @@
         "### Convert into a Linear Algebra problem\n",
         "One of the reasons that we use the Finite Element method is that computers are pretty good at doing linear algebra operations quickly. So we begin by setting up the linear algebra structures."
       ],
-      "id": "0a97d61c"
+      "id": "78ff0e6c"
     },
     {
       "cell_type": "code",
@@ -254,7 +254,7 @@
         "A.assemble()  # Finalize the assembly of the matrix A\n",
         "b = create_vector(linear_form)  # Create a vector for the right-hand side"
       ],
-      "id": "cab6fe44",
+      "id": "e44a7343",
       "execution_count": null,
       "outputs": []
     },
@@ -264,7 +264,7 @@
       "source": [
         "Now let's set up a framework to solve the linear system. Note, the 3rd and 4th lines below are talking about a \"Preconditioner\". I spent some time figuring out what that was all about. It does a LU decomposition, which is a form of Gaussian Elimination (ish). Basically, its all about speeding things up knowing that this is a sparse matrix system (remember, only neighboring elements contribute due to the localization of the basis functions)."
       ],
-      "id": "5b8cfbf5"
+      "id": "29327374"
     },
     {
       "cell_type": "code",
@@ -275,7 +275,7 @@
         "solver.setType(PETSc.KSP.Type.PREONLY)  # Use a preconditioner\n",
         "solver.getPC().setType(PETSc.PC.Type.LU)  # Use LU preconditioner"
       ],
-      "id": "797c2b9e",
+      "id": "72700160",
       "execution_count": null,
       "outputs": []
     },
@@ -286,7 +286,7 @@
         "### Begin a surface plot:\n",
         "I'm going to use a matplotlib surface plot to display my result rather than pyvista. I was playing around on StackExchange and came across a post that complained about why a pyvista version of a plot looked so ugly when matplotlib could do it so easily. The answer was basically, that the poster used pyvista correctly, it just contained data that was on vastly different scales. The answerer said something to the effect of, \"You have to tell PyVista to lie to you.\" My question (at least for now) is, \"How does PyVista know my units are meaningful?\" Since my units are not (yet) meaningful, I'll stick with matplotlib. Plus, I always try to learn only one thing at a time."
       ],
-      "id": "c8eb86ca"
+      "id": "ab181076"
     },
     {
       "cell_type": "code",
@@ -297,7 +297,7 @@
         "Uc = np.zeros_like(Tc)\n",
         "Uc[:, 0] = uWork.x.array  # Initial condition for plotting"
       ],
-      "id": "c86ee45b",
+      "id": "b51b558e",
       "execution_count": null,
       "outputs": []
     },
@@ -312,7 +312,7 @@
         "$$\n",
         "at each time step, so the linear form needs to be assembled into the vector `b`."
       ],
-      "id": "35370134"
+      "id": "3e0a1346"
     },
     {
       "cell_type": "code",
@@ -341,7 +341,7 @@
         "    # Update solution at previous time step (uPrev)\n",
         "    uPrev.x.array[:] = uWork.x.array"
       ],
-      "id": "75fbd708",
+      "id": "385aa426",
       "execution_count": null,
       "outputs": []
     },
@@ -352,7 +352,7 @@
         "### Make a pretty picture\n",
         "Make the plot the normal matplotlib way."
       ],
-      "id": "ab1ea32b"
+      "id": "51a7380b"
     },
     {
       "cell_type": "code",
@@ -369,7 +369,7 @@
         "plt.subplots_adjust(top=0.9)  # Adjust the top margin to fit\n",
         "plt.show()  # Show the plot"
       ],
-      "id": "06452527",
+      "id": "b7fdc5ab",
       "execution_count": null,
       "outputs": []
     },
@@ -380,7 +380,7 @@
         "### Compare the behavior for different heat transfer coefficients\n",
         "Let's make this plot to compare with the one I made where I adjusted the heat transfer coefficient on my homemade version of the finite element method."
       ],
-      "id": "11926eda"
+      "id": "3f01edf2"
     },
     {
       "cell_type": "code",
@@ -394,7 +394,7 @@
         "plotRobinRod(1)\n",
         "plotRobinRod(100)"
       ],
-      "id": "791403d8",
+      "id": "19700da4",
       "execution_count": null,
       "outputs": []
     },
@@ -410,14 +410,15 @@
         "- Go back to the physics and make sure I can do units correctly. This is especially important for dealing with external heat sources.\n",
         "- Figure out how to make composite boundaries. Ultimately, I want to model a house, so I need to figure out how I want to create walls, doors, and windows. "
       ],
-      "id": "b250b9b7"
+      "id": "44d61c8e"
     }
   ],
   "metadata": {
     "kernelspec": {
-      "display_name": "Python 3",
+      "name": "python3",
       "language": "python",
-      "name": "python3"
+      "display_name": "Python 3 (ipykernel)",
+      "path": "/home/swolf/.local/share/jupyter/kernels/python3"
     }
   },
   "nbformat": 4,
