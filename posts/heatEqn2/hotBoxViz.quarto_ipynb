@@ -43,7 +43,7 @@
         "## Code\n",
         "Import block:"
       ],
-      "id": "50f2d7d9"
+      "id": "805bca49"
     },
     {
       "cell_type": "code",
@@ -59,7 +59,7 @@
         "# The functions in `hotBoxToy` were developed in the previous post\n",
         "from hotBoxToy import *"
       ],
-      "id": "9ed5c385",
+      "id": "6ba1f515",
       "execution_count": null,
       "outputs": []
     },
@@ -69,7 +69,7 @@
       "source": [
         "Parameters are input in the code below, and the simulation runs based on the fit parameters from the previous analysis"
       ],
-      "id": "1fb043f2"
+      "id": "d6e0104a"
     },
     {
       "cell_type": "code",
@@ -112,7 +112,7 @@
         "B = 6.6667e-3\n",
         "longCalc = simToyHotBox(A,B,oneHour*10, 100)    "
       ],
-      "id": "091ce465",
+      "id": "2ccefaa9",
       "execution_count": null,
       "outputs": []
     },
@@ -129,7 +129,7 @@
         "\n",
         "Back to this system--Below is a figure with 4 heatmaps on it showing the system at four times that are during this change in behavior."
       ],
-      "id": "5a2a3cd5"
+      "id": "cec88e25"
     },
     {
       "cell_type": "code",
@@ -192,7 +192,7 @@
         "fig.colorbar(cbar, cax=cbar_ax,label='Temperature [deg C]')\n",
         "plt.show()"
       ],
-      "id": "b48ffb8d",
+      "id": "225e94dc",
       "execution_count": null,
       "outputs": []
     },
@@ -209,7 +209,7 @@
         "### Amimation generation code\n",
         "Figuring out how to do the animation was an interesting task, especially since most of the examples in the documentation animate things like a position vs. time graph, showing where the object appears later in the motion, and dealing with 3d plots is different in matplotlib. The key to using this method for animating a figure is to name all of the features of the graph that are changing, and creating a function to update each of these features."
       ],
-      "id": "5e669b5f"
+      "id": "47efb115"
     },
     {
       "cell_type": "code",
@@ -302,7 +302,7 @@
         "# Builds the animation\n",
         "makeAni('hotboxLong.gif',longCalc,L,W,H,Deltax)"
       ],
-      "id": "1e779757",
+      "id": "42cb8bd5",
       "execution_count": null,
       "outputs": []
     }

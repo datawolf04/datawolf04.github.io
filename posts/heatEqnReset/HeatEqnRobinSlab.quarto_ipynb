@@ -21,7 +21,7 @@
         "draft: false\n",
         "---"
       ],
-      "id": "37d28302"
+      "id": "22023dfe"
     },
     {
       "cell_type": "markdown",
@@ -43,7 +43,7 @@
         "## Building a 3D domain\n",
         "The first challenge is to build a 3D domain. Fortunately, FENICSx has a function for that, and my code looks like this:"
       ],
-      "id": "d9edbf49"
+      "id": "7aeed337"
     },
     {
       "cell_type": "code",
@@ -68,7 +68,7 @@
         "    ghost_mode=mesh.GhostMode.shared_facet  # Ghost mode for shared facets\n",
         ")"
       ],
-      "id": "e5b5d751",
+      "id": "1a02dae5",
       "execution_count": null,
       "outputs": []
     },
@@ -84,7 +84,7 @@
         "\n",
         "The above is a very hand-wavy explanation, and is enough for me (for now anyway). So, I then created the function space as usual, and defined the parameters that are important for this problem. "
       ],
-      "id": "fb2ff4ea"
+      "id": "18cb4835"
     },
     {
       "cell_type": "code",
@@ -110,7 +110,7 @@
         "uPrev.name = \"uPrev\"\n",
         "uPrev.interpolate(initial_condition)  # Interpolate the initial condition into the function space"
       ],
-      "id": "c401e646",
+      "id": "778a4305",
       "execution_count": null,
       "outputs": []
     },
@@ -134,7 +134,7 @@
         "\n",
         "Note, ParaView is a separate program used for 3D visualizations, not a Python package. This is also part of the rationale behind building the github repository. I'll need to create visualizations outside of a Quarto doc (like a majority of my other posts) and have to build visualizations elsewhere, then link to them. "
       ],
-      "id": "7643148a"
+      "id": "08b730dd"
     }
   ],
   "metadata": {

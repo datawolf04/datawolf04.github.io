@@ -209,7 +209,7 @@
         "$$\n",
         "you will see that there are infinitely many $k$ values that solve this problem. However, there is no analytic solution."
       ],
-      "id": "02b99228"
+      "id": "52d30cc0"
     },
     {
       "cell_type": "code",
@@ -248,7 +248,7 @@
         "ax.legend()\n",
         "plt.show()"
       ],
-      "id": "b0ac5f0c",
+      "id": "17187965",
       "execution_count": null,
       "outputs": []
     },
@@ -264,7 +264,7 @@
         "\n",
         "So in my next post, I'm going to generate a numerical model solving the Robin problem, and compare it to the Dirichelet problem that I solved previously.\n"
       ],
-      "id": "c3c8f03e"
+      "id": "136d2f65"
     }
   ],
   "metadata": {

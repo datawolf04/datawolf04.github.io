@@ -66,7 +66,7 @@
         "## FENICSx Solution\n",
         "Let's build this solution using FENICSx. Start by importing some libraries that are going to be required."
       ],
-      "id": "595052fe"
+      "id": "46628bb4"
     },
     {
       "cell_type": "code",
@@ -86,7 +86,7 @@
         "from dolfinx.fem.petsc import assemble_vector, assemble_matrix, create_vector, apply_lifting, set_bc\n",
         "from uDiricheletExact import *"
       ],
-      "id": "60af5148",
+      "id": "deb13997",
       "execution_count": null,
       "outputs": []
     },
@@ -96,7 +96,7 @@
       "source": [
         "Set up the simulation parameters. Define the mesh and function space. Under the hood, the `fem.functionspace` command is creating a polynomial basis function under the hood."
       ],
-      "id": "284e4946"
+      "id": "1fa252de"
     },
     {
       "cell_type": "code",
@@ -123,7 +123,7 @@
         "    domain, ('Lagrange',1) # Linear Lagrange elements (polynomials)\n",
         ")"
       ],
-      "id": "617435aa",
+      "id": "7f145d99",
       "execution_count": null,
       "outputs": []
     },
@@ -133,7 +133,7 @@
       "source": [
         "Set up the initial condition `u_n` and set up a \"working solution\" `uh`."
       ],
-      "id": "cca585c9"
+      "id": "872393de"
     },
     {
       "cell_type": "code",
@@ -151,7 +151,7 @@
         "uh.name = \"uh\"  # Name the function for clarity \n",
         "uh.interpolate(initial_condition)"
       ],
-      "id": "3597919f",
+      "id": "2e224094",
       "execution_count": null,
       "outputs": []
     },
@@ -161,7 +161,7 @@
       "source": [
         "Set up the (Dirichlet) boundary conditions for the problem:"
       ],
-      "id": "fc7299d7"
+      "id": "3e3148ad"
     },
     {
       "cell_type": "code",
@@ -179,7 +179,7 @@
         "boundary_dofs = fem.locate_dofs_topological(V, fdim, boundary_facets)\n",
         "bc = fem.dirichletbc(uD, boundary_dofs, V)"
       ],
-      "id": "1e9ec5a2",
+      "id": "206f538a",
       "execution_count": null,
       "outputs": []
     },
@@ -189,7 +189,7 @@
       "source": [
         "Set up the required functions for the variational problem including the source term (which is zero in this case). Then, define the $a(u,v)$ and $L(v)$ in terms of these functions, and convert to a form suitable for FENICSx."
       ],
-      "id": "ed8f421e"
+      "id": "9dfde390"
     },
     {
       "cell_type": "code",
@@ -204,7 +204,7 @@
         "bilinear_form = fem.form(a)\n",
         "linear_form = fem.form(L)"
       ],
-      "id": "09c4224e",
+      "id": "cc617bf0",
       "execution_count": null,
       "outputs": []
     },
@@ -214,7 +214,7 @@
       "source": [
         "Do the Linear Algebra required"
       ],
-      "id": "db97bd7d"
+      "id": "b1e167b5"
     },
     {
       "cell_type": "code",
@@ -231,7 +231,7 @@
         "solver.setType(PETSc.KSP.Type.PREONLY)  # Use a preconditioner\n",
         "solver.getPC().setType(PETSc.PC.Type.LU)  # Use LU preconditioner"
       ],
-      "id": "8a0e466a",
+      "id": "dd6b0322",
       "execution_count": null,
       "outputs": []
     },
@@ -241,7 +241,7 @@
       "source": [
         "And prepare to make a plot. I'll make a 3D surface plot and the variable `Uc` is my computational solution."
       ],
-      "id": "8f6cc8b4"
+      "id": "dfce5951"
     },
     {
       "cell_type": "code",
@@ -252,7 +252,7 @@
         "Uc = np.zeros_like(Tc)\n",
         "Uc[:, 0] = u_n.x.array  # Initial condition for plotting"
       ],
-      "id": "c157cc4b",
+      "id": "3ee71d78",
       "execution_count": null,
       "outputs": []
     },
@@ -262,7 +262,7 @@
       "source": [
         "Now, repeat the process for each time-step, filling in the `Uc` array as we go:"
       ],
-      "id": "cccb5b10"
+      "id": "ea6eb5a7"
     },
     {
       "cell_type": "code",
@@ -290,7 +290,7 @@
         "  # Update solution at previous time step (u_n)\n",
         "  u_n.x.array[:] = uh.x.array"
       ],
-      "id": "7180b5e4",
+      "id": "52cca39f",
       "execution_count": null,
       "outputs": []
     },
@@ -301,7 +301,7 @@
         "### Make a pretty picture\n",
         "So, let's see how this computation compares to the exact solution. "
       ],
-      "id": "097501c0"
+      "id": "a0ee6fc0"
     },
     {
       "cell_type": "code",
@@ -337,7 +337,7 @@
         "fig.colorbar(cbar, cax=cbar_ax,label='Temperature [arb. units]')\n",
         "plt.show()  # Show the plot"
       ],
-      "id": "de4c37cd",
+      "id": "f7944a23",
       "execution_count": null,
       "outputs": []
     },
@@ -352,7 +352,7 @@
         "\n",
         "I also know that I've only touched on the edges of this software suite. My plans are to figure out more complex meshes. (For example, if I want to model a house, I'll need to make walls and windows and stuff like that.) I will also need to figure out PyVista - software that they use to make nice visualizations, especially for 3D objects."
       ],
-      "id": "9ea9720b"
+      "id": "5ae9c380"
     }
   ],
   "metadata": {

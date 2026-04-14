@@ -98,7 +98,7 @@
         "### Ideal Projectile Motion: Thinking about code\n",
         "At this point, we have fully specified the problem. Any motion is fully specified given the cliff height $H$, launch speed $v_i$, and launch angle $\\theta$. We are done. Computationally, we want to be able to calculate all the important things, and define all of the important functions. I have chosen to use a python *class* to do so. The nice thing about using classes is that you can specify all of the variables for the system, but not have them cluttering the working environment."
       ],
-      "id": "6a32c51e"
+      "id": "6d63e365"
     },
     {
       "cell_type": "code",
@@ -152,7 +152,7 @@
         "  def acceleration(self,t):\n",
         "    return [0,-self.g]"
       ],
-      "id": "966bc7f2",
+      "id": "d089e658",
       "execution_count": null,
       "outputs": []
     },
@@ -214,7 +214,7 @@
         "\n",
         "`dragEOM` is this function $\\dot{u}(t)$ applied to our projectile system."
       ],
-      "id": "69b8ac84"
+      "id": "378f5b44"
     },
     {
       "cell_type": "code",
@@ -260,7 +260,7 @@
         "\n",
         "  splash.terminal = True"
       ],
-      "id": "f5d95390",
+      "id": "0f706df9",
       "execution_count": null,
       "outputs": []
     },
@@ -271,7 +271,7 @@
         "#### Getting the motion\n",
         "Now that this is done, we can get the motion for this system using the following class:"
       ],
-      "id": "6e8009fc"
+      "id": "069accf6"
     },
     {
       "cell_type": "code",
@@ -313,7 +313,7 @@
         "    self.ax = udot[2]\n",
         "    self.ay = udot[3]"
       ],
-      "id": "00bf74cb",
+      "id": "897aa9f1",
       "execution_count": null,
       "outputs": []
     },
@@ -330,7 +330,7 @@
         "- $m = 1$ kg\n",
         "- $c = 0.003$ kg/m"
       ],
-      "id": "e344d6f7"
+      "id": "7115e4a3"
     },
     {
       "cell_type": "code",
@@ -346,7 +346,7 @@
         "m = 1\n",
         "c = 0.003"
       ],
-      "id": "093da503",
+      "id": "124674bc",
       "execution_count": null,
       "outputs": []
     },
@@ -356,7 +356,7 @@
       "source": [
         "I will visualize this motion in two ways. First, I'll plot each quantity of the motion (position, velocity, acceleration) vs. time. "
       ],
-      "id": "533ca184"
+      "id": "63706c7d"
     },
     {
       "cell_type": "code",
@@ -368,7 +368,7 @@
         "\n",
         "plotCannonCurves(vi,theta,H,m,c)"
       ],
-      "id": "dbbe4303",
+      "id": "bb241ad3",
       "execution_count": null,
       "outputs": []
     },
@@ -378,7 +378,7 @@
       "source": [
         "Now I will plot the trajectory (y-coordinate vs x-coordinate). Note that I have added boxes to this plot indicating the cliff location and the water level to help guide the eye. The plot has also been set up with an equal aspect ratio so that the horizontal and vertical distances are the same. The green curve should more closely match the golf ball tracer than the red parabolic path does."
       ],
-      "id": "55e35899"
+      "id": "6d77da7c"
     },
     {
       "cell_type": "code",
@@ -390,7 +390,7 @@
         "\n",
         "makeTrajectoryPlot(vi,theta,H,m,c)"
       ],
-      "id": "2f9ce358",
+      "id": "5cf459ce",
       "execution_count": null,
       "outputs": []
     },
@@ -415,7 +415,7 @@
         "\n",
         "I will calculate these quantities for a range of launch velocities, masses, and launch angles keeping the cliff height $(H=100 \\,\\text{m})$ and drag coefficient $(c=0.003 \\,\\text{kg/m})$ the same as it was before."
       ],
-      "id": "6e4feca0"
+      "id": "731cb5f0"
     },
     {
       "cell_type": "code",
@@ -473,7 +473,7 @@
         "Z3 = deltaD[nv//2, :, :].transpose()\n",
         "ZZ3 = deltaT[nv//2, :, :].transpose()"
       ],
-      "id": "493118fd",
+      "id": "d160cb47",
       "execution_count": null,
       "outputs": []
     },
@@ -483,7 +483,7 @@
       "source": [
         "Now, let's examine the model agreement for the range:"
       ],
-      "id": "24fe4249"
+      "id": "d08f0896"
     },
     {
       "cell_type": "code",
@@ -520,7 +520,7 @@
         "plt.savefig('rangeCalcFracDiff.png')\n",
         "plt.show()"
       ],
-      "id": "d99e7c68",
+      "id": "e8861759",
       "execution_count": null,
       "outputs": []
     },
@@ -530,7 +530,7 @@
       "source": [
         "Finally, I'll examine the model agreement for the time-of-flight:"
       ],
-      "id": "cd7f9193"
+      "id": "d54a4152"
     },
     {
       "cell_type": "code",
@@ -567,7 +567,7 @@
         "plt.savefig('tofCalcFracDiff.png')\n",
         "plt.show()"
       ],
-      "id": "1ccbaa8d",
+      "id": "d72c89cc",
       "execution_count": null,
       "outputs": []
     },
@@ -581,7 +581,7 @@
         "\n",
         "##### Motion of a \"feather\" vs a \"pebble\""
       ],
-      "id": "8172a0e3"
+      "id": "2108e162"
     },
     {
       "cell_type": "code",
@@ -632,7 +632,7 @@
         "plt.figtext(0.65,0.01, txt,family=['DejaVu Sans','FontAwesome'],fontsize=9)\n",
         "plt.show()"
       ],
-      "id": "b8015444",
+      "id": "bcf62ae7",
       "execution_count": null,
       "outputs": []
     }

@@ -1,0 +1,150 @@
+---
+title: "Bird Sightings At Sea"
+description: ""
+author: "Steven Wolf"
+date: "4/14/2026"
+categories:
+  - TidyTuesday
+  - R 
+execute: 
+  messages: false
+  warning: false
+  echo: false
+---
+
+
+I'm back doing some [#TidyTuesday](https://www.tidytuesday.com/) visualizations. This week let's get bird-brained. [The dataset](https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-04-14/readme.md) has 2 objects (I have already joined the wind and sea data to the ships data):
+
+- `birds` Observation data related to bird sightings. Includes things like bird count, plumage of birds, behavior of birds.
+- `ships` Observation data related to the location of the ship, date and time of observation, weather conditions, and sea conditions.
+
+```{r}
+load('Tongarewa.RData')
+library(tidyverse)
+library(maps)
+library(viridis)
+library(GGally)
+library(showtext)
+library(ggtext)
+
+showtext_opts(dpi = 225, regular.wt = 300, bold.wt = 800)
+
+theme_set(theme_classic(base_size = 14, base_family = 'sans'))
+
+font_add("fa7-brands", 
+         "/usr/share/fonts/fontawesome-free-7.0.1-desktop/otfs/Font Awesome 7 Brands-Regular-400.otf")
+showtext_auto(enable = TRUE)
+
+gh <- str_glue("<span style='font-family: \"fa7-brands\"'>&#xf09b;</span>")
+li <- str_glue("<span style='font-family:\"fa7-brands\"'>&#xf08c;</span>")
+bluesky <- str_glue("<span style='font-family:\"fa7-brands\"'>&#xe671;</span>")
+ttText <- str_glue("**#TidyTuesday** &bull; Source: {bluesky} David Hood")
+caption_text <- str_glue("{ttText} <br> {gh} datawolf04 {li} wolf-253b6625a")
+ttStart <- str_glue("<b>#TidyTuesday</b>")
+
+theme_mine = function(...){
+  theme_minimal() %+replace%
+    
+    theme(
+      legend.title = element_markdown(size = rel(0.8), hjust = 0.5),
+      legend.text = element_text(size = rel(0.7)), 
+          
+      plot.margin = margin(t = 20, r = 20, b = 20, l = 20),
+      plot.title = element_text(size = rel(1.25),
+                                margin = margin(0,0,10,0),hjust=0.5),
+      plot.subtitle = element_text(size = rel(1.25),
+                                margin = margin(0,0,10,0),hjust=0.5),
+      axis.title.x = element_text(margin = margin(10, 0, 0, 0), size = rel(0.8)),
+      axis.title.y = element_text(margin = margin(0, 10, 0, 0), size = rel(0.8),angle=90),
+      axis.text = element_text(size=rel(0.8)),
+      plot.caption = element_markdown(
+        size        = rel(.7),
+        family      = "sans",
+        color       = "grey25",
+        lineheight  = 0.6,
+        hjust       = 1,
+        halign      = 0,
+        margin      = margin(t = 10, b = 5)
+      )
+    ) 
+}
+
+
+```
+
+## Snapshot of birds data
+This dataset is full of missing data. Indeed if I were to drop any row that doesn't have an value in every column, that analysis would be quite boring:
+
+```{r}
+birds |> drop_na()
+```
+
+Let's look at what the worst offenders are:
+```{r}
+empty <- birds |> summarise(across(everything(), ~ mean(is.na(.x)))) |> t() |> data.frame() |> 
+    rownames_to_column("observation")
+names(empty)[2] = 'naFrac'
+empty |> arrange(desc(naFrac)) |> filter(naFrac > 0.2)
+```
+That's essentially everything, except the count.
+
+```{r}
+empty |> arrange(desc(naFrac)) |> filter(naFrac <= 0.2)
+```
+
+## Summary of ship data
+I will begin by getting a sense of when and where this data is being taken.
+
+```{r}
+world_map <- map_data("world", wrap=c(-180,180))
+
+ggplot() +
+    geom_polygon(data = world_map, aes(x = long, y = lat, group = group), 
+        fill = "lightgray", color = "white") +
+    geom_point(data = ships, aes(x=longitude, y=latitude, color = date)) +
+    labs(title= "Observation Locations", color="Observation Date",x = "", y="") + 
+    scale_color_viridis_c(trans = 'date') + 
+    coord_fixed(
+        xlim = c(min(ships$longitude, na.rm = TRUE)-15, 180),
+        ylim = c(-90,10),
+        ratio = 1.2
+    ) +
+        theme_mine() +
+    theme(axis.title = element_blank(), 
+          axis.text = element_blank(),
+          legend.position = "inside",
+          legend.position.inside = c(1.05,1),
+          legend.justification = c(1,1))
+```
+
+## Seasonal patterns in bird observations
+Since I've been playing with the map functions, I decided to plot count data on the map for different seasons in the dataset.
+
+```{r}
+combined <- left_join(birds, ships, by="record_id") |> filter(!is.na(season)) |> 
+    mutate(season = str_to_sentence(season))
+
+pltTitle <- str_glue('Bird count data from {format(min(combined$date),"%B %Y")} to {format(max(combined$date),"%B %Y")}')
+
+ggplot() +
+    geom_polygon(data = world_map, aes(x = long, y = lat, group = group), 
+        fill = "lightgray", color = "white") +
+    geom_point(data = combined, aes(x=longitude, y=latitude, color = count), na.rm=TRUE) +
+    labs(title= pltTitle, color="Number of birds", x='', y='',
+         caption=caption_text) + 
+    scale_color_viridis_c(option="turbo", trans="log10") + 
+    coord_fixed(
+        xlim = c(min(ships$longitude, na.rm = TRUE)-15, 180),
+        ylim = c(-90,10),
+        ratio = 1.2
+    ) +
+    facet_wrap(vars(season), nrow = 2, ncol=2) +
+    theme_mine() + 
+    theme(axis.title = element_blank(), 
+          axis.text = element_blank(),
+    ) 
+ggsave('birdObsBySeason.png')
+```
+
+
+
