@@ -7,10 +7,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Steven Wolf">
-<meta name="dcterms.date" content="2025-07-30">
-<meta name="description" content="Bringing a nuke to a fist-fight">
+<meta name="dcterms.date" content="2026-04-14">
 
-<title>Using the Heat Equation to model a real-world system (Part 5) – Steven Wolf - Data World</title>
+<title>Bird Sightings At Sea – Steven Wolf - Data World</title>
 <style>
 /* Default styles provided by pandoc.
 ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
@@ -25,41 +24,6 @@ ul.task-list li input[type="checkbox"] {
   width: 0.8em;
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
-}
-/* CSS for syntax highlighting */
-html { -webkit-text-size-adjust: 100%; }
-pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
-pre > code.sourceCode > span:empty { height: 1.2em; }
-.sourceCode { overflow: visible; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-div.sourceCode { margin: 1em 0; }
-pre.sourceCode { margin: 0; }
-@media screen {
-div.sourceCode { overflow: auto; }
-}
-@media print {
-pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
-}
-pre.numberSource code
-  { counter-reset: source-line 0; }
-pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
-pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-  }
-pre.numberSource { margin-left: 3em;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
 
@@ -166,17 +130,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Using the Heat Equation to model a real-world system (Part 5)</h1>
-                  <div>
-        <div class="description">
-          Bringing a nuke to a fist-fight
-        </div>
-      </div>
-                          <div class="quarto-categories">
-                <div class="quarto-category">Heat Equation</div>
-                <div class="quarto-category">Modeling</div>
-                <div class="quarto-category">Bringing a nuke to a fist-fight</div>
-                <div class="quarto-category">3D Model</div>
+      <h1 class="title">Bird Sightings At Sea</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">TidyTuesday</div>
+                <div class="quarto-category">R</div>
               </div>
                   </div>
   </div>
@@ -194,7 +151,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
       <div>
       <div class="quarto-title-meta-heading">Published</div>
       <div class="quarto-title-meta-contents">
-        <p class="date">July 30, 2025</p>
+        <p class="date">April 14, 2026</p>
       </div>
     </div>
     
@@ -210,10 +167,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#modeling-a-3d-slab-with-convection" id="toc-modeling-a-3d-slab-with-convection" class="nav-link active" data-scroll-target="#modeling-a-3d-slab-with-convection">Modeling a 3D slab with convection</a></li>
-  <li><a href="#building-a-3d-domain" id="toc-building-a-3d-domain" class="nav-link" data-scroll-target="#building-a-3d-domain">Building a 3D domain</a></li>
-  <li><a href="#finally-a-pretty-picture" id="toc-finally-a-pretty-picture" class="nav-link" data-scroll-target="#finally-a-pretty-picture">Finally, a pretty picture</a></li>
-  <li><a href="#next-steps" id="toc-next-steps" class="nav-link" data-scroll-target="#next-steps">Next steps</a></li>
+  <li><a href="#snapshot-of-birds-data" id="toc-snapshot-of-birds-data" class="nav-link active" data-scroll-target="#snapshot-of-birds-data">Snapshot of birds data</a></li>
+  <li><a href="#summary-of-ship-data" id="toc-summary-of-ship-data" class="nav-link" data-scroll-target="#summary-of-ship-data">Summary of ship data</a></li>
+  <li><a href="#seasonal-patterns-in-bird-observations" id="toc-seasonal-patterns-in-bird-observations" class="nav-link" data-scroll-target="#seasonal-patterns-in-bird-observations">Seasonal patterns in bird observations</a></li>
   </ul>
 </nav>
     </div>
@@ -224,82 +180,90 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 
-<section id="modeling-a-3d-slab-with-convection" class="level2">
-<h2 class="anchored" data-anchor-id="modeling-a-3d-slab-with-convection">Modeling a 3D slab with convection</h2>
-<p>I’m going to model a simple 3D slab with convection. For now, I’m not including any power generation, and this slab is going to have thermal properties that make the visualization look well enough. Rather than including all of the code in this post, I’m going to point you to my <a href="https://github.com/datawolf04/heatModel/">Github Repository</a> where the code exists. Here I will grab bits of the new code that I found difficult to figure out and discuss the lessons I’ve learned (or sometimes, would like to learn). This is also useful, since much of the code is the same as the previous code.</p>
-<p>Our slab has the following properties.</p>
+<p>I’m back doing some <a href="https://www.tidytuesday.com/">#TidyTuesday</a> visualizations. This week let’s get bird-brained. <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-04-14/readme.md">The dataset</a> has 2 objects (I have already joined the wind and sea data to the ships data):</p>
 <ul>
-<li>Length and height are both 1 (insert arbitrary length unit)</li>
-<li>Width is 2 (insert arbitrary length unit)</li>
-<li>Initial temp is 10 (arbitrary temperature units)</li>
-<li>External temp is 0 (arbitrary temperature units)</li>
+<li><code>birds</code> Observation data related to bird sightings. Includes things like bird count, plumage of birds, behavior of birds.</li>
+<li><code>ships</code> Observation data related to the location of the ship, date and time of observation, weather conditions, and sea conditions.</li>
 </ul>
-<p>My next post will talk about units and do some physics.</p>
-</section>
-<section id="building-a-3d-domain" class="level2">
-<h2 class="anchored" data-anchor-id="building-a-3d-domain">Building a 3D domain</h2>
-<p>The first challenge is to build a 3D domain. Fortunately, FENICSx has a function for that, and my code looks like this:</p>
-<div id="ecc1e6ee" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>L <span class="op">=</span> <span class="fl">1.0</span>  <span class="co"># Length of the slab</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>W <span class="op">=</span> <span class="fl">2.0</span>  <span class="co"># Width of the slab </span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>H <span class="op">=</span> <span class="fl">1.0</span>  <span class="co"># Height of the slab </span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>dl <span class="op">=</span> <span class="fl">0.05</span> <span class="co"># Element size for the mesh</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>nx, ny, nz <span class="op">=</span> <span class="bu">int</span>(L<span class="op">/</span>dl), <span class="bu">int</span>(W<span class="op">/</span>dl), <span class="bu">int</span>(H<span class="op">/</span>dl)  <span class="co"># Number of elements in each direction</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the mesh and function space</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>bottom_back_left <span class="op">=</span> np.array([<span class="fl">0.0</span>, <span class="fl">0.0</span>, <span class="fl">0.0</span>])  <span class="co"># Bottom back corner of the slab</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>top_front_right <span class="op">=</span> np.array([L, W, H])  <span class="co"># Top front corner of the slab</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a 3D domain representing the slab</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>domain <span class="op">=</span> mesh.create_box(</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    MPI.COMM_WORLD,  <span class="co"># MPI communicator</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    [bottom_back_left,top_front_right],  <span class="co"># Coordinates of the corners of the rectangle</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    [nx, ny, nz],  <span class="co"># Number of elements in each direction</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    mesh.CellType.tetrahedron,  <span class="co"># Type of elements </span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    ghost_mode<span class="op">=</span>mesh.GhostMode.shared_facet  <span class="co"># Ghost mode for shared facets</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="snapshot-of-birds-data" class="level2">
+<h2 class="anchored" data-anchor-id="snapshot-of-birds-data">Snapshot of birds data</h2>
+<p>This dataset is full of missing data. Indeed if I were to drop any row that doesn’t have an value in every column, that analysis would be quite boring:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 26
+# ℹ 26 variables: bird_observation_id &lt;dbl&gt;, record_id &lt;dbl&gt;,
+#   species_common_name &lt;chr&gt;, species_scientific_name &lt;chr&gt;,
+#   species_abbreviation &lt;chr&gt;, age &lt;chr&gt;, wan_plumage_phase &lt;chr&gt;,
+#   plumage_phase &lt;chr&gt;, sex &lt;lgl&gt;, count &lt;dbl&gt;, n_feeding &lt;dbl&gt;,
+#   feeding &lt;lgl&gt;, n_sitting_on_water &lt;dbl&gt;, sitting_on_water &lt;lgl&gt;,
+#   n_sitting_on_ice &lt;dbl&gt;, sitting_on_ice &lt;lgl&gt;, sitting_on_ship &lt;lgl&gt;,
+#   in_hand &lt;lgl&gt;, n_flying_past &lt;dbl&gt;, flying_past &lt;lgl&gt;, …</code></pre>
 </div>
-<p>I struggled to get this right for longer than I would like to admit. For some reason, when I was building the domain and generating the appropriate function spaces, my code was failing when I was building the interpolating the initial condition into the appropriate function space. I finally added the <code>ghost_mode=mesh.GhostMode.shared_facet</code> line to the above and it started working. As near as I can tell, this is why that is required:</p>
-<ul>
-<li>FENICSx, in general, is designed for computationally intensive calculations. So it takes advantage of parallelization.</li>
-<li>One common parallelization scheme is to divide the computation into bits, operate them independantly, and then pull them back together. For example, if you have a group homework assignment with 10 questions and a group of 5 people, you assign 2 problems to everyone, then staple them together at the end. Parallel computing, effectively, does this with processors.</li>
-<li>However, sometimes the problems aren’t fully independant. Suppose that one needs the answer to question 1 in order to answer questions 2, 3, and 4 in my homework assignment example above. Somehow, the answer to question 1 needs to be provided for the persons doing questions 2, 3, and 4. For parallel computing with FENICSx, this is done with the ghost mode. So by not specifying a ghost mode, I found that the default ghost mode didn’t work for the mesh/functionspace that I defined.</li>
-</ul>
-<p>The above is a very hand-wavy explanation, and is enough for me (for now anyway). So, I then created the function space as usual, and defined the parameters that are important for this problem.</p>
-<div id="fe43ccf5" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>V <span class="op">=</span> functionspace(domain, (<span class="st">"Lagrange"</span>, <span class="dv">1</span>))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>tdim <span class="op">=</span> domain.topology.dim  <span class="co"># Topological dimension of the domain</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> SpatialCoordinate(domain)  <span class="co"># Spatial coordinates of the domain</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>tempExt <span class="op">=</span> <span class="kw">lambda</span> x: extTemp  <span class="co"># External temperature function (constant in this case)</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> tempExt(x)  <span class="co"># External temperature at the boundary</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="dv">0</span>))  <span class="co"># Source term (zero in this case)</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>h <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="fl">0.1</span>))  <span class="co"># Robin boundary condition coefficient</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>kappa <span class="op">=</span> Constant(domain, PETSc.ScalarType(<span class="fl">1.0</span>))  <span class="co"># Thermal conductivity </span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">#########################################</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Set up the initial condition</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> initial_condition(x, Temp<span class="op">=</span>T0, a<span class="op">=</span><span class="dv">0</span>):</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> Temp <span class="op">*</span> np.exp(<span class="op">-</span>a <span class="op">*</span> (x[<span class="dv">0</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> x[<span class="dv">1</span>]<span class="op">**</span><span class="dv">2</span> <span class="op">+</span> x[<span class="dv">2</span>]<span class="op">**</span><span class="dv">2</span>))  <span class="co"># Initial temperature T0 defined elsewhere</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>uPrev <span class="op">=</span> Function(V)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>uPrev.name <span class="op">=</span> <span class="st">"uPrev"</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>uPrev.interpolate(initial_condition)  <span class="co"># Interpolate the initial condition into the function space</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
-<p>I found that if I left the <code>* np.exp(-a * (x[0]**2 + x[1]**2 + x[2]**2))</code> expression out of the return statement, there was an error message stating that the arguments were the wrong shape, and the interpolation didn’t work. I tried tracking it down, but ultimately came up with this hacky solution.</p>
+<p>Let’s look at what the worst offenders are:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          observation    naFrac
+1                 sex 1.0000000
+2       plumage_phase 0.9983476
+3            moulting 0.9976948
+4   wan_plumage_phase 0.8046676
+5                 age 0.7922846
+6           n_feeding 0.5395459
+7  n_sitting_on_water 0.5395459
+8    n_sitting_on_ice 0.5395459
+9       n_flying_past 0.5395459
+10     n_accompanying 0.5395459
+11   n_following_ship 0.5395459
+12  naturally_feeding 0.4318734
+13            in_hand 0.4311185
+14       accompanying 0.4311185
+15    sitting_on_ship 0.4310981
+16     following_ship 0.4310981
+17     sitting_on_ice 0.4310777
+18        flying_past 0.4310165
+19   sitting_on_water 0.4308941
+20            feeding 0.4303433</code></pre>
+</div>
+</div>
+<p>That’s essentially everything, except the count.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>              observation     naFrac
+1                   count 0.05506028
+2 species_scientific_name 0.02246068
+3     species_common_name 0.01409657
+4    species_abbreviation 0.01409657
+5     bird_observation_id 0.00000000
+6               record_id 0.00000000</code></pre>
+</div>
+</div>
 </section>
-<section id="finally-a-pretty-picture" class="level2">
-<h2 class="anchored" data-anchor-id="finally-a-pretty-picture">Finally, a pretty picture</h2>
-<p>The rest of the computation proceeded as usual. I was able to make a gif of the output using <code>pyvista</code>. The time-step parameters were chosen so that there was a change, and it was visible.</p>
-<p><img src="slabTemp.gif" class="img-fluid"></p>
+<section id="summary-of-ship-data" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-ship-data">Summary of ship data</h2>
+<p>I will begin by getting a sense of when and where this data is being taken.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="birds_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
-<section id="next-steps" class="level2">
-<h2 class="anchored" data-anchor-id="next-steps">Next steps</h2>
-<ol type="1">
-<li>Do some physics. These arbitrary length, temperature, and time units simply will not do!</li>
-<li>Put the slab in the sun.</li>
-<li>Make prettier visualizations using <code>pyvista</code> and/or <code>ParaView</code>.</li>
-</ol>
-<p>Note, ParaView is a separate program used for 3D visualizations, not a Python package. This is also part of the rationale behind building the github repository. I’ll need to create visualizations outside of a Quarto doc (like a majority of my other posts) and have to build visualizations elsewhere, then link to them.</p>
+<section id="seasonal-patterns-in-bird-observations" class="level2">
+<h2 class="anchored" data-anchor-id="seasonal-patterns-in-bird-observations">Seasonal patterns in bird observations</h2>
+<p>Since I’ve been playing with the map functions, I decided to plot count data on the map for different seasons in the dataset.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="birds_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 
 </section>

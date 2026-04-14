@@ -9,8 +9,112 @@
 <link>https://datawolf04.github.io/</link>
 <atom:link href="https://datawolf04.github.io/index.xml" rel="self" type="application/rss+xml"/>
 <description>A place to play with data</description>
-<generator>quarto-1.8.26</generator>
-<lastBuildDate>Tue, 02 Dec 2025 00:00:00 GMT</lastBuildDate>
+<generator>quarto-1.9.37</generator>
+<lastBuildDate>Tue, 14 Apr 2026 00:00:00 GMT</lastBuildDate>
+<item>
+  <title>Bird Sightings At Sea</title>
+  <dc:creator>Steven Wolf</dc:creator>
+  <link>https://datawolf04.github.io/posts/tt20260413/birds.html</link>
+  <description><![CDATA[ 
+
+
+
+
+
+<p>I’m back doing some <a href="https://www.tidytuesday.com/">#TidyTuesday</a> visualizations. This week let’s get bird-brained. <a href="https://github.com/rfordatascience/tidytuesday/blob/main/data/2026/2026-04-14/readme.md">The dataset</a> has 2 objects (I have already joined the wind and sea data to the ships data):</p>
+<ul>
+<li><code>birds</code> Observation data related to bird sightings. Includes things like bird count, plumage of birds, behavior of birds.</li>
+<li><code>ships</code> Observation data related to the location of the ship, date and time of observation, weather conditions, and sea conditions.</li>
+</ul>
+<section id="snapshot-of-birds-data" class="level2">
+<h2 class="anchored" data-anchor-id="snapshot-of-birds-data">Snapshot of birds data</h2>
+<p>This dataset is full of missing data. Indeed if I were to drop any row that doesn’t have an value in every column, that analysis would be quite boring:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 0 × 26
+# ℹ 26 variables: bird_observation_id &lt;dbl&gt;, record_id &lt;dbl&gt;,
+#   species_common_name &lt;chr&gt;, species_scientific_name &lt;chr&gt;,
+#   species_abbreviation &lt;chr&gt;, age &lt;chr&gt;, wan_plumage_phase &lt;chr&gt;,
+#   plumage_phase &lt;chr&gt;, sex &lt;lgl&gt;, count &lt;dbl&gt;, n_feeding &lt;dbl&gt;,
+#   feeding &lt;lgl&gt;, n_sitting_on_water &lt;dbl&gt;, sitting_on_water &lt;lgl&gt;,
+#   n_sitting_on_ice &lt;dbl&gt;, sitting_on_ice &lt;lgl&gt;, sitting_on_ship &lt;lgl&gt;,
+#   in_hand &lt;lgl&gt;, n_flying_past &lt;dbl&gt;, flying_past &lt;lgl&gt;, …</code></pre>
+</div>
+</div>
+<p>Let’s look at what the worst offenders are:</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>          observation    naFrac
+1                 sex 1.0000000
+2       plumage_phase 0.9983476
+3            moulting 0.9976948
+4   wan_plumage_phase 0.8046676
+5                 age 0.7922846
+6           n_feeding 0.5395459
+7  n_sitting_on_water 0.5395459
+8    n_sitting_on_ice 0.5395459
+9       n_flying_past 0.5395459
+10     n_accompanying 0.5395459
+11   n_following_ship 0.5395459
+12  naturally_feeding 0.4318734
+13            in_hand 0.4311185
+14       accompanying 0.4311185
+15    sitting_on_ship 0.4310981
+16     following_ship 0.4310981
+17     sitting_on_ice 0.4310777
+18        flying_past 0.4310165
+19   sitting_on_water 0.4308941
+20            feeding 0.4303433</code></pre>
+</div>
+</div>
+<p>That’s essentially everything, except the count.</p>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>              observation     naFrac
+1                   count 0.05506028
+2 species_scientific_name 0.02246068
+3     species_common_name 0.01409657
+4    species_abbreviation 0.01409657
+5     bird_observation_id 0.00000000
+6               record_id 0.00000000</code></pre>
+</div>
+</div>
+</section>
+<section id="summary-of-ship-data" class="level2">
+<h2 class="anchored" data-anchor-id="summary-of-ship-data">Summary of ship data</h2>
+<p>I will begin by getting a sense of when and where this data is being taken.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20260413/birds_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="seasonal-patterns-in-bird-observations" class="level2">
+<h2 class="anchored" data-anchor-id="seasonal-patterns-in-bird-observations">Seasonal patterns in bird observations</h2>
+<p>Since I’ve been playing with the map functions, I decided to plot count data on the map for different seasons in the dataset.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="https://datawolf04.github.io/posts/tt20260413/birds_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+ ]]></description>
+  <category>TidyTuesday</category>
+  <category>R</category>
+  <guid>https://datawolf04.github.io/posts/tt20260413/birds.html</guid>
+  <pubDate>Tue, 14 Apr 2026 00:00:00 GMT</pubDate>
+</item>
 <item>
   <title>Sechseläuten Festival and Folk Wisdom</title>
   <dc:creator>Steven Wolf</dc:creator>
@@ -3376,7 +3480,7 @@ font-style: inherit;">'</span>)</span>
 <h2 class="anchored" data-anchor-id="view-some-solutions">View some solutions:</h2>
 <p>[7/15/25 Minor update: The graph titles were not displaying enough significant digits, so I fixed the display.]</p>
 <p>Note, that we have a property that can change the dynamics of this system, namely <img src="https://latex.codecogs.com/png.latex?b">, which is related to the (inverse of the) heat transfer coefficient. For the previous plot <img src="https://latex.codecogs.com/png.latex?b=1">. Compare to these, where <img src="https://latex.codecogs.com/png.latex?b=5"> and <img src="https://latex.codecogs.com/png.latex?b=0.5">:</p>
-<div id="b150aac4" class="cell quarto-layout-panel" data-execution_count="6" data-layout-ncol="2">
+<div id="b150aac4" class="cell quarto-layout-panel" data-layout-ncol="2" data-execution_count="6">
 <div class="quarto-layout-row">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p><img src="https://datawolf04.github.io/posts/heatEqnReset/HeatEqnReset2_files/figure-html/cell-7-output-1.png" class="img-fluid"></p>
@@ -4078,7 +4182,7 @@ font-style: inherit;">5</span>))</span>
 <section id="the-end" class="level1">
 <h1>The end:</h1>
 <p>I can make this pretty video using Manim!</p>
-<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="collisionViz/media/videos/puckStickCollision/1080p60/puckStickCollision.mp4"></video></div>
+<div class="quarto-video"><video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-big-play-centered vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="collisionViz/media/videos/puckStickCollision/1080p60/puckStickCollision.mp4"></video></div>
 </section>
 <section id="the-beginning" class="level1">
 <h1>The beginning:</h1>
